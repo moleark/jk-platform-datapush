@@ -1,0 +1,11 @@
+node_modules
+config/production.json
+config/development.json
+npm-debug.log
+npm-debug.log.*
+package-lock.json
+ts/uq-joint
+ts/kasima_Test.ts
+push/uq-joint
+router.ts
+jkRouter_test.ts

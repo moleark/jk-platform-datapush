@@ -1,0 +1,12 @@
+{
+    "name": "jk-platform-datapush",
+    "port": 3018,
+    "interval": 3000,
+    "firstEntities": [],
+    "afterFirstEntities": [
+        {
+            "name": "casmartPush",
+            "inervalUnit": 1
+        }
+    ]
+}
