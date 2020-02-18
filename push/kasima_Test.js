@@ -54,25 +54,27 @@ let upData = {
 //这是需要提交的数据
 ////var content = querystring.stringify(data);
 //测试环境
-/*
-let appid = '507';
-let secret = '2U75AuyZQAUHSXNdbSgkEUVdmz6oPwqD';
-let dateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
-*/
-//生产环境
 let appid = '507';
 let secret = '2U75AuyZQAUHSXNdbSgkEUVdmz6oPwqD';
 let dateTime = date_fns_1.format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+//生产环境
+/*let appid = '507';
+let secret = '2U75AuyZQAUHSXNdbSgkEUVdmz6oPwqD';
+let dateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+*/
 //获取商品类型 
+/*
 //签名验证，转换为大写进行判断
 let md5Str = md5(appid + dateTime + secret);
 let getProductType = '/v2/rest/Supplier/GetProductType?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
+
 let path = encodeURI(getProductType);
 console.log(path);
 console.log(encodeURI(path));
+
 var options = {
-    //host: 'preapi.casmart.com.cn',
-    host: 'api.casmart.com.cn',
+    //host: 'api.casmart.com.cn',
+    host: 'preapi.casmart.com.cn',
     //port: 443,
     path: path,
     method: 'GET',
@@ -80,6 +82,7 @@ var options = {
         'Content-Type': 'application/json;charset=UTF-8'
     }
 };
+*/
 //获取商品类型扩展属性
 /*
 //签名验证，转换为大写进行判断
@@ -139,14 +142,11 @@ var options = {
 };
 */
 //获取分组
-/*
 //签名验证，转换为大写进行判断
 let md5Str = md5(appid + dateTime + secret);
 let GetProductGroup = '/v2/rest/Supplier/GetProductGroup?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
-
 let path = encodeURI(GetProductGroup);
 console.log(path);
-
 var options = {
     host: 'preapi.casmart.com.cn',
     //port: 443,
@@ -156,7 +156,6 @@ var options = {
         'Content-Type': 'application/json;charset=UTF-8'
     }
 };
-*/
 //添加产品
 /*
 //签名验证，转换为大写进行判断

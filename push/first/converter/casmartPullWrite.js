@@ -10,7 +10,80 @@ const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 //喀斯玛接口相关配置
 const casmartApiSetting = config_1.default.get("casmarkApi");
-//产品分类、类型、分组的处理
+//获取产品分类
+function GetCateId(Templatetypeid) {
+    let result = '';
+    switch (Templatetypeid) {
+        case '1':
+            result = '241';
+            break;
+        case '2':
+            result = '241';
+            break;
+        case '3':
+            result = '227';
+            break;
+        default:
+            result = '241';
+            break;
+    }
+    return result;
+}
+//获取品牌
+function GetBrandId(brandName) {
+    let result = '';
+    switch (brandName) {
+        case 'J&K':
+            result = '734';
+            break;
+        case 'Amethyst':
+            result = '734';
+            break;
+        case 'Acros':
+            result = '734';
+            break;
+        case 'Sigma':
+            result = '734';
+            break;
+        case 'TCI':
+            result = '734';
+            break;
+        case 'Dr. Ehrenstorfer':
+            result = '734';
+            break;
+        case 'SERVA':
+            result = '734';
+            break;
+        case 'Fluorochem':
+            result = '734';
+            break;
+        case 'Strem':
+            result = '734';
+            break;
+        case 'LGC':
+            result = '734';
+            break;
+        case 'TRC':
+            result = '734';
+            break;
+        case 'Apollo':
+            result = '734';
+            break;
+        case 'Cambridge Isotope Laboratories（CIL）':
+            result = '734';
+            break;
+        case 'Frontier':
+            result = '734';
+            break;
+        case 'Alfa':
+            result = '734';
+            break;
+        case 'Echelon':
+            result = '734';
+            break;
+    }
+    return result;
+}
 async function CasmartPullWrite(joint, data) {
     try {
         //定义变量
@@ -43,13 +116,17 @@ async function CasmartPullWrite(joint, data) {
         else {
             //新增产品上架情况
             if (data["StateName"] == 'add') {
-                let groups = [424];
+                //定义商品类型、产品分类、产品分组 
+                let cateId = this.GetCateId(data["Templatetypeid"]); //固定 241;
+                let brandId = this.GetBrandId(data["BrandName"]); //固定
+                let typeId = this.GetBrandId(data["CategoryId"]); //产品分类，在sql查询中完成
+                let groups = [424]; //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
                 postData = {
                     rid: data["PackageId"],
                     code: data["OriginalId"],
-                    cateid: 241,
-                    brandid: 734,
-                    typeid: 385,
+                    cateid: cateId,
+                    brandid: brandId,
+                    typeid: data["CategoryId"],
                     name: data["Description"],
                     subname: data["DescriptionC"],
                     mktprice: data["CatalogPrice"],
