@@ -85,7 +85,7 @@ function GetSpecMark(packnr: any, packageSize: any, unit: string): string {
 //获取仪器耗材产品图片
 function GetImg(brandName: string): any {
 
-    let result = [];
+    let result = ['https://www.baidu.com/img/bd_logo1.png'];
     if (brandName == "J&K Scentice") {
         result = ['1.img', '2.img'];
     }
@@ -124,13 +124,19 @@ function GetSpec(unit: string): string {
     return result;
 }
 
+//获取生物试剂的chemid
+function GetChemId(categoryId: string): string {
+    return 'SWSJ-002'
+}
+
 // 
 export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boolean> {
 
     try {
         //定义变量
-        //console.log(data);
+        console.log(data);
         //console.log('快去采平台处理');
+        let result = false;
 
         let { companyId, key, host, chemAddPath, chemUpdatePath, bioAddPath, bioUpdatePath, clAddPath, clUpdatePath, deletePath } = kuaiQuCaiApiSetting;
         let DateTime: number = Date.now();
@@ -154,25 +160,25 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
         if (data["IsDelete"] == '1') {
 
             let deleteData = data["PackageId"];
-            postData = { COMPANY_SALE_NOS: deleteData };
+            postData = JSON.stringify({ COMPANY_SALE_NOS: deleteData });
             options.path = deletePath;
 
         } else {
 
-            let chemName = this.GetChemName(data["Description"], data["DescriptionC"]); //获取化学品名称 
-            let deliveTime = this.GetDeliveTime(data["Delivetime"]);
-            let deliveType = this.GetDeliveType(data["Storage"], data["BrandName"]);
-            let specMark = this.GetSpecMark(data["Packnr"], data["Quantity"], data["Unit"]);
+            let chemName = GetChemName(data["Description"], data["DescriptionC"]); //获取化学品名称 
+            let deliveTime = GetDeliveTime(data["Delivetime"]);
+            let deliveType = GetDeliveType(data["Storage"], data["BrandName"]);
+            let specMark = GetSpecMark(data["Packnr"], data["Quantity"], data["Unit"]);
             let supllyCompanyId = '162';
             let supllyCompany = '百灵威';
             let saleCompanyName = '北京百灵威科技有限公司';
             let saleCompanyPhone = '010-59309000';
-            let spec = this.GetSpec(data["Unit"]);
+            let spec = GetSpec(data["Unit"]);
 
             if (data["StateName"] == 'add') {
                 switch (data["Templatetypeid"]) {
 
-                    case "1":
+                    case 1:
                         let addDataChem = {
                             COMPANY_SALE_NO: data["PackageId"],
                             CHEM_ID: data["CasFormat"],
@@ -202,14 +208,15 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: '',
                             CL_TYPE_ID: '',
-                            PACKAGE_TYPE: ''
+                            PACKAGE_TYPE: '',
+                            IMG: []
                         };
-                        postData = { DATA: addDataChem };
+                        postData = JSON.stringify({ "DATA": [addDataChem] });
                         options.path = chemAddPath;
                         break;
 
-                    case "2":
-                        let chemid = this.GetChemId(data["CategoryId"]);
+                    case 2:
+                        let chemid = GetChemId(data["CategoryId"]);
                         let addDataBio = {
                             COMPANY_SALE_NO: data["PackageId"],
                             CHEM_ID: chemid,
@@ -239,14 +246,15 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: data["CategoryId"],
                             CL_TYPE_ID: '',
-                            PACKAGE_TYPE: ''
+                            PACKAGE_TYPE: '',
+                            IMG: []
                         };
-                        postData = { DATA: addDataBio };
+                        postData = JSON.stringify({ "DATA": [addDataBio] });
                         options.path = bioAddPath;
                         break;
 
-                    case "3":
-                        let img = this.GetImg(data["BrandName"]);
+                    case 3:
+                        let img = GetImg(data["BrandName"]);
                         let addDataCl = {
                             COMPANY_SALE_NO: data["PackageId"],
                             CHEM_ID: '',
@@ -254,8 +262,8 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             COMPANY_BIO_NAME: '',
                             COMPANY_CL_NAME: chemName,
                             PRICE: data["CatalogPrice"],
-                            VALUMEUNIT_ID: data["Unit"],
-                            VALUME: data["Quantity"],
+                            VALUMEUNIT_ID: 'EA',
+                            VALUME: '',
                             SPEC_ID: spec,
                             SPEC_MARK: specMark,
                             SALE_MARK: 1,
@@ -276,10 +284,10 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: '',
                             CL_TYPE_ID: data["CategoryId"],
-                            PACKAGE_TYPE: '??',
+                            PACKAGE_TYPE: data["Quantity"] + data["Unit"],
                             IMG: img
                         };
-                        postData = { DATA: addDataCl };
+                        postData = JSON.stringify({ "DATA": [addDataCl] });
                         options.path = clAddPath;
                         break;
 
@@ -290,7 +298,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
             } else if (data["StateName"] == 'edit') {
 
                 switch (data["Templatetypeid"]) {
-                    case "1":
+                    case 1:
                         let updateDataChem = {
                             COMPANY_SALE_NO: data["PackageId"],
                             CHEM_ID: data["CasFormat"],
@@ -320,14 +328,15 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: '',
                             CL_TYPE_ID: '',
-                            PACKAGE_TYPE: ''
+                            PACKAGE_TYPE: '',
+                            IMG: []
                         };
-                        postData = { DATA: updateDataChem };
+                        postData = JSON.stringify({ "DATA": [updateDataChem] });
                         options.path = chemUpdatePath;
                         break;
 
-                    case "2":
-                        let chemid = this.GetChemId(data["CategoryId"]);
+                    case 2:
+                        let chemid = GetChemId(data["CategoryId"]);
                         let updateDataBio = {
                             COMPANY_SALE_NO: data["PackageId"],
                             CHEM_ID: chemid,
@@ -357,13 +366,15 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: data["CategoryId"],
                             CL_TYPE_ID: '',
-                            PACKAGE_TYPE: ''
+                            PACKAGE_TYPE: '',
+                            IMG: []
                         };
-                        postData = { DATA: updateDataBio };
+                        postData = JSON.stringify({ "DATA": [updateDataBio] });
                         options.path = bioUpdatePath;
                         break;
 
-                    case "3":
+                    case 3:
+                        let img = GetImg(data["BrandName"]);
                         let updateDataCl = {
                             COMPANY_SALE_NO: data["PackageId"],
                             CHEM_ID: '',
@@ -393,9 +404,10 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: '',
                             CL_TYPE_ID: data["CategoryId"],
-                            PACKAGE_TYPE: '??'
+                            PACKAGE_TYPE: data["Quantity"] + data["Unit"],
+                            IMG: img
                         };
-                        postData = { DATA: updateDataCl };
+                        postData = JSON.stringify({ "DATA": [updateDataCl] });
                         options.path = clUpdatePath;
                         break;
                     default:
@@ -410,6 +422,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 console.log('BODY: ' + chunk);
+                result = true;
             });
         });
 
@@ -419,7 +432,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
 
         req.write(postData);
         req.end();
-        return true;
+        return result;
 
     } catch (error) {
 

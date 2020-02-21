@@ -22,7 +22,7 @@ export const settings: Settings = {
     uqIns: uqIns,      //[],
     uqOuts: undefined,
 
-    uqInEntities: uqInEntities,  //undefined,
+    uqInEntities: uqInEntities,
     uqBusSettings: undefined, //uqBusSettings,
     scanInterval: interval,
 

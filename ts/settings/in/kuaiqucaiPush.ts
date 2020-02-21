@@ -5,14 +5,14 @@ import config from 'config';
 const promiseSize = config.get<number>("promiseSize");
 
 let pullSql = `select * from ( 
-                    select r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CASFormat, p.OriginalId, m.name AS BrandName, 
+                    select r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name AS BrandName, 
                         p.DescriptionC, p.Description, r.IsDelete, r.StateName, isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid,           
-                        j.Packnr, j.Quantity, j.Unit, r.CatalogPrice, r.Discount, r.Storage, zcl_mess.dbo.Fn_get_delivetime_days(j.JKCat, 'CN') AS Delivetime
+                        j.Packnr, j.Quantity, j.Unit, r.CatalogPrice, r.Discount, r.Storage, zcl_mess.dbo.Fn_get_delivetime_days(j.JKCat, 'CN') AS Delivetime, '02016' as CategoryId
                     from (
                         SELECT TOP ${promiseSize} * 
                         from ( SELECT r1.PackageId, id
                             FROM   ProdData.dbo.ThirdPartyPlatformEntryResult r1
-                            WHERE  r1.CustomerUnitOnPlatformId = '01f9147127be4a178cabdf80ec481f3f' AND r1.SalesRegionID = 'CN' and r1.brandid = 'A01' and isdelete <> 1 and statename = 'add'
+                            WHERE  r1.CustomerUnitOnPlatformId = 'eba25a3dd8b34771a134923d9d20cbcc' AND r1.SalesRegionID = 'CN' and r1.brandid = 'R35' and isdelete <> 1 
                                    AND ID > @iMaxId
                             ) t1  ORDER BY t1.Id
                     ) r2 
