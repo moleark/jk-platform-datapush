@@ -5,7 +5,11 @@
     "firstEntities": [],
     "afterFirstEntities": [
         {
-            "name": "casmartPush",
+            "name": "casmartPush1",
+            "inervalUnit": 1
+        },
+        {
+            "name": "kuaiqucaiPush",
             "inervalUnit": 1
         }
     ]

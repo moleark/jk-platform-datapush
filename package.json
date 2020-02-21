@@ -39,6 +39,6 @@
         "node-fetch": "^2.3.0",
         "requset": "0.0.1-security",
         "typescript": "^3.7.4",
-        "uq-joint": "^1.0.22"
+        "uq-joint": "^1.0.33"
     }
 }

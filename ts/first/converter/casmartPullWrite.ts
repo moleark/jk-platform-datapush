@@ -9,7 +9,7 @@ import { logger } from "../../tools/logger";
 import { DateTimeOffset } from "mssql";
 
 //喀斯玛接口相关配置
-const casmartApiSetting = config.get<any>("casmarkApi");
+const casmartApiSetting = config.get<any>("casmartApi");
 
 
 //获取产品分类

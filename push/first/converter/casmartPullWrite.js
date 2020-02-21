@@ -9,7 +9,7 @@ let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 //喀斯玛接口相关配置
-const casmartApiSetting = config_1.default.get("casmarkApi");
+const casmartApiSetting = config_1.default.get("casmartApi");
 //获取产品分类
 function GetCateId(Templatetypeid) {
     let result = '';
