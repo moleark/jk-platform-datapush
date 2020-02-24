@@ -89,6 +89,7 @@ async function CasmartPullWrite(joint, data) {
         //定义变量
         //console.log(data);
         //console.log('喀斯玛接口处理');
+        let result = false;
         let { host, appid, secret, addPath, updatePath } = casmartApiSetting;
         let timestamp = date_fns_1.format(new Date(), 'yyyy-MM-dd HH:mm:ss');
         let postData = {};
@@ -182,32 +183,33 @@ async function CasmartPullWrite(joint, data) {
             //res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 if (res.statusCode != 200) {
-                    let mark = 'Fail: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + chunk;
-                    //console.log(mark);
-                    logger_1.logger.error(mark);
+                    logger_1.logger.error('CasmartPush Fail: { Code: ' + res.statusCode + ', Packageid: ' + data["PackageId"] + ',Type: ' + data["StateName"] + ',Datetime: ' + timestamp + ',Message: ' + chunk + ' }');
                     req.end();
-                    return false;
+                    result = false;
                 }
                 else {
                     let resultOblect = JSON.parse(chunk);
                     if (String(resultOblect.retCode) == '1') {
+                        // 此情况说明接口认证没有问题，但是可能数据上不符合，所以返回 true， 记录错误信息 继续执行；
                         //console.log('Fail: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + chunk);
-                        logger_1.logger.error('Fail: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + chunk);
+                        logger_1.logger.error('CasmartPush Fail: { Code: ' + res.statusCode + ',Packageid: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
                         req.end();
-                        return false;
+                        result = true;
                     }
-                    console.log('Success: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + chunk);
+                    else {
+                        console.log('CasmartPush Success: { Packageid: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
+                        result = true;
+                    }
                 }
             });
         });
         req.on('error', function (e) {
             //console.log('Error: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + e.message);
-            logger_1.logger.error('Error: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + e.message);
-            req.end();
-            return false;
+            logger_1.logger.error('CasmartPush Error: { Code:None, Packageid: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + e.message + '}');
+            result = false;
         });
         req.end();
-        return true;
+        return result;
     }
     catch (error) {
         logger_1.logger.error(error);

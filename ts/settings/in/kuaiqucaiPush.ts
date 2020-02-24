@@ -7,12 +7,12 @@ const promiseSize = config.get<number>("promiseSize");
 let pullSql = `select * from ( 
                     select r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name AS BrandName, 
                         p.DescriptionC, p.Description, r.IsDelete, r.StateName, isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid,           
-                        j.Packnr, j.Quantity, j.Unit, r.CatalogPrice, r.Discount, r.Storage, zcl_mess.dbo.Fn_get_delivetime_days(j.JKCat, 'CN') AS Delivetime, '02016' as CategoryId
+                        j.Packnr, j.Quantity, j.Unit, r.CatalogPrice, r.Discount, r.Storage, zcl_mess.dbo.Fn_get_delivetime_days(j.JKCat, 'CN') AS Delivetime, '' as CategoryId
                     from (
                         SELECT TOP ${promiseSize} * 
                         from ( SELECT r1.PackageId, id
                             FROM   ProdData.dbo.ThirdPartyPlatformEntryResult r1
-                            WHERE  r1.CustomerUnitOnPlatformId = 'eba25a3dd8b34771a134923d9d20cbcc' AND r1.SalesRegionID = 'CN' and r1.brandid = 'R35' and isdelete <> 1 
+                            WHERE  r1.CustomerUnitOnPlatformId = '866400ad9bba4d2db9846ca5ebdfd638' AND r1.SalesRegionID = 'CN' and r1.brandid = 'A01' and isdelete = 1 
                                    AND ID > @iMaxId
                             ) t1  ORDER BY t1.Id
                     ) r2 

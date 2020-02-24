@@ -85,10 +85,11 @@ function GetSpecMark(packnr: any, packageSize: any, unit: string): string {
 //获取仪器耗材产品图片
 function GetImg(brandName: string): any {
 
-    let result = ['https://www.baidu.com/img/bd_logo1.png'];
-    if (brandName == "J&K Scentice") {
+    //let result = ['https://www.baidu.com/img/bd_logo1.png'];
+    let result = [];
+    /*if (brandName == "J&K Scentice") {
         result = ['1.img', '2.img'];
-    }
+    }*/
     return result;
 }
 
@@ -126,7 +127,18 @@ function GetSpec(unit: string): string {
 
 //获取生物试剂的chemid
 function GetChemId(categoryId: string): string {
-    return 'SWSJ-002'
+    return 'SWSJ-002' //没有其他部门同事进行帮忙分类，咱取其中一条
+}
+
+//获取耗材产品到货时间
+function GetCLDeliveryTime(storage: string): string {
+    let result: string = "";
+    if (Number(storage) > 1) {
+        result = "03";
+    } else {
+        result = "15";
+    }
+    return result;
 }
 
 // 
@@ -174,6 +186,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
             let saleCompanyName = '北京百灵威科技有限公司';
             let saleCompanyPhone = '010-59309000';
             let spec = GetSpec(data["Unit"]);
+            let clDeliveryTime = GetCLDeliveryTime(data["Storage"]);
 
             if (data["StateName"] == 'add') {
                 switch (data["Templatetypeid"]) {
@@ -244,7 +257,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             BRAND_NAME: data["BrandName"],
                             POSTAGE: 12,
                             NO_POSTAGE_NUM: 0,
-                            BIO_TYPE_ID: data["CategoryId"],
+                            BIO_TYPE_ID: '044', // data["CategoryId"],
                             CL_TYPE_ID: '',
                             PACKAGE_TYPE: '',
                             IMG: []
@@ -257,7 +270,6 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                         let img = GetImg(data["BrandName"]);
                         let addDataCl = {
                             COMPANY_SALE_NO: data["PackageId"],
-                            CHEM_ID: '',
                             COMPANY_CHEM_NAME: '',
                             COMPANY_BIO_NAME: '',
                             COMPANY_CL_NAME: chemName,
@@ -272,7 +284,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             SRC_COMPANY: data["BrandName"],
                             ARTICLE_NO: data["OriginalId"],
                             DISCOUNT_RATE: data["Discount"],
-                            DELIVERYTIME_ID: deliveTime,
+                            DELIVERYTIME_ID: clDeliveryTime,
                             DELIVERY_TYPE_ID: deliveType,
                             COMPANY_DESC: specMark,
                             SUPPLY_COMPANY_ID: supllyCompanyId,
@@ -283,7 +295,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             POSTAGE: 12,
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: '',
-                            CL_TYPE_ID: data["CategoryId"],
+                            CL_TYPE_ID: '02011', //data["CategoryId"], //实验耗材
                             PACKAGE_TYPE: data["Quantity"] + data["Unit"],
                             IMG: img
                         };
@@ -364,7 +376,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             BRAND_NAME: data["BrandName"],
                             POSTAGE: 12,
                             NO_POSTAGE_NUM: 0,
-                            BIO_TYPE_ID: data["CategoryId"],
+                            BIO_TYPE_ID: '044', //data["CategoryId"],
                             CL_TYPE_ID: '',
                             PACKAGE_TYPE: '',
                             IMG: []
@@ -392,7 +404,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             SRC_COMPANY: data["BrandName"],
                             ARTICLE_NO: data["OriginalId"],
                             DISCOUNT_RATE: data["Discount"],
-                            DELIVERYTIME_ID: deliveTime,
+                            DELIVERYTIME_ID: clDeliveryTime,
                             DELIVERY_TYPE_ID: deliveType,
                             COMPANY_DESC: specMark,
                             SUPPLY_COMPANY_ID: supllyCompanyId,
@@ -403,7 +415,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                             POSTAGE: 12,
                             NO_POSTAGE_NUM: 0,
                             BIO_TYPE_ID: '',
-                            CL_TYPE_ID: data["CategoryId"],
+                            CL_TYPE_ID: '02011', // data["CategoryId"],//实验耗材
                             PACKAGE_TYPE: data["Quantity"] + data["Unit"],
                             IMG: img
                         };
@@ -416,18 +428,41 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
             }
         }
 
+        //获取准备数据改后  开始推送...
         var req = http.request(options, function (res) {
             console.log('STATUS: ' + res.statusCode);
             console.log('HEADERS: ' + JSON.stringify(res.headers));
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
+
                 console.log('BODY: ' + chunk);
-                result = true;
+                if (res.statusCode != 200) {
+                    //console.log(mark);
+                    logger.error('KuaiQuCaiPush Fail: {Code:' + res.statusCode + ',PackageId: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
+                    result = false;
+
+                } else {
+                    let resultOblect = JSON.parse(chunk);
+                    if (Number(resultOblect.DATA.SUCCESS_NUM) < 1) {
+
+                        // 此情况说明接口认证没有问题，但是可能数据上不符合，所以返回 true， 记录错误信息 继续执行；
+                        //console.log('Fail: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + chunk);
+                        logger.error('KuaiQuCaiPush Fail:{ Code:' + res.statusCode + ',PackageId:' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
+                        result = true; // false;
+                    }
+                    else {
+                        console.log('KuaiQuCaiPush Success: { PackageId: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
+                        result = true;
+                    }
+                }
+
             });
         });
 
         req.on('error', function (e) {
-            console.log('problem with request: ' + e.message);
+            //console.log('problem with request: ' + e.message);
+            logger.error('KuaiQuCaiPush Error:{ Code:None, PackageId: ' + data["PackageId"] + ',Type: ' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + e.message + '}');
+            result = false;
         });
 
         req.write(postData);
