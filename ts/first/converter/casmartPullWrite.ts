@@ -13,7 +13,7 @@ const casmartApiSetting = config.get<any>("casmartApi");
 
 
 //获取产品分类
-function GetCateId(Templatetypeid: string) {
+function GetCateId(Templatetypeid: string): string {
 
     let result = '';
     switch (Templatetypeid) {
@@ -35,7 +35,7 @@ function GetCateId(Templatetypeid: string) {
 }
 
 //获取品牌
-function GetBrandId(brandName: string) {
+function GetBrandId(brandName: string): string {
 
     let result = '';
     switch (brandName) {
@@ -91,6 +91,26 @@ function GetBrandId(brandName: string) {
     return result;
 }
 
+function GetTypeId(templatetypeid: string): string {
+    let result = '';
+    switch (templatetypeid) {
+
+        case '1':
+            result = '385';  //实验试剂->常用生化试剂 
+            break;
+        case '2':
+            result = '385';
+            break;
+        case '3':
+            result = '402'; //实验耗材->其他实验耗材
+            break;
+        default:
+            result = '499'; //实验试剂->其他试剂和服务
+            break;
+    }
+    return result;
+}
+
 
 export async function CasmartPullWrite(joint: Joint, data: any): Promise<boolean> {
 
@@ -134,9 +154,9 @@ export async function CasmartPullWrite(joint: Joint, data: any): Promise<boolean
             if (data["StateName"] == 'add') {
 
                 //定义商品类型、产品分类、产品分组 
-                let cateId = this.GetCateId(data["Templatetypeid"]); //固定 241;
-                let brandId = this.GetBrandId(data["BrandName"]);   //固定
-                let typeId = this.GetBrandId(data["CategoryId"]);       //产品分类，在sql查询中完成
+                let cateId = GetCateId(data["Templatetypeid"]); //固定 241;
+                let brandId = GetBrandId(data["BrandName"]);   //固定
+                let typeId = GetTypeId(data["CategoryId"]);       //产品分类，在sql查询中完成
                 let groups = [424];   //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
 
                 postData = {
@@ -144,7 +164,7 @@ export async function CasmartPullWrite(joint: Joint, data: any): Promise<boolean
                     code: data["OriginalId"],
                     cateid: cateId,
                     brandid: brandId,
-                    typeid: data["CategoryId"],
+                    typeid: typeId,
                     name: data["Description"],
                     subname: data["DescriptionC"],
                     mktprice: data["CatalogPrice"],

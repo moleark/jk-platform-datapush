@@ -84,6 +84,24 @@ function GetBrandId(brandName) {
     }
     return result;
 }
+function GetTypeId(templatetypeid) {
+    let result = '';
+    switch (templatetypeid) {
+        case '1':
+            result = '385'; //实验试剂->常用生化试剂 
+            break;
+        case '2':
+            result = '385';
+            break;
+        case '3':
+            result = '402'; //实验耗材->其他实验耗材
+            break;
+        default:
+            result = '499'; //实验试剂->其他试剂和服务
+            break;
+    }
+    return result;
+}
 async function CasmartPullWrite(joint, data) {
     try {
         //定义变量
@@ -118,16 +136,16 @@ async function CasmartPullWrite(joint, data) {
             //新增产品上架情况
             if (data["StateName"] == 'add') {
                 //定义商品类型、产品分类、产品分组 
-                let cateId = this.GetCateId(data["Templatetypeid"]); //固定 241;
-                let brandId = this.GetBrandId(data["BrandName"]); //固定
-                let typeId = this.GetBrandId(data["CategoryId"]); //产品分类，在sql查询中完成
+                let cateId = GetCateId(data["Templatetypeid"]); //固定 241;
+                let brandId = GetBrandId(data["BrandName"]); //固定
+                let typeId = GetTypeId(data["CategoryId"]); //产品分类，在sql查询中完成
                 let groups = [424]; //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
                 postData = {
                     rid: data["PackageId"],
                     code: data["OriginalId"],
                     cateid: cateId,
                     brandid: brandId,
-                    typeid: data["CategoryId"],
+                    typeid: typeId,
                     name: data["Description"],
                     subname: data["DescriptionC"],
                     mktprice: data["CatalogPrice"],
