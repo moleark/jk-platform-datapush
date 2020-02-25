@@ -15,7 +15,7 @@ let pullSql = `select * from (
                         SELECT TOP ${promiseSize} * 
                         from ( SELECT r1.PackageId, id
                             FROM   ProdData.dbo.ThirdPartyPlatformEntryResult r1
-                            WHERE  r1.CustomerUnitOnPlatformId = '866400ad9bba4d2db9846ca5ebdfd638' AND r1.SalesRegionID = 'CN' and r1.brandid = 'A01' and isdelete = 1 
+                            WHERE  r1.CustomerUnitOnPlatformId = 'eba25a3dd8b34771a134923d9d20cbcc' AND r1.SalesRegionID = 'CN' and r1.brandid = 'M64' and isdelete <> 1 
                                    AND ID > @iMaxId
                             ) t1  ORDER BY t1.Id
                     ) r2 
