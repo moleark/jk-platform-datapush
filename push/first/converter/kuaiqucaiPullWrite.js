@@ -156,10 +156,7 @@ function GetBrandName(brandName) {
     else if (brandName == "ChromaDex") {
         result = 'Chromadex';
     }
-    else if (brandName == "{Dr.Ehrenstorfer") {
-        result = 'Dr.Ehrenstorfer';
-    }
-    else if (brandName == "{Dr.Ehrenstorfer") {
+    else if (brandName == "Dr. Ehrenstorfer") {
         result = 'Dr.Ehrenstorfer';
     }
     else {
