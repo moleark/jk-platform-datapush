@@ -2,8 +2,8 @@ import express, { Request, Response, NextFunction, Router } from 'express';
 import * as bodyParser from 'body-parser';
 import cors from 'cors';
 import config from 'config';
-import { host, Joint } from 'uq-joint';
-//import { host, Joint } from './uq-joint/index';
+//import { host, Joint } from 'uq-joint';
+import { host, Joint } from './uq-joint/index';
 import { settings } from './settings/index';
 import { initMssqlPool } from './db/mssql/tools';
 

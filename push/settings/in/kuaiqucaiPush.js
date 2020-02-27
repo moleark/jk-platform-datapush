@@ -23,6 +23,9 @@ let pullSql = `select * from (
                     INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId 
                     INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID 
                     INNER JOIN zcl_mess.dbo.manufactory m ON m.code = p.Manufactory 
+                    WHERE j.unit in ('Kg','G','ug','ng','L','ml','μl','l','mg','KG','μmol','ul','u','tablets','t','rxn','mls','rod','pcs','pc'
+				     ,'none','nmol','na','mole','mm','EA','Kunits','Kit','KU','KIT','IU','GR','GM','GAL','G-SB','LT','CM','CLM','CDU','AMP','AM','500U','500IU','000U','SET','VIALS','000IU','UNITS','UNIT','UN','UL','UG','U','T','ZONE','Pak','PIECE'
+			         ,'MU','ML','MIU','ME','M','Lt',  'BL','对','个','支','包','张','盒','袋','瓶','桶','台','EA','套','卷','块','bp','none','片','箱' )
                     ) t2`;
 exports.KuaiQuCaiPush = {
     uq: '百灵威系统工程部/platformDataPush',
@@ -31,23 +34,23 @@ exports.KuaiQuCaiPush = {
     key: 'ID',
     mapper: {
         $id: 'ID',
-        packageId: "PackageId",
-        casFormat: "CasFormat",
-        originalId: "OriginalId",
-        brandName: "BrandName",
-        productName: "Description",
-        productNameChinese: "DescriptionC",
-        isDelete: "IsDelete",
-        stateName: 'StateName',
-        purity: "Purity",
-        templatetypeid: "Templatetypeid",
-        packnr: "Packnr",
-        quantity: "Quantity",
-        unit: "Unit",
-        catalogPrice: "CatalogPrice",
-        discount: "Discount",
-        storage: "Storage",
-        delivery: "Delivetime"
+        COMPANY_SALE_NO: "PackageId",
+        CASFORMAT: "CasFormat",
+        ARTICLE_NO: "OriginalId",
+        BRAND_NAME: "BrandName",
+        ProductName: "Description",
+        ProductNameChinese: "DescriptionC",
+        IsDelete: "IsDelete",
+        StateName: 'StateName',
+        PURITY: "Purity",
+        TemplateTypeId: "Templatetypeid",
+        PackNr: "Packnr",
+        VALUME: "Quantity",
+        VALUMEUNIT_ID: "Unit",
+        PRICE: "CatalogPrice",
+        DISCOUNT_RATE: "Discount",
+        STOCK: "Storage",
+        DELIVERYTIME: "Delivetime"
     },
     pull: pullSql,
     pullWrite: kuaiqucaiPullWrite_1.KuaiQuCaiPullWrite,
