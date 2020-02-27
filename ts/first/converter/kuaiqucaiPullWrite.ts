@@ -249,7 +249,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boole
                 break;
         }
 
-        // 统一的产品 json 数据
+        // 统一的产品 json 数据，部分数据需要判断处理，所以增加了几个判断方法。
         let CHEM_ID = GETCHEM_ID(data["TemplateTypeId"], data["CASFORMAT"]);    //获取ChemID,化学品传cas、生物试剂传参数固定的分类、耗材产品空着
         let COMPANY_CHEM_NAME = GETCOMPANY_CHEM_NAME(data["TemplateTypeId"], data["ProductName"], data["ProductNameChinese"]);  //获取化学实际产品名称 
         let COMPANY_BIO_NAME = GETCOMPANY_BIO_NAME(data["TemplateTypeId"], data["ProductName"], data["ProductNameChinese"]);    //获取生物试剂产品名称 
