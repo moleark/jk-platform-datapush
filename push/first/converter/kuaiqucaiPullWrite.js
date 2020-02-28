@@ -19,7 +19,7 @@ function GETCHEM_ID(templatetypeid, casFormat) {
             result = casFormat;
             break;
         case 2:
-            result = 'SWSJ-002'; //没有其他部门同事进行帮忙分类，咱取其中一条
+            result = 'SWSJ-002'; //没有其他部门同事进行帮忙分类，暂取其中一条
             break;
         case 3:
             result = '';
@@ -250,23 +250,11 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         let timestamp = parseFloat((DateTime / 1000).toFixed());
         let token = md5(timestamp + companyId + key);
         let postDataStr = {};
-        //用于查询 
+        //用于查询请求 
         let getOptions = {
             host: host,
             path: '',
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-                'TIMESTAMP': timestamp,
-                'COMPANY': companyId,
-                'TOKEN': token
-            }
-        };
-        //用于增加、修改、删除 
-        let postOptions = {
-            host: host,
-            path: '',
-            method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
                 'TIMESTAMP': timestamp,
@@ -345,6 +333,18 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
             };
             postDataStr = JSON.stringify({ "DATA": [postDataJson] });
         }
+        //用于增加、修改、删除 请求 
+        let postOptions = {
+            host: host,
+            path: '',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                'TIMESTAMP': timestamp,
+                'COMPANY': companyId,
+                'TOKEN': token
+            }
+        };
         //根据是否存在的结果执行后续步骤 
         if (queryResult.CODE != 200 || queryResult.MESSAGE != 'SUCCESS') {
             //平台上查询不到，调用新增方法 
@@ -401,7 +401,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
                 }
             }
         }
-        //调用平台的接口 并返回结果 
+        //调用平台的接口推送数据，并返回结果 
         let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, postDataStr);
         let postResult = JSON.parse(String(optionData));
         //判断请求结果 并记录 

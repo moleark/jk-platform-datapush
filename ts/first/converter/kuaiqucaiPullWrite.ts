@@ -24,7 +24,7 @@ function GETCHEM_ID(templatetypeid, casFormat: string) {
             result = casFormat;
             break;
         case 2:
-            result = 'SWSJ-002'; //没有其他部门同事进行帮忙分类，咱取其中一条
+            result = 'SWSJ-002'; //没有其他部门同事进行帮忙分类，暂取其中一条
             break;
         case 3:
             result = '';
@@ -260,7 +260,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
         let token = md5(timestamp + companyId + key);
         let postDataStr = {};
 
-        //用于查询 
+        //用于查询请求 
         let getOptions = {
             host: host,
             path: '',
@@ -273,22 +273,8 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
             }
         };
 
-        //用于增加、修改、删除 
-        let postOptions = {
-            host: host,
-            path: '',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-                'TIMESTAMP': timestamp,
-                'COMPANY': companyId,
-                'TOKEN': token
-            }
-        };
-
         //调用平台查询产品详情接口判断产品是否存在，查询接口区分 化学品查询、生物试剂查询、耗材查询三个接口；
         switch (body["TemplateTypeId"]) {
-
             case 1:
                 getOptions.path = chemDetailPath + '?COMPANY_SALE_NO=' + body["COMPANY_SALE_NO"];
                 break;
@@ -308,9 +294,9 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
 
         //删除的请求格式 跟 新增、修改 的 格式不一致，所以在此处分开判断 
         if (body["IsDelete"] == 1) {
-
             let deleteData = body["COMPANY_SALE_NO"];
             postDataStr = JSON.stringify({ COMPANY_SALE_NOS: deleteData });
+
         } else {
 
             // 统一的产品 json 数据，部分数据需要判断处理，所以增加了几个判断方法。
@@ -362,6 +348,19 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
             };
             postDataStr = JSON.stringify({ "DATA": [postDataJson] });
         }
+
+        //用于增加、修改、删除 请求 
+        let postOptions = {
+            host: host,
+            path: '',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                'TIMESTAMP': timestamp,
+                'COMPANY': companyId,
+                'TOKEN': token
+            }
+        };
 
         //根据是否存在的结果执行后续步骤 
         if (queryResult.CODE != 200 || queryResult.MESSAGE != 'SUCCESS') {
@@ -422,7 +421,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
             }
         }
 
-        //调用平台的接口 并返回结果 
+        //调用平台的接口推送数据，并返回结果 
         let optionData = await HttpRequest_POST(postOptions, postDataStr);
         let postResult = JSON.parse(String(optionData));
 
