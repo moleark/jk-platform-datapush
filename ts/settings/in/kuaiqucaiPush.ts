@@ -26,9 +26,9 @@ let pullSql = `select * from (
                 ) t2`;
 
 export const KuaiQuCaiPush: UqInTuid = {
-    uq: '百灵威系统工程部/platformDataPush',
+    uq: 'platform/Kuaiqucai',
     type: 'tuid',
-    entity: 'kuaiqucaiPush',
+    entity: 'package',
     key: 'ID',
     mapper: {
         $id: 'ID',

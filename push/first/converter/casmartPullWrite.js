@@ -8,6 +8,7 @@ const http_1 = __importDefault(require("http"));
 let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
+const mapData_1 = require("../../uq-joint/tool/mapData");
 //喀斯玛接口相关配置
 const casmartApiSetting = config_1.default.get("casmartApi");
 //获取产品分类
@@ -102,7 +103,15 @@ function GetTypeId(templatetypeid) {
     }
     return result;
 }
-async function CasmartPullWrite(joint, data) {
+async function CasmartPullWrite(joint, uqIn, data) {
+    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
+    if (key === undefined)
+        throw 'key is not defined';
+    if (uqFullName === undefined)
+        throw 'tuid ' + tuid + ' not defined';
+    let keyVal = data[key];
+    let mapToUq = new mapData_1.MapToUq(this);
+    let body = await mapToUq.map(data, mapper);
     try {
         //定义变量
         //console.log(data);
@@ -120,9 +129,9 @@ async function CasmartPullWrite(joint, data) {
             }
         };
         //产品下架的情况
-        if (data["IsDelete"] == '1') {
+        if (data["isDelete"] == '1') {
             postData = {
-                rid: data["PackageId"],
+                rid: data["rid"],
                 isinsale: 0
             };
             let deleteJson = JSON.stringify(postData);
@@ -134,33 +143,33 @@ async function CasmartPullWrite(joint, data) {
         }
         else {
             //新增产品上架情况
-            if (data["StateName"] == 'add') {
+            if (data["stateName"] == 'add') {
                 //定义商品类型、产品分类、产品分组 
-                let cateId = GetCateId(data["Templatetypeid"]); //固定 241;
-                let brandId = GetBrandId(data["BrandName"]); //固定
-                let typeId = GetTypeId(data["CategoryId"]); //产品分类，在sql查询中完成
+                let cateId = GetCateId(data["templateTypeId"]); //固定 241;
+                let brandId = GetBrandId(data["brandName"]); //固定
+                let typeId = GetTypeId(data["typeId"]); //产品分类，在sql查询中完成
                 let groups = [424]; //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
                 postData = {
-                    rid: data["PackageId"],
-                    code: data["OriginalId"],
+                    rid: data["rid"],
+                    code: data["code"],
                     cateid: cateId,
                     brandid: brandId,
                     typeid: typeId,
-                    name: data["Description"],
-                    subname: data["DescriptionC"],
-                    mktprice: data["CatalogPrice"],
-                    price: data["SalePrice"],
+                    name: data["name"],
+                    subname: data["subname"],
+                    mktprice: data["mktprice"],
+                    price: data["price"],
                     unit: '瓶',
                     imgs: [],
-                    stockamount: data["Storage"],
+                    stockamount: data["stockamount"],
                     isinsale: 1,
-                    intro: data["Purity"],
-                    spec: data["Package"],
-                    maker: data["BrandName"],
+                    intro: data["intro"],
+                    spec: data["spec"],
+                    maker: data["brandName"],
                     packinglist: '',
                     service: '',
-                    deliverycycle: data["Delivetime"],
-                    cascode: data["CasFormat"],
+                    deliverycycle: data["deliverycycle"],
+                    cascode: data["cascode"],
                     extends: [],
                     instructions: [],
                     groups: groups
@@ -175,14 +184,14 @@ async function CasmartPullWrite(joint, data) {
             else {
                 //修改产品信息
                 postData = {
-                    rid: data["PackageId"],
-                    name: data["Description"],
-                    subname: data["DescriptionC"],
-                    mktprice: data["CatalogPrice"],
-                    price: data["SalePrice"],
-                    stockamount: data["Storage"],
+                    rid: data["rid"],
+                    name: data["name"],
+                    subname: data["subname"],
+                    mktprice: data["mktprice"],
+                    price: data["price"],
+                    stockamount: data["stockamount"],
                     isinsale: 1,
-                    intro: data["Purity"],
+                    intro: data["intro"],
                     instructions: [],
                     imgs: []
                 };

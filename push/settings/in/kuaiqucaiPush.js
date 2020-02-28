@@ -28,9 +28,9 @@ let pullSql = `select * from (
 			         ,'MU','ML','MIU','ME','M','Lt',  'BL','对','个','支','包','张','盒','袋','瓶','桶','台','EA','套','卷','块','bp','none','片','箱' )
                 ) t2`;
 exports.KuaiQuCaiPush = {
-    uq: '百灵威系统工程部/platformDataPush',
+    uq: 'platform/Kuaiqucai',
     type: 'tuid',
-    entity: 'kuaiqucaiPush',
+    entity: 'package',
     key: 'ID',
     mapper: {
         $id: 'ID',

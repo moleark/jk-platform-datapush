@@ -123,27 +123,12 @@ var options = {
 };
 */
 //获取分类
-//签名验证，转换为大写进行判断
-let md5Str = md5(appid + dateTime + secret);
-let GetProductCategory = '/v2/rest/Supplier/GetProductCategory?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
-let path = encodeURI(GetProductCategory);
-console.log(path);
-var options = {
-    host: 'preapi.casmart.com.cn',
-    //port: 443,
-    path: path,
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-    }
-};
-//获取分组
 /*
 //签名验证，转换为大写进行判断
 let md5Str = md5(appid + dateTime + secret);
-let GetProductGroup = '/v2/rest/Supplier/GetProductGroup?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
+let GetProductCategory = '/v2/rest/Supplier/GetProductCategory?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
 
-let path = encodeURI(GetProductGroup);
+let path = encodeURI(GetProductCategory);
 console.log(path);
 
 var options = {
@@ -156,6 +141,21 @@ var options = {
     }
 };
 */
+//获取分组
+//签名验证，转换为大写进行判断
+let md5Str = md5(appid + dateTime + secret);
+let GetProductGroup = '/v2/rest/Supplier/GetProductGroup?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
+let path = encodeURI(GetProductGroup);
+console.log(path);
+var options = {
+    host: 'preapi.casmart.com.cn',
+    //port: 443,
+    path: path,
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json;charset=UTF-8'
+    }
+};
 //添加产品
 /*
 //签名验证，转换为大写进行判断
