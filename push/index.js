@@ -14,9 +14,9 @@ const express_1 = __importDefault(require("express"));
 const bodyParser = __importStar(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 const config_1 = __importDefault(require("config"));
-//import { host, Joint } from 'uq-joint';
-const index_1 = require("./uq-joint/index");
-const index_2 = require("./settings/index");
+const uq_joint_1 = require("uq-joint");
+//import { host, Joint } from './uq-joint/index';
+const index_1 = require("./settings/index");
 const tools_1 = require("./db/mssql/tools");
 (async function () {
     console.log(process.env.NODE_ENV);
@@ -66,7 +66,7 @@ const tools_1 = require("./db/mssql/tools");
         }
     });
     // 监听服务
-    let joint = new index_1.Joint(index_2.settings);
+    let joint = new uq_joint_1.Joint(index_1.settings);
     let port = config_1.default.get('port');
     app.listen(port, async () => {
         console.log('jk-platform-datapush listening on port ' + port);

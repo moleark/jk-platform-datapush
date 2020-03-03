@@ -8,7 +8,7 @@ const http_1 = __importDefault(require("http"));
 let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
-const mapData_1 = require("../../uq-joint/tool/mapData");
+//import { MapToUq } from "../../uq-joint/tool/mapData";
 //喀斯玛接口相关配置
 const casmartApiSetting = config_1.default.get("casmartApi");
 //获取产品分类
@@ -103,15 +103,16 @@ function GetTypeId(templatetypeid) {
     }
     return result;
 }
-async function CasmartPullWrite(joint, uqIn, data) {
-    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
-    if (key === undefined)
-        throw 'key is not defined';
-    if (uqFullName === undefined)
-        throw 'tuid ' + tuid + ' not defined';
+async function CasmartPullWrite(joint, data) {
+    /*
+    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn as UqInTuid;
+    if (key === undefined) throw 'key is not defined';
+    if (uqFullName === undefined) throw 'tuid ' + tuid + ' not defined';
     let keyVal = data[key];
-    let mapToUq = new mapData_1.MapToUq(this);
+    let mapToUq = new MapToUq(this);
     let body = await mapToUq.map(data, mapper);
+    */
+    let body = data;
     try {
         //定义变量
         //console.log(data);
@@ -129,9 +130,9 @@ async function CasmartPullWrite(joint, uqIn, data) {
             }
         };
         //产品下架的情况
-        if (data["isDelete"] == '1') {
+        if (body["isDelete"] == '1') {
             postData = {
-                rid: data["rid"],
+                rid: body["rid"],
                 isinsale: 0
             };
             let deleteJson = JSON.stringify(postData);
@@ -143,33 +144,33 @@ async function CasmartPullWrite(joint, uqIn, data) {
         }
         else {
             //新增产品上架情况
-            if (data["stateName"] == 'add') {
+            if (body["stateName"] == 'add') {
                 //定义商品类型、产品分类、产品分组 
-                let cateId = GetCateId(data["templateTypeId"]); //固定 241;
-                let brandId = GetBrandId(data["brandName"]); //固定
-                let typeId = GetTypeId(data["typeId"]); //产品分类，在sql查询中完成
+                let cateId = GetCateId(body["templateTypeId"]); //固定 241;
+                let brandId = GetBrandId(body["brandName"]); //固定
+                let typeId = GetTypeId(body["typeId"]); //产品分类，在sql查询中完成
                 let groups = [424]; //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
                 postData = {
-                    rid: data["rid"],
-                    code: data["code"],
+                    rid: body["rid"],
+                    code: body["code"],
                     cateid: cateId,
                     brandid: brandId,
                     typeid: typeId,
-                    name: data["name"],
-                    subname: data["subname"],
-                    mktprice: data["mktprice"],
-                    price: data["price"],
+                    name: body["name"],
+                    subname: body["subname"],
+                    mktprice: body["mktprice"],
+                    price: body["price"],
                     unit: '瓶',
                     imgs: [],
-                    stockamount: data["stockamount"],
+                    stockamount: body["stockamount"],
                     isinsale: 1,
-                    intro: data["intro"],
-                    spec: data["spec"],
-                    maker: data["brandName"],
+                    intro: body["intro"],
+                    spec: body["spec"],
+                    maker: body["brandName"],
                     packinglist: '',
                     service: '',
-                    deliverycycle: data["deliverycycle"],
-                    cascode: data["cascode"],
+                    deliverycycle: body["deliverycycle"],
+                    cascode: body["cascode"],
                     extends: [],
                     instructions: [],
                     groups: groups
@@ -184,14 +185,14 @@ async function CasmartPullWrite(joint, uqIn, data) {
             else {
                 //修改产品信息
                 postData = {
-                    rid: data["rid"],
-                    name: data["name"],
-                    subname: data["subname"],
-                    mktprice: data["mktprice"],
-                    price: data["price"],
-                    stockamount: data["stockamount"],
+                    rid: body["rid"],
+                    name: body["name"],
+                    subname: body["subname"],
+                    mktprice: body["mktprice"],
+                    price: body["price"],
+                    stockamount: body["stockamount"],
                     isinsale: 1,
-                    intro: data["intro"],
+                    intro: body["intro"],
                     instructions: [],
                     imgs: []
                 };
@@ -210,7 +211,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
             //res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 if (res.statusCode != 200) {
-                    logger_1.logger.error('CasmartPush Fail: { Code: ' + res.statusCode + ', Packageid: ' + data["PackageId"] + ',Type: ' + data["StateName"] + ',Datetime: ' + timestamp + ',Message: ' + chunk + ' }');
+                    logger_1.logger.error('CasmartPush Fail: { Code: ' + res.statusCode + ', Packageid: ' + body["PackageId"] + ',Type: ' + body["StateName"] + ',Datetime: ' + timestamp + ',Message: ' + chunk + ' }');
                     req.end();
                     result = false;
                 }
@@ -218,21 +219,21 @@ async function CasmartPullWrite(joint, uqIn, data) {
                     let resultOblect = JSON.parse(chunk);
                     if (String(resultOblect.retCode) == '1') {
                         // 此情况说明接口认证没有问题，但是可能数据上不符合，所以返回 true， 记录错误信息 继续执行；
-                        //console.log('Fail: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + chunk);
-                        logger_1.logger.error('CasmartPush Fail: { Code: ' + res.statusCode + ',Packageid: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
+                        //console.log('Fail: Casmart Packageid: ' + body["PackageId"] + ' Type:' + body["StateName"] + ' Datetime:' + timestamp + ' Message:' + chunk);
+                        logger_1.logger.error('CasmartPush Fail: { Code: ' + res.statusCode + ',Packageid: ' + body["PackageId"] + ',Type:' + body["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
                         req.end();
                         result = true;
                     }
                     else {
-                        console.log('CasmartPush Success: { Packageid: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
+                        console.log('CasmartPush Success: { Packageid: ' + body["PackageId"] + ',Type:' + body["StateName"] + ',Datetime:' + timestamp + ',Message:' + chunk + '}');
                         result = true;
                     }
                 }
             });
         });
         req.on('error', function (e) {
-            //console.log('Error: Casmart Packageid: ' + data["PackageId"] + ' Type:' + data["StateName"] + ' Datetime:' + timestamp + ' Message:' + e.message);
-            logger_1.logger.error('CasmartPush Error: { Code:None, Packageid: ' + data["PackageId"] + ',Type:' + data["StateName"] + ',Datetime:' + timestamp + ',Message:' + e.message + '}');
+            //console.log('Error: Casmart Packageid: ' + body["PackageId"] + ' Type:' + body["StateName"] + ' Datetime:' + timestamp + ' Message:' + e.message);
+            logger_1.logger.error('CasmartPush Error: { Code:None, Packageid: ' + body["PackageId"] + ',Type:' + body["StateName"] + ',Datetime:' + timestamp + ',Message:' + e.message + '}');
             result = false;
         });
         req.end();

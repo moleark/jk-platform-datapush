@@ -23,7 +23,7 @@ let pullSql = `select * from (
                     INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId 
                     INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID 
                     INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
-                ) t2  `;
+                ) t2 `;
 
 export const CasmartPush: UqInTuid = {
     uq: 'platform/Casmart',

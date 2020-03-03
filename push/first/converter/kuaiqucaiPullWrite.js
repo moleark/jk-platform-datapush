@@ -8,7 +8,7 @@ let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 const util_1 = require("util");
-const mapData_1 = require("../../uq-joint/tool/mapData");
+//import { MapToUq } from "../../uq-joint/tool/mapData";
 //快去采接口相关配置
 const kuaiQuCaiApiSetting = config_1.default.get("kuaiQuCaiApi");
 // 获取不同的chemid，化学试剂传cas号码、生物试剂传文档中固定的分类、耗材产品传''  
@@ -231,15 +231,16 @@ function GetPACKAGE_TYPE(templatetypeid, packageSize, unit) {
     return result;
 }
 //对查询到的产品进行处理 
-async function KuaiQuCaiPullWrite(joint, uqIn, data) {
-    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
-    if (key === undefined)
-        throw 'key is not defined';
-    if (uqFullName === undefined)
-        throw 'tuid ' + tuid + ' not defined';
+async function KuaiQuCaiPullWrite(joint, data) {
+    /*
+    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn as UqInTuid;
+    if (key === undefined) throw 'key is not defined';
+    if (uqFullName === undefined) throw 'tuid ' + tuid + ' not defined';
     let keyVal = data[key];
-    let mapToUq = new mapData_1.MapToUq(this);
+    let mapToUq = new MapToUq(this);
     let body = await mapToUq.map(data, mapper);
+    */
+    let body = data;
     try {
         //console.log(data);
         //console.log(body);

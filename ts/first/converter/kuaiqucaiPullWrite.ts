@@ -1,4 +1,4 @@
-import { Joint, Tuid, UqIn, UqInTuid } from "uq-joint";
+import { Joint } from "uq-joint";
 //import { Joint } from "../../uq-joint";
 import _ from 'lodash';
 import { format, isSameWeek } from 'date-fns';
@@ -10,7 +10,7 @@ import { logger } from "../../tools/logger";
 import { DateTimeOffset } from "mssql";
 import { readMany } from "./uqOutRead";
 import { isNullOrUndefined } from "util";
-import { MapToUq } from "../../uq-joint/tool/mapData";
+//import { MapToUq } from "../../uq-joint/tool/mapData";
 
 //快去采接口相关配置
 const kuaiQuCaiApiSetting = config.get<any>("kuaiQuCaiApi");
@@ -238,14 +238,18 @@ function GetPACKAGE_TYPE(templatetypeid, packageSize: any, unit: string): string
 }
 
 //对查询到的产品进行处理 
-export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): Promise<boolean> {
+export async function KuaiQuCaiPullWrite(joint: Joint, data: any): Promise<boolean> {
 
+    /*
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn as UqInTuid;
     if (key === undefined) throw 'key is not defined';
     if (uqFullName === undefined) throw 'tuid ' + tuid + ' not defined';
     let keyVal = data[key];
     let mapToUq = new MapToUq(this);
     let body = await mapToUq.map(data, mapper);
+    */
+
+    let body = data;
 
     try {
         //console.log(data);
