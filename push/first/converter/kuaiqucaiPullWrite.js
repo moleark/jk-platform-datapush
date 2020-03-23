@@ -7,6 +7,8 @@ const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
+//import { DateTimeOffset } from "mssql";
+//import { readMany } from "./uqOutRead";
 const util_1 = require("util");
 //import { MapToUq } from "../../uq-joint/tool/mapData";
 //快去采接口相关配置
@@ -19,7 +21,7 @@ function GETCHEM_ID(templatetypeid, casFormat) {
             result = casFormat;
             break;
         case 2:
-            result = 'SWSJ-002'; //没有其他部门同事进行帮忙分类，暂取其中一条
+            result = 'SWSJ-007'; //其他
             break;
         case 3:
             result = '';
@@ -210,7 +212,7 @@ function GetBrandName(brandName) {
 function GetBIO_TYPE_ID(templatetypeid) {
     let result = '';
     if (templatetypeid == 2) {
-        result = '044'; //其他互作相关试剂
+        result = '049'; //其他
     }
     return result;
 }

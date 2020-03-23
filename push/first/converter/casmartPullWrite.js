@@ -16,16 +16,48 @@ function GetCateId(Templatetypeid) {
     let result = '';
     switch (Templatetypeid) {
         case '1':
-            result = '241';
+            result = '5'; //化学试剂（包括危化品）
             break;
         case '2':
-            result = '241';
+            result = '3'; //试剂耗材等其他商品
             break;
         case '3':
-            result = '227';
+            result = '3';
             break;
         default:
-            result = '241';
+            result = '3';
+            break;
+    }
+    return result;
+}
+//获取产品分组
+function GetGroups(Templatetypeid) {
+    let result = [];
+    switch (Templatetypeid) {
+        case '1':
+            result = [3363];
+            break;
+        case '2':
+            result = [300029586];
+            break;
+        case '3':
+            result = [3364];
+            break;
+        default:
+            result = [3363];
+            break;
+    }
+    return result;
+}
+//获取扩展属性
+function GetExtends(templateTypeId, intro, cascode, mf) {
+    let result = [];
+    switch (templateTypeId) {
+        case '1':
+            result = [{ "key": 9, "value": intro }, { "key": 10, "value": cascode }, { "key": 11, "value": mf }];
+            break;
+        default:
+            result = [];
             break;
     }
     return result;
@@ -35,70 +67,97 @@ function GetBrandId(brandName) {
     let result = '';
     switch (brandName) {
         case 'J&K':
-            result = '734';
+            result = '300150934';
             break;
         case 'Amethyst':
-            result = '734';
+            result = '2029';
             break;
         case 'Acros':
-            result = '734';
-            break;
-        case 'Sigma':
-            result = '734';
+            result = '462';
             break;
         case 'TCI':
-            result = '734';
+            result = '25485';
             break;
         case 'Dr. Ehrenstorfer':
-            result = '734';
+            result = '8160';
             break;
         case 'SERVA':
-            result = '734';
+            result = '193';
             break;
         case 'Fluorochem':
-            result = '734';
+            result = '5578';
+            break;
+        case 'AccuStandard':
+            result = '554';
             break;
         case 'Strem':
-            result = '734';
-            break;
-        case 'LGC':
-            result = '734';
+            result = '1523';
             break;
         case 'TRC':
-            result = '734';
+            result = '1262';
             break;
         case 'Apollo':
-            result = '734';
+            result = '988';
             break;
         case 'Cambridge Isotope Laboratories（CIL）':
-            result = '734';
+            result = '1279';
+            break;
+        case 'ChromaDex':
+            result = '383';
+            break;
+        case 'Polymer Source':
+            result = '8163';
+            break;
+        case 'Matrix':
+            result = '2794';
+            break;
+        case 'Rieke Metals':
+            result = '8159';
             break;
         case 'Frontier':
-            result = '734';
+            result = '2025';
             break;
-        case 'Alfa':
-            result = '734';
+        case 'ADS':
+            result = '3232';
+            break;
+        case 'Wilmad':
+            result = '2328';
             break;
         case 'Echelon':
-            result = '734';
+            result = '2493';
+            break;
+        case '1-Material':
+            result = '8158';
+            break;
+        case 'J&K-Abel':
+            result = '300150934';
+            break;
+        case 'J&K Scientific':
+            result = '300150934';
+            break;
+        case 'Accela':
+            result = '2233';
+            break;
+        case '3M':
+            result = '418';
+            break;
+        case 'Delta':
+            result = ':300067922';
             break;
     }
     return result;
 }
-function GetTypeId(templatetypeid) {
+function GetTypeId(iswx, typeId) {
     let result = '';
-    switch (templatetypeid) {
-        case '1':
-            result = '385'; //实验试剂->常用生化试剂 
+    switch (iswx) {
+        case 'Yes':
+            result = '521';
             break;
-        case '2':
-            result = '385';
-            break;
-        case '3':
-            result = '402'; //实验耗材->其他实验耗材
+        case 'No':
+            result = typeId;
             break;
         default:
-            result = '499'; //实验试剂->其他试剂和服务
+            result = typeId;
             break;
     }
     return result;
@@ -148,8 +207,9 @@ async function CasmartPullWrite(joint, data) {
                 //定义商品类型、产品分类、产品分组 
                 let cateId = GetCateId(body["templateTypeId"]); //固定 241;
                 let brandId = GetBrandId(body["brandName"]); //固定
-                let typeId = GetTypeId(body["typeId"]); //产品分类，在sql查询中完成
-                let groups = [424]; //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
+                let typeId = GetTypeId(body["iswx"], body["typeId"]); //产品分类，在sql查询中完成
+                let groups = GetGroups(body["templateTypeId"]); //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
+                let extend = GetExtends(body["templateTypeId"], body["intro"], body["cascode"], body["mf"]);
                 postData = {
                     rid: body["rid"],
                     code: body["code"],
@@ -171,7 +231,7 @@ async function CasmartPullWrite(joint, data) {
                     service: '',
                     deliverycycle: body["deliverycycle"],
                     cascode: body["cascode"],
-                    extends: [],
+                    extends: extend,
                     instructions: [],
                     groups: groups
                 };

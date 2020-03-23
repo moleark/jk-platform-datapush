@@ -7,8 +7,8 @@ import { HttpRequest_GET, HttpRequest_POST } from '../../tools/HttpRequestHelper
 let md5 = require('md5');
 import config from 'config';
 import { logger } from "../../tools/logger";
-import { DateTimeOffset } from "mssql";
-import { readMany } from "./uqOutRead";
+//import { DateTimeOffset } from "mssql";
+//import { readMany } from "./uqOutRead";
 import { isNullOrUndefined } from "util";
 //import { MapToUq } from "../../uq-joint/tool/mapData";
 
@@ -24,7 +24,7 @@ function GETCHEM_ID(templatetypeid, casFormat: string) {
             result = casFormat;
             break;
         case 2:
-            result = 'SWSJ-002'; //没有其他部门同事进行帮忙分类，暂取其中一条
+            result = 'SWSJ-007';  //其他
             break;
         case 3:
             result = '';
@@ -212,7 +212,7 @@ function GetBIO_TYPE_ID(templatetypeid): string {
 
     let result = '';
     if (templatetypeid == 2) {
-        result = '044'; //其他互作相关试剂
+        result = '049'; //其他
     }
     return result;
 }
