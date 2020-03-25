@@ -10,7 +10,7 @@ const promiseSize = config_1.default.get("promiseSize");
 let pullSql = `select * from ( 
                     SELECT r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
                         r.CatalogPrice, r.SalePrice, r.Storage, p.DescriptionC, p.Description, zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime,
-                        isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, p.MF,
+                        isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, isnull(p.MF,'N/A') AS MF,
                         (SELECT  CASE when EXISTS(SELECT * FROM zcl_mess.dbo.sc_restrict WHERE chemid=pc.chemid)  then 'Yes' ELSE 'No' END ) as IsWX,
                         isnull((SELECT TOP 1 cc.ClassCode 
                                 FROM	opdata.dbo.SaleProductProductCategory dd

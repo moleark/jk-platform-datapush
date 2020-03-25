@@ -11,21 +11,23 @@ const logger_1 = require("../../tools/logger");
 //import { MapToUq } from "../../uq-joint/tool/mapData";
 //喀斯玛接口相关配置
 const casmartApiSetting = config_1.default.get("casmartApi");
-//获取产品分类
+//获取产品类型
 function GetCateId(Templatetypeid) {
+    // 3：试剂耗材等其他商品，普通的试剂耗材商品，不包含危化品，不支持上传“纯度”、“cas”、“分子式”等扩展信息；
+    // 5：化学试剂（包括危化品），包含危化品分类的，支持上传 “纯度”、“cas”、“分子式” 信息；
     let result = '';
     switch (Templatetypeid) {
         case '1':
-            result = '5'; //化学试剂（包括危化品）
+            result = '5';
             break;
         case '2':
-            result = '3'; //试剂耗材等其他商品
+            result = '5';
             break;
         case '3':
             result = '3';
             break;
         default:
-            result = '3';
+            result = '5';
             break;
     }
     return result;
@@ -55,6 +57,9 @@ function GetExtends(templateTypeId, intro, cascode, mf) {
     switch (templateTypeId) {
         case '1':
             result = [{ "key": 9, "value": intro }, { "key": 10, "value": cascode }, { "key": 11, "value": mf }];
+            break;
+        case '2':
+            result = [{ "key": 9, "value": intro }, { "key": 11, "value": mf }];
             break;
         default:
             result = [];
@@ -147,11 +152,12 @@ function GetBrandId(brandName) {
     }
     return result;
 }
+//获取商品分类
 function GetTypeId(iswx, typeId) {
     let result = '';
     switch (iswx) {
         case 'Yes':
-            result = '521';
+            result = '521'; //危险品使用521：化学试剂->危险化学品->普通危险化学品
             break;
         case 'No':
             result = typeId;
@@ -208,7 +214,7 @@ async function CasmartPullWrite(joint, data) {
                 let cateId = GetCateId(body["templateTypeId"]); //固定 241;
                 let brandId = GetBrandId(body["brandName"]); //固定
                 let typeId = GetTypeId(body["iswx"], body["typeId"]); //产品分类，在sql查询中完成
-                let groups = GetGroups(body["templateTypeId"]); //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息
+                let groups = GetGroups(body["templateTypeId"]); //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息;
                 let extend = GetExtends(body["templateTypeId"], body["intro"], body["cascode"], body["mf"]);
                 postData = {
                     rid: body["rid"],
