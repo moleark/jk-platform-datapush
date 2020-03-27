@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const uq_joint_1 = require("uq-joint");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
@@ -10,6 +11,7 @@ const logger_1 = require("../../tools/logger");
 //import { DateTimeOffset } from "mssql";
 //import { readMany } from "./uqOutRead";
 const util_1 = require("util");
+//import { MapToUq } from "uq-joint/tool/mapData";
 //import { MapToUq } from "../../uq-joint/tool/mapData";
 //快去采接口相关配置
 const kuaiQuCaiApiSetting = config_1.default.get("kuaiQuCaiApi");
@@ -233,16 +235,16 @@ function GetPACKAGE_TYPE(templatetypeid, packageSize, unit) {
     return result;
 }
 //对查询到的产品进行处理 
-async function KuaiQuCaiPullWrite(joint, data) {
-    /*
-    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn as UqInTuid;
-    if (key === undefined) throw 'key is not defined';
-    if (uqFullName === undefined) throw 'tuid ' + tuid + ' not defined';
+async function KuaiQuCaiPullWrite(joint, uqIn, data) {
+    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
+    if (key === undefined)
+        throw 'key is not defined';
+    if (uqFullName === undefined)
+        throw 'tuid ' + tuid + ' not defined';
     let keyVal = data[key];
-    let mapToUq = new MapToUq(this);
+    //let mapToUq = new MapToUq(this);
+    let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    */
-    let body = data;
     try {
         //console.log(data);
         //console.log(body);

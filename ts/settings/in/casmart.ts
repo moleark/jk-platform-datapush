@@ -1,12 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
+import { UqInTuid } from "uq-joint";
 //import { UqInTuid } from "../../uq-joint";
-const casmartPullWrite_1 = require("../../first/converter/casmartPullWrite");
-const config_1 = __importDefault(require("config"));
-const promiseSize = config_1.default.get("promiseSize");
+import { CasmartPullWrite } from '../../first/converter/casmartPullWrite';
+import config from 'config';
+const promiseSize = config.get<number>("promiseSize");
+
 let pullSql = `select * from ( 
                     SELECT r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
                         r.CatalogPrice, r.SalePrice, r.Storage, p.DescriptionC, p.Description, zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime,
@@ -34,10 +31,11 @@ let pullSql = `select * from (
                     INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
                     INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID
                 ) t2 `;
-exports.CasmartPush = {
+
+export const Casmart: UqInTuid = {
     uq: 'platform/Casmart',
     type: 'tuid',
-    entity: 'casmartPush',
+    entity: 'package1',  //修改为 package 报错,修改为package1，命名与moniker表id一致。
     key: 'ID',
     mapper: {
         $id: 'ID',
@@ -61,8 +59,8 @@ exports.CasmartPush = {
         iswx: "IsWX"
     },
     pull: pullSql,
-    pullWrite: casmartPullWrite_1.CasmartPullWrite,
-    firstPullWrite: casmartPullWrite_1.CasmartPullWrite,
+    pullWrite: CasmartPullWrite,
+    firstPullWrite: CasmartPullWrite,
 };
 //CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' AND r1.StateName = 'add'
 /*
@@ -70,5 +68,4 @@ isnull((SELECT TOP 1 pm.UnitCategoryId FROM opdata.dbo.SaleProductProductCategor
                             INNER JOIN opdata.dbo.ProductCategoryLanguage ee ON dd.ProductCategoryID=ee.ProductCategoryID AND ee.LanguageID='zh-CN'
                             left join ProdData.dbo.PlatformUnitCategoryWithJKMapping pm on pm.JKCategoryId = ee.ProductCategoryID and pm.PlatformUnitCode = 'casmart'
                             WHERE dd.SaleProductID= r.productid ),'516') AS CategoryId,
-*/ 
-//# sourceMappingURL=casmartPush.js.map
+*/

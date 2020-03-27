@@ -23,12 +23,12 @@ let pullSql = `select * from (
                     WHERE j.unit in ('Kg','G','ug','ng','L','ml','μl','l','mg','KG','μmol','ul','u','tablets','t','rxn','mls','rod','pcs','pc'
 				     ,'none','nmol','na','mole','mm','EA','Kunits','Kit','KU','KIT','IU','GR','GM','GAL','G-SB','LT','CM','CLM','CDU','AMP','AM','500U','500IU','000U','SET','VIALS','000IU','UNITS','UNIT','UN','UL','UG','U','T','ZONE','Pak','PIECE'
 			         ,'MU','ML','MIU','ME','M','Lt',  'BL','对','个','支','包','张','盒','袋','瓶','桶','台','EA','套','卷','块','bp','none','片','箱' )
-                ) t2`;
+                ) t2 `;
 
-export const KuaiQuCaiPush: UqInTuid = {
+export const Kuaiqucai: UqInTuid = {
     uq: 'platform/Kuaiqucai',
     type: 'tuid',
-    entity: 'package',
+    entity: 'package2', //kuaiqucaiPush
     key: 'ID',
     mapper: {
         $id: 'ID',

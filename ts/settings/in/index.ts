@@ -1,10 +1,9 @@
-import { CasmartPush } from "./casmartPush";
-import { KuaiQuCaiPullWrite } from "first/converter/kuaiqucaiPullWrite";
-import { KuaiQuCaiPush } from "./kuaiqucaiPush";
+import { Casmart } from "./casmart";
+import { Kuaiqucai } from "./kuaiqucai";
 
 const uqIns = [
-    CasmartPush,
-    KuaiQuCaiPush
+    Casmart,
+    Kuaiqucai
 ]
 
 export default uqIns;

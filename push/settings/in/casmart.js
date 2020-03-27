@@ -34,10 +34,10 @@ let pullSql = `select * from (
                     INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
                     INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID
                 ) t2 `;
-exports.CasmartPush = {
+exports.Casmart = {
     uq: 'platform/Casmart',
     type: 'tuid',
-    entity: 'casmartPush',
+    entity: 'package1',
     key: 'ID',
     mapper: {
         $id: 'ID',
@@ -71,4 +71,4 @@ isnull((SELECT TOP 1 pm.UnitCategoryId FROM opdata.dbo.SaleProductProductCategor
                             left join ProdData.dbo.PlatformUnitCategoryWithJKMapping pm on pm.JKCategoryId = ee.ProductCategoryID and pm.PlatformUnitCode = 'casmart'
                             WHERE dd.SaleProductID= r.productid ),'516') AS CategoryId,
 */ 
-//# sourceMappingURL=casmartPush.js.map
+//# sourceMappingURL=casmart.js.map

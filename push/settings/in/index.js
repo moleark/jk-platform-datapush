@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const casmartPush_1 = require("./casmartPush");
-const kuaiqucaiPush_1 = require("./kuaiqucaiPush");
+const casmart_1 = require("./casmart");
+const kuaiqucai_1 = require("./kuaiqucai");
 const uqIns = [
-    casmartPush_1.CasmartPush,
-    kuaiqucaiPush_1.KuaiQuCaiPush
+    casmart_1.Casmart,
+    kuaiqucai_1.Kuaiqucai
 ];
 exports.default = uqIns;
 //# sourceMappingURL=index.js.map

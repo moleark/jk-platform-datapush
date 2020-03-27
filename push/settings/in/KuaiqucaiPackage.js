@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-//import { UqInTuid } from "../../uq-joint";
 const kuaiqucaiPullWrite_1 = require("../../first/converter/kuaiqucaiPullWrite");
 const config_1 = __importDefault(require("config"));
 const promiseSize = config_1.default.get("promiseSize");
@@ -27,10 +26,10 @@ let pullSql = `select * from (
 				     ,'none','nmol','na','mole','mm','EA','Kunits','Kit','KU','KIT','IU','GR','GM','GAL','G-SB','LT','CM','CLM','CDU','AMP','AM','500U','500IU','000U','SET','VIALS','000IU','UNITS','UNIT','UN','UL','UG','U','T','ZONE','Pak','PIECE'
 			         ,'MU','ML','MIU','ME','M','Lt',  'BL','对','个','支','包','张','盒','袋','瓶','桶','台','EA','套','卷','块','bp','none','片','箱' )
                 ) t2 `;
-exports.KuaiQuCaiPush = {
+exports.KuaiQuCaiPackage = {
     uq: 'platform/Kuaiqucai',
     type: 'tuid',
-    entity: 'kuaiqucaiPush',
+    entity: 'package',
     key: 'ID',
     mapper: {
         $id: 'ID',
@@ -58,4 +57,4 @@ exports.KuaiQuCaiPush = {
 };
 //CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' AND r1.StateName = 'add'
 //and r1.brandid = 'R35' and isdelete = 1
-//# sourceMappingURL=kuaiqucaiPush.js.map
+//# sourceMappingURL=KuaiqucaiPackage.js.map
