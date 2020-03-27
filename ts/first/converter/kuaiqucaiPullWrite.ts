@@ -81,7 +81,7 @@ function GETDELIVERYTIME_ID(storage: string, deliveryTime: string): string {
 
     let result = '';
     if (Number(storage) > 0) {
-        result = "01";  //跟舒经理核实，现货产品传最小时间单位
+        result = "01";      //跟舒经理核实，现货产品传最小时间单位
     } else {
         if (isNullOrUndefined(deliveryTime)) {
             result = '21';
@@ -99,7 +99,7 @@ function GETDELIVERYTIME_ID(storage: string, deliveryTime: string): string {
     return result;
 }
 
-//获取货期类型：0 现货, 1 期货(5个品牌是代理国产商品), 2 期货(代理进口商品);
+//获取货期类型：1 现货, 2 期货(5个品牌是代理国产商品), 3 期货(代理进口商品);
 function GETDELIVERY_TYPE_ID(storage: number, brandName: string): number {
 
     let result = 1;
@@ -429,8 +429,10 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
 
         //判断请求结果 并记录 
         if (postResult.CODE != 200) {
+
             logger.error('KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
             result = false;
+
         } else {
             if (Number(postResult.DATA.SUCCESS_NUM) < 1) {
 

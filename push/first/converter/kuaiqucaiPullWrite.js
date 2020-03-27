@@ -95,7 +95,7 @@ function GETDELIVERYTIME_ID(storage, deliveryTime) {
     }
     return result;
 }
-//获取货期类型：0 现货, 1 期货(5个品牌是代理国产商品), 2 期货(代理进口商品);
+//获取货期类型：1 现货, 2 期货(5个品牌是代理国产商品), 3 期货(代理进口商品);
 function GETDELIVERY_TYPE_ID(storage, brandName) {
     let result = 1;
     if (storage > 0) {
