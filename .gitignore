@@ -1,5 +1,6 @@
 node_modules
 config/production.json
+config/ecosystem.config.js
 config/development.json
 npm-debug.log
 npm-debug.log.*

@@ -566,6 +566,9 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
                         break;
                 }
             }
+            else {
+                return true;
+            }
         }
         else {
             // 能够查询到的情况，应该调用修改或者删除方法

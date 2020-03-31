@@ -521,6 +521,8 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
                     default:
                         break;
                 }
+            } else {
+                return true;
             }
         } else {
 
