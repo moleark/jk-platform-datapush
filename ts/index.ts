@@ -64,6 +64,7 @@ import { initMssqlPool } from './db/mssql/tools';
     // 监听服务
     let joint = new Joint(settings);
     let port = config.get<number>('port');
+
     app.listen(port, async () => {
         console.log('jk-platform-datapush listening on port ' + port);
         joint.start();

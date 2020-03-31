@@ -11,7 +11,6 @@ import { HttpRequest_GET } from '../../tools/HttpRequestHelper';
 //喀斯玛接口相关配置
 const casmartApiSetting = config.get<any>("casmartApi");
 
-
 //获取产品类型
 function GetCateId(iswx: string, typeId: number): number {
     let result = 516;
@@ -200,6 +199,7 @@ function GetTypeId(templatetypeid: any): number {
     return result;
 }
 
+//获取生产厂家名称（J&K 中特殊符号报错）
 function GetMaker(brandName: string): string {
 
     let result = '';
@@ -215,7 +215,7 @@ function GetMaker(brandName: string): string {
     return result;
 }
 
-
+// 推送
 export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Promise<boolean> {
 
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn as UqInTuid;
@@ -235,11 +235,11 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         //console.log('喀斯玛接口处理');
         let result = false;
 
-        let { host, appid, secret, addPath, updatePath } = casmartApiSetting;
+        let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let timestamp = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
         //let postData = {};
         let options = {
-            host: host,
+            hostname: hostname,
             path: '',
             method: 'GET',
             headers: {

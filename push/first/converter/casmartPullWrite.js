@@ -186,6 +186,7 @@ function GetTypeId(templatetypeid) {
     }
     return result;
 }
+//获取生产厂家名称（J&K 中特殊符号报错）
 function GetMaker(brandName) {
     let result = '';
     if (brandName == 'J&K') {
@@ -199,6 +200,7 @@ function GetMaker(brandName) {
     }
     return result;
 }
+// 推送
 async function CasmartPullWrite(joint, uqIn, data) {
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
     if (key === undefined)
@@ -215,11 +217,11 @@ async function CasmartPullWrite(joint, uqIn, data) {
         //console.log(body);
         //console.log('喀斯玛接口处理');
         let result = false;
-        let { host, appid, secret, addPath, updatePath } = casmartApiSetting;
+        let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let timestamp = date_fns_1.format(new Date(), 'yyyy-MM-dd HH:mm:ss');
         //let postData = {};
         let options = {
-            host: host,
+            hostname: hostname,
             path: '',
             method: 'GET',
             headers: {
