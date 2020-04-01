@@ -76,6 +76,9 @@ function GETDELIVERYTIME_ID(storage, deliveryTime) {
         if (util_1.isNullOrUndefined(deliveryTime)) {
             result = '21';
         }
+        else if (Number(deliveryTime) <= 9) {
+            result = '0' + deliveryTime;
+        }
         else if (Number(deliveryTime) <= 15) {
             result = deliveryTime;
         }
