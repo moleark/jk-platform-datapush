@@ -466,7 +466,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         // 调用平台查询产品详情接口判断产品是否存在，查询接口区分 化学品查询、生物试剂查询、耗材查询三个接口；
         switch (body["TemplateTypeId"]) {
             case 1:
-                getOptions.path = chemDetailPath + '?COMPANY_SALE_NO=' + body["COMPANY_SALE_NO"];
+                getOptions.path = chemDetailPath + '?COMPANY_SALE_NO=' + encodeURI(body["COMPANY_SALE_NO"]);
                 break;
             case 2:
                 getOptions.path = bioDetailPath + '?COMPANY_SALE_NO=' + body["COMPANY_SALE_NO"];
