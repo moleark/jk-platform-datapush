@@ -213,9 +213,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
     let body = await mapToUq.map(data, mapper);
     let { templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, intro, mf, stockamount, stateName, isDelete, typeId, iswx } = body;
     try {
-        //定义变量
         //console.log(body);
-        //console.log('喀斯玛接口处理');
         let result = false;
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let timestamp = date_fns_1.format(new Date(), 'yyyy-MM-dd HH:mm:ss');
@@ -303,12 +301,12 @@ async function CasmartPullWrite(joint, uqIn, data) {
         let optionData = await HttpRequestHelper_1.HttpRequest_GET(options);
         let postResult = JSON.parse(String(optionData));
         if (postResult.retCode != 0) {
-            logger_1.logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid: ' + rid + ',Type: ' + stateName + ',Datetime: ' + timestamp + ',Message: ' + optionData + ' }');
             result = false;
+            logger_1.logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }');
         }
         else {
-            console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionData + '}');
             result = true;
+            console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionData + '}');
         }
         return result;
     }

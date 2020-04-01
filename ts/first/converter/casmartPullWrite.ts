@@ -229,10 +229,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         stateName, isDelete, typeId, iswx } = body;
 
     try {
-
-        //定义变量
         //console.log(body);
-        //console.log('喀斯玛接口处理');
         let result = false;
 
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
@@ -330,12 +327,11 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         let postResult = JSON.parse(String(optionData));
 
         if (postResult.retCode != 0) {
-
-            logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid: ' + rid + ',Type: ' + stateName + ',Datetime: ' + timestamp + ',Message: ' + optionData + ' }');
             result = false;
+            logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }');
         } else {
-            console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionData + '}');
             result = true;
+            console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionData + '}');
         }
 
         return result;

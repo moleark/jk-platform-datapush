@@ -390,7 +390,6 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
     let body = await mapToUq.map(data, mapper);
 
     try {
-
         // console.log(body);
         let result = false;
 
