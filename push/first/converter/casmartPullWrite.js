@@ -216,8 +216,8 @@ async function CasmartPullWrite(joint, uqIn, data) {
         //console.log(body);
         let result = false;
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
-        let datetime = new Date().toLocaleString();
-        let timestamp = date_fns_1.format(Date.parse(datetime), 'yyyy-MM-dd HH:mm:ss');
+        let datetime = Date.now();
+        let timestamp = date_fns_1.format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
         //let postData = {};
         let options = {
             hostname: hostname,
