@@ -200,6 +200,28 @@ function GetMaker(brandName) {
     }
     return result;
 }
+function GetName(name) {
+    let result = '';
+    if (name != null) {
+        result = name;
+    }
+    let sr = result.search('#');
+    if (sr != -1) {
+        result.replace('#', '');
+    }
+    return result;
+}
+function GetSubname(subName) {
+    let result = '';
+    if (subName != null) {
+        result = subName;
+    }
+    let sr = result.search('#');
+    if (sr != -1) {
+        result.replace('#', '');
+    }
+    return result;
+}
 // 推送
 async function CasmartPullWrite(joint, uqIn, data) {
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
@@ -248,14 +270,16 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 let groups = GetGroups(templateTypeId); //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息;
                 let extend = GetExtends(templateTypeId, intro, cascode, mf);
                 let maker = GetMaker(brandName);
+                let cname = GetName(name);
+                let csubname = GetSubname(subname);
                 let addData = {
                     rid: rid,
                     code: code,
                     cateid: cateId,
                     brandid: brandId,
                     typeid: type,
-                    name: name.replace('#', ''),
-                    subname: subname.replace('#', ''),
+                    name: cname,
+                    subname: csubname,
                     mktprice: mktprice,
                     price: Math.round(price),
                     unit: '瓶',

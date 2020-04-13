@@ -215,6 +215,33 @@ function GetMaker(brandName: string): string {
     return result;
 }
 
+function GetName(name: string): string {
+
+    let result = '';
+    if (name != null) {
+        result = name;
+    }
+    let sr = result.search('#');
+    if (sr != -1) {
+        result.replace('#', '');
+    }
+    return result;
+}
+
+function GetSubname(subName: string): string {
+
+    let result = '';
+    if (subName != null) {
+        result = subName;
+    }
+    let sr = result.search('#');
+    if (sr != -1) {
+        result.replace('#', '');
+    }
+    return result;
+}
+
+
 // 推送
 export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Promise<boolean> {
 
@@ -269,6 +296,8 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 let groups = GetGroups(templateTypeId);   //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息;
                 let extend = GetExtends(templateTypeId, intro, cascode, mf);
                 let maker = GetMaker(brandName);
+                let cname = GetName(name);
+                let csubname = GetSubname(subname);
 
                 let addData = {
                     rid: rid,
@@ -276,8 +305,8 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     cateid: cateId,
                     brandid: brandId,
                     typeid: type,
-                    name: name.replace('#', ''),
-                    subname: subname.replace('#', ''),
+                    name: cname,
+                    subname: csubname,
                     mktprice: mktprice,
                     price: Math.round(price),
                     unit: '瓶',
