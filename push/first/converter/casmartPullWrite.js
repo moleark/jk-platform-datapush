@@ -205,22 +205,22 @@ function GetName(name) {
     if (name != null) {
         result = name;
     }
-    let sr = result.search('#');
+    /*let sr = result.search('#');
     if (sr != -1) {
         result.replace('#', '');
-    }
-    return result;
+    }*/
+    return result.replace('#', '');
 }
 function GetSubname(subName) {
     let result = '';
     if (subName != null) {
         result = subName;
     }
-    let sr = result.search('#');
+    /*let sr = result.search('#');
     if (sr != -1) {
         result.replace('#', '');
-    }
-    return result;
+    }*/
+    return result.replace('#', '');
 }
 // 推送
 async function CasmartPullWrite(joint, uqIn, data) {

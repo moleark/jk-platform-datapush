@@ -221,11 +221,11 @@ function GetName(name: string): string {
     if (name != null) {
         result = name;
     }
-    let sr = result.search('#');
+    /*let sr = result.search('#');
     if (sr != -1) {
         result.replace('#', '');
-    }
-    return result;
+    }*/
+    return result.replace('#', '');
 }
 
 function GetSubname(subName: string): string {
@@ -234,11 +234,11 @@ function GetSubname(subName: string): string {
     if (subName != null) {
         result = subName;
     }
-    let sr = result.search('#');
+    /*let sr = result.search('#');
     if (sr != -1) {
         result.replace('#', '');
-    }
-    return result;
+    }*/
+    return result.replace('#', '');
 }
 
 
