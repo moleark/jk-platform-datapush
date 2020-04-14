@@ -139,7 +139,7 @@ function GETSPEC_MARK(packnr, packageSize, unit) {
 function GetImg(templateTypeId) {
     let result = [];
     if (templateTypeId == 3) {
-        result = ['https:// www.jkchemical.com/image/map-jk.gif'];
+        result = ['https://www.jkchemical.com/image/map-jk.gif'];
     }
     return result;
 }

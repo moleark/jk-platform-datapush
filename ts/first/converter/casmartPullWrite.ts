@@ -215,16 +215,82 @@ function GetMaker(brandName: string): string {
     return result;
 }
 
+// 获取产品图片
+function GetImg(brandName: string): any {
+
+    let result = [];
+    switch (brandName) {
+        case 'J&K':
+            result = ['https://www.jkchemical.com/static/casmart/JNK.png'];
+            break;
+        case 'Amethyst':
+            result = ['https://www.jkchemical.com/static/casmart/Amethyst.png'];
+            break;
+        case 'Acros':
+            result = ['https://www.jkchemical.com/static/casmart/Acros.png'];
+            break;
+        case 'TCI':
+            result = ['https://www.jkchemical.com/static/casmart/TCI.png'];
+            break;
+        case 'SERVA':
+            result = ['https://www.jkchemical.com/static/casmart/Serva.jpg'];
+            break;
+        case 'Serva':
+            result = ['https://www.jkchemical.com/static/casmart/Serva.jpg'];
+            break;
+        case 'Fluorochem':
+            result = ['https://www.jkchemical.com/static/casmart/Fluorochem.jpg'];
+            break;
+        case 'AccuStandard':
+            result = ['https://www.jkchemical.com/static/casmart/Accustandard.png'];
+            break;
+        case 'Strem':
+            result = ['https://www.jkchemical.com/static/casmart/Strem.png'];
+            break;
+        case 'TRC':
+            result = ['https://www.jkchemical.com/static/casmart/TRC.jpg'];
+            break;
+        case 'Apollo':
+            result = ['https://www.jkchemical.com/static/casmart/Apollo.jpg'];
+            break;
+        case 'Cambridge Isotope Laboratories（CIL）':
+            result = ['https://www.jkchemical.com/static/casmart/CIL.png'];
+            break;
+        case 'Polymer Source':
+            result = ['https://www.jkchemical.com/static/casmart/Polymersource.png'];
+            break;
+        case 'Matrix':
+            result = ['https://www.jkchemical.com/static/casmart/Matrix.png'];
+            break;
+        case 'Rieke Metals':
+            result = ['https://www.jkchemical.com/static/casmart/RiekeMetals.jpg'];
+            break;
+        case 'Frontier':
+            result = ['https://www.jkchemical.com/static/casmart/Frontier.png'];
+            break;
+        case 'Wilmad':
+            result = ['https://www.jkchemical.com/static/casmart/Wilmad.jpg'];
+            break;
+        case '1-Material':
+            result = ['https://www.jkchemical.com/static/casmart/1-Material.png'];
+            break;
+        case 'Alfa':
+            result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
+            break;
+        default:
+            result = [''];
+            break;
+    }
+
+    return result;
+}
+
 function GetName(name: string): string {
 
     let result = '';
     if (name != null) {
         result = name;
     }
-    /*let sr = result.search('#');
-    if (sr != -1) {
-        result.replace('#', '');
-    }*/
     return result.replace('#', '');
 }
 
@@ -298,6 +364,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 let maker = GetMaker(brandName);
                 let cname = GetName(name);
                 let csubname = GetSubname(subname);
+                let image = GetImg(brandName);
 
                 let addData = {
                     rid: rid,
@@ -310,7 +377,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     mktprice: mktprice,
                     price: Math.round(price),
                     unit: '瓶',
-                    imgs: [],
+                    imgs: image,
                     stockamount: Number(stockamount),
                     isinsale: 1,
                     intro: intro,

@@ -146,7 +146,7 @@ function GetImg(templateTypeId): any {
 
     let result = [];
     if (templateTypeId == 3) {
-        result = ['https:// www.jkchemical.com/image/map-jk.gif'];
+        result = ['https://www.jkchemical.com/image/map-jk.gif'];
     }
     return result;
 }
