@@ -290,22 +290,24 @@ function GetName(name: string): string {
 
     let result = '';
     if (name != null) {
-        result = name;
+        //去除空格、反斜杠、括号、+- 
+        result = name.replace(/\s+/g, "").replace(/[/]/g, "").replace('#', '').replace('(', '').replace(')', '').replace('+-', '');
     }
-    return result.replace('#', '');
+    return result;
 }
 
 function GetSubname(subName: string): string {
 
     let result = '';
     if (subName != null) {
-        result = subName;
+        //去除空格、反斜杠、括号、+- 
+        result = subName.replace(/\s+/g, "").replace(/[/]/g, '').replace('#', '').replace('（', '').replace('）', '').replace('+-', '');
     }
     /*let sr = result.search('#');
     if (sr != -1) {
         result.replace('#', '');
     }*/
-    return result.replace('#', '');
+    return result;
 }
 
 
