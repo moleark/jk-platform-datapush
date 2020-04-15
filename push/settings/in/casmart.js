@@ -74,7 +74,7 @@ exports.Casmart = {
         name: "Description",
         subname: "DescriptionC",
         deliverycycle: "Delivetime",
-        intro: "Purity",
+        purity: "Purity",
         mf: "MF",
         stockamount: "Storage",
         stateName: 'StateName',

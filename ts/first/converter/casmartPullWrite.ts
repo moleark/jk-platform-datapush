@@ -52,15 +52,16 @@ function GetGroups(templatetypeid: any): any[] {
 }
 
 //获取扩展属性
-function GetExtends(templateTypeId: any, intro: string, cascode: string, mf: string): any[] {
+function GetExtends(templateTypeId: any, purity: string, cascode: string, mf: string): any[] {
 
     let result = [];
+    let rPurity = purity.replace('+', '').replace('?', '').replace('#', '').replace('-', '');
     switch (templateTypeId) {
         case 1:
-            result = [{ "key": 9, "value": intro }, { "key": 10, "value": cascode }, { "key": 11, "value": mf }]
+            result = [{ "key": 9, "value": rPurity }, { "key": 10, "value": cascode }, { "key": 11, "value": mf }]
             break;
         case 2:
-            result = [{ "key": 9, "value": intro }, { "key": 11, "value": mf }]
+            result = [{ "key": 9, "value": rPurity }, { "key": 11, "value": mf }]
             break;
         default:
             result = [];
@@ -318,7 +319,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     //let mapToUq = new MapToUq(this);
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let { templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, intro, mf, stockamount,
+    let { templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount,
         stateName, isDelete, typeId, iswx } = body;
 
     try {
@@ -328,6 +329,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let datetime = Date.now();
         let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        //let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
         //let postData = {};
         let options = {
             hostname: hostname,
@@ -360,7 +362,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 let brandId = GetBrandId(brandName);   //固定
                 let type = GetTypeId(templateTypeId);  //商品类型
                 let groups = GetGroups(templateTypeId);   //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息;
-                let extend = GetExtends(templateTypeId, intro, cascode, mf);
+                let extend = GetExtends(templateTypeId, purity, cascode, mf);
                 let maker = GetMaker(brandName);
                 let cname = GetName(name);
                 let csubname = GetSubname(subname);
@@ -380,7 +382,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     imgs: image,
                     stockamount: Number(stockamount),
                     isinsale: 1,
-                    intro: intro,
+                    intro: '',
                     spec: spec,
                     maker: maker,
                     packinglist: '',
@@ -407,7 +409,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     price: Math.round(price),
                     stockamount: stockamount,
                     isinsale: 1,
-                    intro: intro,
+                    intro: '',
                     instructions: [],
                     imgs: []
                 };
