@@ -272,7 +272,7 @@ function GetName(name) {
     let result = '';
     if (name != null) {
         //去除空格、反斜杠、括号、+- 
-        result = name.replace(/\s+/g, "").replace(/[/]/g, "").replace('#', '').replace('(', '').replace(')', '').replace('+-', '');
+        result = name.replace(/\s+/g, "").replace(/[/]/g, "").replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace('+-', '');
     }
     return result;
 }
@@ -280,7 +280,7 @@ function GetSubname(subName) {
     let result = '';
     if (subName != null) {
         //去除空格、反斜杠、括号、+- 
-        result = subName.replace(/\s+/g, "").replace(/[/]/g, '').replace('#', '').replace('（', '').replace('）', '').replace('+-', '');
+        result = subName.replace(/\s+/g, "").replace(/[/]/g, '').replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace(/[（]/g, '').replace(/[）]/g, '').replace('+-', '');
     }
     /*let sr = result.search('#');
     if (sr != -1) {
@@ -305,8 +305,8 @@ async function CasmartPullWrite(joint, uqIn, data) {
         let result = false;
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let datetime = Date.now();
-        let timestamp = date_fns_1.format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
-        //let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
+        //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        let timestamp = date_fns_1.format(datetime, 'yyyy-MM-dd HH:mm:ss');
         //let postData = {};
         let options = {
             hostname: hostname,
