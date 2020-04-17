@@ -4,12 +4,11 @@ import { CasmartPullWrite } from '../../first/converter/casmartPullWrite';
 import config from 'config';
 const promiseSize = config.get<number>("promiseSize");
 
-/*
+
 let pullSql = ` SELECT  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, r.CatalogPrice, r.SalePrice, r.Storage, 
                         p.DescriptionC, p.Description, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
-                        zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime, r.StateName, r.IsDelete, 
-                        isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, isnull(p.MF,'N/A') AS MF,
-                        (SELECT  CASE when EXISTS(SELECT 1 FROM zcl_mess.dbo.sc_restrict WHERE chemid=pc.chemid)  then 'Yes' ELSE 'No' END ) as IsWX,
+                        zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime, r.StateName, r.IsDelete, isnull(p.purity,'N/A') AS Purity, 
+                        r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, isnull(p.MF,'N/A') AS MF, (CASE WHEN sc.chemid IS NULL  then 'No' ELSE 'Yes' END ) as IsWX,
                         isnull((SELECT  TOP 1 cc.ClassCode 
                                 FROM	opdata.dbo.SaleProductProductCategory dd
                                         INNER JOIN opdata.dbo.ProductCategoryLanguage ee ON dd.ProductCategoryID=ee.ProductCategoryID AND ee.LanguageID='zh-CN'
@@ -26,9 +25,11 @@ let pullSql = ` SELECT  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFo
                 INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId 
                 INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID 
                 INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
-                INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID `;
-*/
+                INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID 
+                LEFT  JOIN zcl_mess.dbo.sc_restrict sc ON sc.chemid = pc.chemid `;
 
+//-- (SELECT  CASE when EXISTS(SELECT 1 FROM zcl_mess.dbo.sc_restrict WHERE chemid=pc.chemid)  then 'Yes' ELSE 'No' END ) as IsWX,
+/*
 let pullSql = ` DECLARE @id BIGINT;
 
                 SELECT  TOP ${promiseSize} @id=ID 
@@ -54,6 +55,7 @@ let pullSql = ` DECLARE @id BIGINT;
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
                         INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID
                 WHERE r.Id = @id; `;
+*/
 
 export const Casmart: UqInTuid = {
         uq: 'platform/Push',
