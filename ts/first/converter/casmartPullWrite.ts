@@ -291,7 +291,7 @@ function GetName(name: string): string {
     let result = '';
     if (name != null) {
         //去除空格、反斜杠、括号、+- 
-        result = name.replace(/\s+/g, "").replace(/[/]/g, "").replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace('+', '').replace('-', '');
+        result = name.replace(/\s+/g, "").replace(/[/]/g, "").replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace('+', '').replace('-', '').replace('&', '');
     }
     return result;
 }
@@ -301,7 +301,7 @@ function GetSubname(subName: string): string {
     let result = '';
     if (subName != null) {
         //去除空格、反斜杠、括号、+- 
-        result = subName.replace(/\s+/g, "").replace(/[/]/g, '').replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace(/[（]/g, '').replace(/[）]/g, '').replace('+', '').replace('-', '');
+        result = subName.replace(/\s+/g, "").replace(/[/]/g, '').replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace(/[（]/g, '').replace(/[）]/g, '').replace('+', '').replace('-', '').replace('&', '');
     }
     return result;
 }
