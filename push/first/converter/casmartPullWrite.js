@@ -271,16 +271,29 @@ function GetImg(brandName) {
 function GetName(name) {
     let result = '';
     if (name != null) {
-        //去除空格、反斜杠、括号、+- 
-        result = name.replace(/\s+/g, "").replace(/[/]/g, "").replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace('+', '').replace('-', '').replace('&', 'N');
+        result = GetFarmetName(name);
     }
     return result;
 }
 function GetSubname(subName) {
     let result = '';
     if (subName != null) {
-        //去除空格、反斜杠、括号、+- 
-        result = subName.replace(/\s+/g, "").replace(/[/]/g, '').replace('#', '').replace(/[(]/g, '').replace(/[)]/g, '').replace(/[（]/g, '').replace(/[）]/g, '').replace('+', '').replace('-', '').replace('&', 'N');
+        result = GetFarmetName(subName);
+    }
+    return result;
+}
+function GetFarmetName(str) {
+    let result = '';
+    //去除空格、反斜杠、括号、+- &
+    //replace(/\s+/g, "")
+    result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[(]/g, ' ').replace(/[)]/g, ' ').replace(/[（]/g, ' ').replace(/[）]/g, ' ').replace('+', '').replace('-', '').replace(/[&]/g, 'N').replace(/[:]/g, ' ');
+    return result;
+}
+//喀斯玛平台限制库存为0的产品无法下订单，所以在此把库存为0的变为10 
+function GetStockamount(amount) {
+    let result = 10;
+    if (amount > 0) {
+        result = amount;
     }
     return result;
 }
@@ -336,6 +349,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 let cname = GetName(name);
                 let csubname = GetSubname(subname);
                 let image = GetImg(brandName);
+                let stock = GetStockamount(Number(stockamount));
                 let addData = {
                     rid: rid,
                     code: code,
@@ -348,7 +362,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                     price: Math.round(price),
                     unit: '瓶',
                     imgs: image,
-                    stockamount: Number(stockamount),
+                    stockamount: stock,
                     isinsale: 1,
                     intro: '',
                     spec: spec,

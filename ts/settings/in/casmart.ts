@@ -35,7 +35,6 @@ let pullSql = ` DECLARE @id BIGINT;
                 SELECT  TOP ${promiseSize} @id=ID 
                 FROM    ProdData.dbo.ThirdPartyPlatformEntryResult
                 WHERE   CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
-                        AND SalesRegionID = 'CN' 
                         AND ID > @iMaxId;
                 SELECT  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, r.CatalogPrice, r.SalePrice, r.Storage, 
                         p.DescriptionC, p.Description, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
@@ -89,3 +88,4 @@ export const Casmart: UqInTuid = {
 
 // LEFT JOIN zcl_mess.dbo.sc_restrict sc ON sc.chemid = pc.ChemID
 // ( CASE WHEN sc.chemid IS NULL THEN 'No' ELSE 'Yes' end ) AS IsWX, 
+// AND SalesRegionID = 'CN' 
