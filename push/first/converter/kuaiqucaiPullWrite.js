@@ -516,7 +516,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
                 SPEC_ID: SPEC_ID,
                 SPEC_MARK: SPEC_MARK,
                 SALE_MARK: 1,
-                PURITY: body["PURITY"],
+                PURITY: body["PURITY"].substr(0, 19),
                 STOCK: body["STOCK"],
                 SRC_COMPANY: BRAND_NAME,
                 ARTICLE_NO: body["ARTICLE_NO"],
