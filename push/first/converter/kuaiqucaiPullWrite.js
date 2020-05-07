@@ -472,7 +472,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
                 getOptions.path = chemDetailPath + '?COMPANY_SALE_NO=' + encodeURI(body["COMPANY_SALE_NO"]);
                 break;
             case 2:
-                getOptions.path = bioDetailPath + '?COMPANY_SALE_NO=' + body["COMPANY_SALE_NO"];
+                getOptions.path = bioDetailPath + '?COMPANY_SALE_NO=' + encodeURI(body["COMPANY_SALE_NO"]);
                 break;
             case 3:
                 getOptions.path = clDetailPath + '?COMPANY_SALE_NO=' + encodeURI(body["COMPANY_SALE_NO"]);
