@@ -268,10 +268,16 @@ function GetImg(brandName) {
     }
     return result;
 }
-function GetName(name) {
+function GetName(name, subname, cascode) {
     let result = '';
-    if (name != null) {
-        result = GetFarmetName(name);
+    if (name != null && name != '') {
+        result += GetFarmetName(name) + ';';
+    }
+    if (subname != null && subname != '') {
+        result += GetFarmetName(subname) + ';';
+    }
+    if (cascode != null && cascode != '0') {
+        result += cascode + ';';
     }
     return result;
 }
@@ -314,8 +320,8 @@ async function CasmartPullWrite(joint, uqIn, data) {
         let result = false;
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let datetime = Date.now();
-        //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
-        let timestamp = date_fns_1.format(datetime, 'yyyy-MM-dd HH:mm:ss');
+        let timestamp = date_fns_1.format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        //let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
         //let postData = {};
         let options = {
             hostname: hostname,
@@ -346,7 +352,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 let groups = GetGroups(templateTypeId); //商品分组信息是由商家在商家端自己添加的,添加商品前，必须添加自己商品分组信息;
                 let extend = GetExtends(templateTypeId, purity, cascode, mf);
                 let maker = GetMaker(brandName);
-                let cname = GetName(name);
+                let cname = GetName(name, subname, cascode);
                 let csubname = GetSubname(subname);
                 let image = GetImg(brandName);
                 let stock = GetStockamount(Number(stockamount));
@@ -382,7 +388,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
             }
             else {
                 //修改产品信息
-                let cname = GetName(name);
+                let cname = GetName(name, subname, cascode);
                 let csubname = GetSubname(subname);
                 let stock = GetStockamount(Number(stockamount));
                 let image = GetImg(brandName);
