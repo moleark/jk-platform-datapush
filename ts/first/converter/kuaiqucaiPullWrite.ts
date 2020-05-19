@@ -498,89 +498,70 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
             }
         };
 
-        if (body["IsDelete"] == 1) {
+        // 判断平台是否存在产品
+        let queryPlatformIsExist = await HttpRequest_GET(getOptions);
+        let queryResult = JSON.parse(String(queryPlatformIsExist));
 
-            // 我司要删除的情况 , 修改为不去判断平台是否存在。既然是删除就直接调用删除接口，提高接口速度，判断是否存在确实有些慢。
-            switch (body["TemplateTypeId"]) {
-                case 1:
-                    postOptions.path = chemDeletePath; // 化学试剂删除接口地址
-                    break;
-                case 2:
-                    postOptions.path = bioDeletePath;  // 生物试剂删除接口地址
-                    break;
-                case 3:
-                    postOptions.path = clDeletePath;   // 耗材删除接口地址
-                    break;
-                default:
-                    break;
-            }
+        // 根据是否存在的结果执行后续步骤 
+        if (queryResult.CODE != 200 || queryResult.MESSAGE != 'SUCCESS') {
 
-        } else {
+            // 平台上查询不到，调用新增方法 
+            if (body["IsDelete"] != 1) {
 
-            // 判断平台是否存在产品
-            let queryPlatformIsExist = await HttpRequest_GET(getOptions);
-            let queryResult = JSON.parse(String(queryPlatformIsExist));
-
-            // 根据是否存在的结果执行后续步骤 
-            if (queryResult.CODE != 200 || queryResult.MESSAGE != 'SUCCESS') {
-
-                // 平台上查询不到，调用新增方法 
-                if (body["IsDelete"] != 1) {
-
-                    // 判断产品类型，调用不同的接口地址  
-                    switch (body["TemplateTypeId"]) {
-                        case 1:
-                            postOptions.path = chemAddPath; // 化学试剂新增接口地址
-                            break;
-                        case 2:
-                            postOptions.path = bioAddPath;  // 生物试剂新增接口地址
-                            break;
-                        case 3:
-                            postOptions.path = clAddPath;   // 耗材新增接口地址
-                            break;
-                        default:
-                            break;
-                    }
-                } else {
-                    return true;
+                // 判断产品类型，调用不同的接口地址  
+                switch (body["TemplateTypeId"]) {
+                    case 1:
+                        postOptions.path = chemAddPath; // 化学试剂新增接口地址
+                        break;
+                    case 2:
+                        postOptions.path = bioAddPath;  // 生物试剂新增接口地址
+                        break;
+                    case 3:
+                        postOptions.path = clAddPath;   // 耗材新增接口地址
+                        break;
+                    default:
+                        break;
                 }
             } else {
+                return true;
+            }
+        } else {
 
-                // 能够查询到的情况，应该调用修改或者删除方法（删除方法修改为不判断是否存在，挪出去此判断了）
-                // 判断产品类型，调用不同的接口地址（化学试剂、生物试剂、仪器耗材对应的接口地址不一致）
-                if (body["IsDelete"] == 1) {
+            // 能够查询到的情况，应该调用修改或者删除方法（删除方法考虑是否挪出去此判断，直接删除会不会速度快一点？）
+            // 判断产品类型，调用不同的接口地址（化学试剂、生物试剂、仪器耗材对应的接口地址不一致）
+            if (body["IsDelete"] == 1) {
 
-                    // 平台存在产品， 我司要删除的情况 
-                    switch (body["TemplateTypeId"]) {
-                        case 1:
-                            postOptions.path = chemDeletePath; // 化学试剂删除接口地址
-                            break;
-                        case 2:
-                            postOptions.path = bioDeletePath;  // 生物试剂删除接口地址
-                            break;
-                        case 3:
-                            postOptions.path = clDeletePath;   // 耗材删除接口地址
-                            break;
-                        default:
-                            break;
-                    }
-                } else {
-                    // 平台存在产品，我司要修改的情况                            
-                    switch (body["TemplateTypeId"]) {
-                        case 1:
-                            postOptions.path = chemUpdatePath;  // 化学试剂修改接口地址
-                            break;
-                        case 2:
-                            postOptions.path = bioUpdatePath;   // 生物试剂修改接口地址
-                            break;
-                        case 3:
-                            postOptions.path = clUpdatePath;    // 耗材修改接口地址
-                            break;
-                        default:
-                            break;
-                    }
+                // 平台存在产品， 我司要删除的情况 
+                switch (body["TemplateTypeId"]) {
+                    case 1:
+                        postOptions.path = chemDeletePath; // 化学试剂删除接口地址
+                        break;
+                    case 2:
+                        postOptions.path = bioDeletePath;  // 生物试剂删除接口地址
+                        break;
+                    case 3:
+                        postOptions.path = clDeletePath;   // 耗材删除接口地址
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                // 平台存在产品，我司要修改的情况                            
+                switch (body["TemplateTypeId"]) {
+                    case 1:
+                        postOptions.path = chemUpdatePath;  // 化学试剂修改接口地址
+                        break;
+                    case 2:
+                        postOptions.path = bioUpdatePath;   // 生物试剂修改接口地址
+                        break;
+                    case 3:
+                        postOptions.path = clUpdatePath;    // 耗材修改接口地址
+                        break;
+                    default:
+                        break;
                 }
             }
+
         }
 
         // 调用平台的接口推送数据，并返回结果 
