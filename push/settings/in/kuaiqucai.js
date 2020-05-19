@@ -12,13 +12,13 @@ let pullSql = ` select  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFo
                         j.Packnr, j.Quantity, j.Unit, r.CatalogPrice, r.Discount, r.Storage, zcl_mess.dbo.Fn_get_delivetime_days(j.JKCat, 'CN') AS Delivetime, '' as CategoryId
                 from (                        
                         SELECT TOP ${promiseSize} ID 
-                        FROM   ProdData.dbo.ThirdPartyPlatformEntryResult
+                        FROM   ProdData.dbo.Export_ThirdPartyPlatformEntryResult
                         WHERE  CustomerUnitOnPlatformId = 'b8e92ee96df948fe9e9b88a7db5783a2' 
                             AND SalesRegionID = 'CN' 
                             AND ID > @iMaxId
                         ORDER BY Id
                     ) r2
-                INNER JOIN ProdData.dbo.ThirdPartyPlatformEntryResult r ON r2.ID = r.ID                    
+                INNER JOIN ProdData.dbo.Export_ThirdPartyPlatformEntryResult r ON r2.ID = r.ID                    
                 INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId 
                 INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID 
                 INNER JOIN zcl_mess.dbo.manufactory m ON m.code = p.Manufactory `;

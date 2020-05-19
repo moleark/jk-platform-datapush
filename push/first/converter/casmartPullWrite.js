@@ -49,7 +49,7 @@ function GetGroups(templatetypeid) {
 //获取扩展属性
 function GetExtends(templateTypeId, purity, cascode, mf) {
     let result = [];
-    let rPurity = purity.replace('+', '').replace('?', '').replace('#', '').replace('-', '');
+    let rPurity = purity.replace('+', '').replace('?', '').replace('#', '').replace('-', '').replace('&', '');
     switch (templateTypeId) {
         case 1:
             result = [{ "key": 9, "value": rPurity }, { "key": 10, "value": cascode }, { "key": 11, "value": mf }];
