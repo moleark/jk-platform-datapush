@@ -56,7 +56,7 @@ function GETCOMPANY_BIO_NAME(templatetypeid, productName: string, productNameChi
             result = productNameChinese;
         }
     }
-    return result.replace('', ' ').replace(/[/]/g, '').replace(/[%]/g, '');
+    return result.replace('', ' ').replace(/[/]/g, '').replace(/[%]/g, '').replace(/[<sup>]/g, '').replace(/[<//sup>]/g, '').replace(/[ε]/g, '');
 }
 
 // 获取耗材产品名称
@@ -70,7 +70,7 @@ function GETCOMPANY_CL_NAME(templatetypeid, productName: string, productNameChin
             result = productNameChinese;
         }
     }
-    return result.replace('', ' ').replace(/[/]/g, '').replace(/[%]/g, '');
+    return result.replace('', ' ').replace(/[/]/g, '').replace(/[%]/g, '').replace(/[<sup>]/g, '').replace(/[<//sup>]/g, '').replace(/[ε]/g, '');;
 }
 
 // 获取发货时间，根据文档中不同的天数返回固定id (部分耗材产品没有发货时间)
