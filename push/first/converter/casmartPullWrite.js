@@ -314,8 +314,8 @@ async function CasmartPullWrite(joint, uqIn, data) {
         let result = false;
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let datetime = Date.now();
-        let timestamp = date_fns_1.format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
-        //let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
+        //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        let timestamp = date_fns_1.format(datetime, 'yyyy-MM-dd HH:mm:ss');
         //let postData = {};
         let options = {
             hostname: hostname,
@@ -382,17 +382,21 @@ async function CasmartPullWrite(joint, uqIn, data) {
             }
             else {
                 //修改产品信息
+                let cname = GetName(name);
+                let csubname = GetSubname(subname);
+                let stock = GetStockamount(Number(stockamount));
+                let image = GetImg(brandName);
                 let updateData = {
                     rid: rid,
-                    name: name,
-                    subname: subname,
+                    name: cname,
+                    subname: csubname,
                     mktprice: mktprice,
                     price: Math.round(price),
-                    stockamount: stockamount,
+                    stockamount: stock,
                     isinsale: 1,
                     intro: '',
                     instructions: [],
-                    imgs: []
+                    imgs: image
                 };
                 let updateJson = JSON.stringify(updateData);
                 let md5Str = md5(appid + updateJson + timestamp + secret);

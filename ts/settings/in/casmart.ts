@@ -33,7 +33,7 @@ let pullSql = ` SELECT  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFo
 
 let pullSql = ` DECLARE @id BIGINT;
                 SELECT  TOP ${promiseSize} @id=ID 
-                FROM    ProdData.dbo.ThirdPartyPlatformEntryResult
+                FROM    ProdData.dbo.Export_ThirdPartyPlatformEntryResult
                 WHERE   CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
                         AND ID > @iMaxId;
                 SELECT  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, r.CatalogPrice, r.SalePrice, r.Storage, 
@@ -46,8 +46,8 @@ let pullSql = ` DECLARE @id BIGINT;
                                         INNER JOIN opdata.dbo.ProductCategoryLanguage ee ON dd.ProductCategoryID=ee.ProductCategoryID AND ee.LanguageID='zh-CN'
                                         inner join ProdData.dbo.PlatformUnitCategoryWithJKMapping pm on pm.JKCategoryId = ee.ProductCategoryID and pm.PlatformUnitCode = 'casmart'
                                         LEFT JOIN  ProdData.dbo.PlatformUnitProductCategory cc ON pm.unitcategoryid = cc.id AND cc.PlatformUnitCode = pm.PlatformUnitCode 
-                                        WHERE dd.SaleProductID= r.productid ),'516') AS CategoryId 
-                FROM    ProdData.dbo.ThirdPartyPlatformEntryResult r
+                                        WHERE dd.SaleProductID= j.jkid ),'516') AS CategoryId 
+                FROM    ProdData.dbo.Export_ThirdPartyPlatformEntryResult r
                         INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId
                         INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID
                         INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID
