@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const uq_joint_1 = require("uq-joint");
+const date_fns_1 = require("date-fns");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
@@ -571,7 +572,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
                 }
             }
             else {
-                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + Date.now() + ',Message:平台不存在无需删除');
+                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:平台不存在无需删除');
                 return true;
             }
         }
@@ -616,17 +617,17 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         let postResult = JSON.parse(String(optionData));
         // 判断请求结果 并记录 
         if (postResult.CODE != 200) {
-            logger_1.logger.error('KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + Date.now() + ',Message:' + optionData + '}');
+            logger_1.logger.error('KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
             result = false;
         }
         else {
             if (Number(postResult.DATA.SUCCESS_NUM) < 1) {
                 //  此情况说明接口认证没有问题，但是可能数据上不符合，所以返回 true， 记录错误信息 继续执行；
-                logger_1.logger.error('KuaiQuCaiPush Fail:{ Code:' + postResult.CODE + ',PackageId:' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + Date.now() + ',Message:' + optionData + '}');
+                logger_1.logger.error('KuaiQuCaiPush Fail:{ Code:' + postResult.CODE + ',PackageId:' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
                 result = true; //  false;
             }
             else {
-                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + Date.now() + ',Message:' + optionData + '}');
+                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
                 result = true;
             }
         }
