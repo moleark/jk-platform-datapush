@@ -30,8 +30,8 @@ let pullSql = ` SELECT  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFo
 
 */
 
-/*
-let pullSql2 = ` DECLARE @id BIGINT;
+
+let pullSql = ` DECLARE @id BIGINT;
                 SELECT  TOP ${promiseSize} @id=ID 
                 FROM    ProdData.dbo.Export_ThirdPartyPlatformEntryResult
                 WHERE   CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
@@ -55,8 +55,8 @@ let pullSql2 = ` DECLARE @id BIGINT;
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
                         LEFT  JOIN zcl_mess.dbo.sc_restrict sc ON sc.chemid = pc.chemid
                 WHERE r.Id = @id; `;
-*/
 
+/*
 let pullSql = `SELECT  TOP ${promiseSize} r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, r.CatalogPrice, r.SalePrice, 
                         r.Storage, p.DescriptionC, p.Description, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, r.StateName, r.IsDelete, 
                         isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, isnull(p.MF,'N/A') AS MF,
@@ -74,8 +74,10 @@ let pullSql = `SELECT  TOP ${promiseSize} r.ID, r.PackageId, zcl_mess.dbo.fc_reC
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
                         LEFT  JOIN zcl_mess.dbo.sc_restrict sc ON sc.chemid = pc.chemid
                         WHERE   r.CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
-                        AND r.ID > @iMaxId
+                                and r.brandid <> 'J60'
+                                AND r.ID > @iMaxId
                         ORDER BY Id;`;
+*/
 
 export const Casmart: UqInTuid = {
         uq: 'platform/Push',
