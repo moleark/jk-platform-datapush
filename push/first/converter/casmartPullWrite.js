@@ -89,7 +89,7 @@ function GetBrandId(brandName) {
             result = 5578;
             break;
         case 'AccuStandard':
-            result = 554;
+            result = 2720;
             break;
         case 'Strem':
             result = 1523;
@@ -195,6 +195,9 @@ function GetMaker(brandName) {
     }
     else if (brandName == 'Dr. Ehrenstorfer') {
         result = 'Dr.Ehrenstorfer';
+    }
+    else if (brandName == 'Accustandard') {
+        result = 'Accustandard';
     }
     else {
         result = brandName;

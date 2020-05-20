@@ -104,14 +104,11 @@ var options = {
 };
 */
 //获取品牌
-/*
 //签名验证，转换为大写进行判断
 let md5Str = md5(appid + dateTime + secret);
 let GetProductBrand = '/v2/rest/Supplier/GetProductBrand?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
-
 let path = encodeURI(GetProductBrand);
 console.log(path);
-
 var options = {
     //host: 'preapi.casmart.com.cn',
     host: 'api.casmart.com.cn',
@@ -122,7 +119,6 @@ var options = {
         'Content-Type': 'application/json;charset=UTF-8'
     }
 };
-*/
 //获取分类
 /*
 //签名验证，转换为大写进行判断
@@ -164,16 +160,21 @@ var options = {
 };
 */
 //添加产品
+/*
 //签名验证，转换为大写进行判断
 let jsonData = JSON.stringify(addData);
 console.log(jsonData);
+
 let md5Str = md5(appid + jsonData + dateTime + secret);
 console.log(md5Str);
+
 let AddProduct = '/v2/rest/Supplier/AddProduct?appid=' + appid + '&data=' + jsonData + '&t=' + dateTime + '&sign=' + md5Str;
 console.log(AddProduct);
+
 let path = encodeURI(AddProduct);
 //let path = AddProduct;
 console.log(path);
+
 var options = {
     //host: 'preapi.casmart.com.cn',
     host: 'api.casmart.com.cn',
@@ -184,6 +185,7 @@ var options = {
         'Content-Type': 'application/json;charset=UTF-8'
     }
 };
+*/
 //修改产品
 /*
 //签名验证，转换为大写进行判断

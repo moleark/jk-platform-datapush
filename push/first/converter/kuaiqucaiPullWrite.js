@@ -454,6 +454,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         let { companyId, key, hostname, chemAddPath, chemDetailPath, chemUpdatePath, chemDeletePath, bioAddPath, bioDetailPath, bioUpdatePath, bioDeletePath, clAddPath, clDetailPath, clUpdatePath, clDeletePath } = kuaiQuCaiApiSetting;
         let DateTime = Date.now();
         let timestamp = parseFloat((DateTime / 1000).toFixed());
+        let recordTime = date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss'); // + 8 * 3600 * 1000
         let token = md5(timestamp + companyId + key);
         let postDataStr = {};
         // 用于查询请求 
@@ -572,7 +573,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
                 }
             }
             else {
-                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss') + ',Message:平台不存在无需删除');
+                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:平台不存在无需删除');
                 return true;
             }
         }
@@ -617,17 +618,17 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         let postResult = JSON.parse(String(optionData));
         // 判断请求结果 并记录 
         if (postResult.CODE != 200) {
-            logger_1.logger.error('KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
+            logger_1.logger.error('KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
             result = false;
         }
         else {
             if (Number(postResult.DATA.SUCCESS_NUM) < 1) {
                 //  此情况说明接口认证没有问题，但是可能数据上不符合，所以返回 true， 记录错误信息 继续执行；
-                logger_1.logger.error('KuaiQuCaiPush Fail:{ Code:' + postResult.CODE + ',PackageId:' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
+                logger_1.logger.error('KuaiQuCaiPush Fail:{ Code:' + postResult.CODE + ',PackageId:' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
                 result = true; //  false;
             }
             else {
-                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
+                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
                 result = true;
             }
         }
