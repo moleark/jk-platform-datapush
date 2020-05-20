@@ -523,6 +523,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
                         break;
                 }
             } else {
+                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + timestamp + ',Message:无需删除跳过');
                 return true;
             }
         } else {
