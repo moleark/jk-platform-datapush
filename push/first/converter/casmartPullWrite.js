@@ -447,7 +447,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 }
                 else {
                     result = true;
-                    console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: Update 转变为' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
+                    console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: edit 转变为' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
                 }
             }
             else {
