@@ -207,6 +207,10 @@ function GetMaker(brandName: string): string {
 
     if (brandName == 'J&K') {
         result = '百灵威';
+    } else if (brandName == 'J&K Scientific') {
+        result = '百灵威'
+    } else if (brandName == 'J&K-Abel') {
+        result = '百灵威'
     } else if (brandName == 'Dr. Ehrenstorfer') {
         result = 'Dr.Ehrenstorfer'
     } else if (brandName == 'Accustandard') {
@@ -480,7 +484,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     logger.error('CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }');
                 } else {
                     result = true;
-                    console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
+                    console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: Update 转变为' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
                 }
 
             } else {

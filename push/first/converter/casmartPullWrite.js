@@ -193,6 +193,12 @@ function GetMaker(brandName) {
     if (brandName == 'J&K') {
         result = '百灵威';
     }
+    else if (brandName == 'J&K Scientific') {
+        result = '百灵威';
+    }
+    else if (brandName == 'J&K-Abel') {
+        result = '百灵威';
+    }
     else if (brandName == 'Dr. Ehrenstorfer') {
         result = 'Dr.Ehrenstorfer';
     }
@@ -441,7 +447,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 }
                 else {
                     result = true;
-                    console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
+                    console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: Update 转变为' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
                 }
             }
             else {
