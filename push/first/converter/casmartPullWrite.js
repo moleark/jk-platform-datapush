@@ -301,7 +301,8 @@ function GetFarmetName(str) {
     let result = '';
     //去除空格、反斜杠、括号、+- &
     //replace(/\s+/g, "")
-    result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[(]/g, ' ').replace(/[)]/g, ' ').replace(/[（]/g, ' ').replace(/[）]/g, ' ').replace('+', '').replace('-', '').replace(/[&]/g, 'N').replace(/[:]/g, ' ');
+    //.replace(/[(]/g, ' ').replace(/[)]/g, ' ').replace(/[（]/g, ' ').replace(/[）]/g, ' ')
+    result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace('+', '').replace('-', '').replace(/[&]/g, 'N').replace(/[:]/g, ' ');
     return result;
 }
 //喀斯玛平台限制库存为0的产品无法下订单，所以在此把库存为0的变为10 
