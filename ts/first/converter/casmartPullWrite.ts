@@ -490,6 +490,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             }
             //新增转修改 
+            /*
             else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步') {
                 stateName = 'edit';
                 let updateDataAgain = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount);
@@ -508,6 +509,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: add 转 ' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
                 }
             }
+            */
             //失败
             else {
                 result = false;

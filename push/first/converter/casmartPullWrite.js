@@ -452,6 +452,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 }
             }
             //新增转修改 
+            /*
             else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步') {
                 stateName = 'edit';
                 let updateDataAgain = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount);
@@ -460,17 +461,17 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 let updateProductPathAgain = encodeURI(updatePath + '?appid=' + appid + '&data=' + updateJsonAgain + '&t=' + timestamp + '&sign=' + md5StrAgain);
                 options.path = updateProductPathAgain;
                 //再次调用平台的接口推送数据，并返回结果
-                let optionDataAgain = await HttpRequestHelper_1.HttpRequest_GET(options);
+                let optionDataAgain = await HttpRequest_GET(options);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
                 if (postResultAgain.retCode != 0) {
                     result = false;
-                    logger_1.logger.error('CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }');
-                }
-                else {
+                    logger.error('CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }');
+                } else {
                     result = true;
                     console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: add 转 ' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
                 }
             }
+            */
             //失败
             else {
                 result = false;
