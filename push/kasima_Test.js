@@ -53,15 +53,15 @@ let upData = {
 //这是需要提交的数据
 ////var content = querystring.stringify(data);
 //测试环境
-/*
 let appid = '507';
 let secret = '2U75AuyZQAUHSXNdbSgkEUVdmz6oPwqD';
-let dateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
-*/
+let dateTime = date_fns_1.format(new Date(), 'yyyy-MM-dd HH:mm:ss');
 //生产环境
+/*
 let appid = '448';
 let secret = '8n51q8VWJJKfVfgCOdlhKFASXdir5vFV';
-let dateTime = date_fns_1.format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+let dateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+*/
 //获取商品类型 
 /*
 //签名验证，转换为大写进行判断
@@ -73,8 +73,8 @@ console.log(path);
 console.log(encodeURI(path));
 
 var options = {
-    //host: 'preapi.casmart.com.cn',
-    host: 'api.casmart.com.cn',
+    host: 'preapi.casmart.com.cn',
+    //host: 'api.casmart.com.cn',
     //port: 443,
     path: path,
     method: 'GET',
@@ -104,33 +104,17 @@ var options = {
 };
 */
 //获取品牌
-//签名验证，转换为大写进行判断
-let md5Str = md5(appid + dateTime + secret);
-let GetProductBrand = '/v2/rest/Supplier/GetProductBrand?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
-let path = encodeURI(GetProductBrand);
-console.log(path);
-var options = {
-    //host: 'preapi.casmart.com.cn',
-    host: 'api.casmart.com.cn',
-    //port: 443,
-    path: path,
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-    }
-};
-//获取分类
 /*
 //签名验证，转换为大写进行判断
 let md5Str = md5(appid + dateTime + secret);
-let GetProductCategory = '/v2/rest/Supplier/GetProductCategory?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
+let GetProductBrand = '/v2/rest/Supplier/GetProductBrand?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
 
-let path = encodeURI(GetProductCategory);
+let path = encodeURI(GetProductBrand);
 console.log(path);
 
 var options = {
-    //host: 'preapi.casmart.com.cn',
-    host: 'api.casmart.com.cn',
+    host: 'preapi.casmart.com.cn',
+    //host: 'api.casmart.com.cn',
     //port: 443,
     path: path,
     method: 'GET',
@@ -139,6 +123,22 @@ var options = {
     }
 };
 */
+//获取分类
+//签名验证，转换为大写进行判断
+let md5Str = md5(appid + dateTime + secret);
+let GetProductCategory = '/v2/rest/Supplier/GetProductCategory?appid=' + appid + '&t=' + dateTime + '&sign=' + md5Str;
+let path = encodeURI(GetProductCategory);
+console.log(path);
+var options = {
+    host: 'preapi.casmart.com.cn',
+    //host: 'api.casmart.com.cn',
+    //port: 443,
+    path: path,
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json;charset=UTF-8'
+    }
+};
 //获取分组
 /*
 //签名验证，转换为大写进行判断
