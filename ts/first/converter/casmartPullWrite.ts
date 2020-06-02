@@ -489,9 +489,8 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 }
 
             }
-            //新增转修改 
-
-            else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步' && (name == null || name == '')) {
+            //新增转修改  && (name == null || name == '')
+            else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步') {
                 stateName = 'edit';
                 let updateDataAgain = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount);
                 let updateJsonAgain = JSON.stringify(updateDataAgain);

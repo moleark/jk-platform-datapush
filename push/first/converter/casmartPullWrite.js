@@ -451,8 +451,8 @@ async function CasmartPullWrite(joint, uqIn, data) {
                     console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: edit 转 ' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');
                 }
             }
-            //新增转修改 
-            else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步' && (name == null || name == '')) {
+            //新增转修改  && (name == null || name == '')
+            else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步') {
                 stateName = 'edit';
                 let updateDataAgain = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount);
                 let updateJsonAgain = JSON.stringify(updateDataAgain);
