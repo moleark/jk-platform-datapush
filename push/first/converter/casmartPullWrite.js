@@ -308,8 +308,23 @@ function GetFarmetName(str) {
 //喀斯玛平台限制库存为0的产品无法下订单，所以在此把库存为0的变为10 
 function GetStockamount(amount) {
     let result = 10;
-    if (amount > 0) {
-        result = amount;
+    if (amount > 0 && amount < 11) {
+        result = 10;
+    }
+    else if (amount > 10 && amount < 21) {
+        result = 20;
+    }
+    else if (amount > 20 && amount < 31) {
+        result = 30;
+    }
+    else if (amount > 30 && amount < 40) {
+        result = 40;
+    }
+    else if (amount > 40 && amount < 51) {
+        result = 50;
+    }
+    else if (amount > 50) {
+        result = 60;
     }
     return result;
 }

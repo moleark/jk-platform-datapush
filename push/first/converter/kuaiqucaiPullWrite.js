@@ -437,6 +437,28 @@ function GetPACKAGE_TYPE(templatetypeid, packageSize, unit) {
     }
     return result;
 }
+function GetStockamount(amount) {
+    let result = 0;
+    if (amount > 0 && amount < 11) {
+        result = 10;
+    }
+    else if (amount > 10 && amount < 21) {
+        result = 20;
+    }
+    else if (amount > 20 && amount < 31) {
+        result = 30;
+    }
+    else if (amount > 30 && amount < 40) {
+        result = 40;
+    }
+    else if (amount > 40 && amount < 51) {
+        result = 50;
+    }
+    else if (amount > 50) {
+        result = 60;
+    }
+    return result;
+}
 // 对查询到的产品进行处理 
 async function KuaiQuCaiPullWrite(joint, uqIn, data) {
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
@@ -504,6 +526,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
             let CL_TYPE_ID = GetCL_TYPE_ID(body["TemplateTypeId"]);
             let PACKAGE_TYPE = GetPACKAGE_TYPE(body["TemplateTypeId"], body["VALUME"], body["VALUMEUNIT_ID"]);
             let IMG = GetImg(body["TemplateTypeId"]);
+            let StockAmount = GetStockamount(Number(body["STOCK"]));
             let postDataJson = {
                 COMPANY_SALE_NO: body["COMPANY_SALE_NO"],
                 CHEM_ID: CHEM_ID,
@@ -517,7 +540,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
                 SPEC_MARK: SPEC_MARK,
                 SALE_MARK: 1,
                 PURITY: body["PURITY"].substr(0, 19),
-                STOCK: body["STOCK"],
+                STOCK: StockAmount,
                 SRC_COMPANY: BRAND_NAME,
                 ARTICLE_NO: body["ARTICLE_NO"],
                 DISCOUNT_RATE: body["DISCOUNT_RATE"],

@@ -1,11 +1,11 @@
 {
     "name": "jk-platform-datapush",
     "port": 3018,
-    "interval": 3000,
+    "interval": 60000,
     "firstEntities": [],
     "afterFirstEntities": [
         {
-            "name": "kuaiqucai",
+            "name": "kuaiqucai1",
             "inervalUnit": 1
         },
         {
