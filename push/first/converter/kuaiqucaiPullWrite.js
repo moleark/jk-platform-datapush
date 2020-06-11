@@ -454,8 +454,14 @@ function GetStockamount(amount) {
     else if (amount > 40 && amount < 51) {
         result = 50;
     }
-    else if (amount > 50) {
+    else if (amount > 50 && amount < 61) {
         result = 60;
+    }
+    else if (amount > 60 && amount < 100) {
+        result = 99;
+    }
+    else if (amount > 99) {
+        result = 100;
     }
     return result;
 }
@@ -476,7 +482,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         let { companyId, key, hostname, chemAddPath, chemDetailPath, chemUpdatePath, chemDeletePath, bioAddPath, bioDetailPath, bioUpdatePath, bioDeletePath, clAddPath, clDetailPath, clUpdatePath, clDeletePath } = kuaiQuCaiApiSetting;
         let DateTime = Date.now();
         let timestamp = parseFloat((DateTime / 1000).toFixed());
-        let recordTime = date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + 8 * 3600 * 1000;
+        let recordTime = date_fns_1.format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
         let token = md5(timestamp + companyId + key);
         let postDataStr = {};
         // 用于查询请求 

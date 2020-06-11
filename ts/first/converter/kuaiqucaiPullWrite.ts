@@ -390,8 +390,12 @@ function GetStockamount(amount: number): number {
         result = 40;
     } else if (amount > 40 && amount < 51) {
         result = 50;
-    } else if (amount > 50) {
+    } else if (amount > 50 && amount < 61) {
         result = 60;
+    } else if (amount > 60 && amount < 100) {
+        result = 99;
+    } else if (amount > 99) {
+        result = 100;
     }
     return result;
 }
@@ -415,7 +419,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
             bioUpdatePath, bioDeletePath, clAddPath, clDetailPath, clUpdatePath, clDeletePath } = kuaiQuCaiApiSetting;
         let DateTime: number = Date.now();
         let timestamp = parseFloat((DateTime / 1000).toFixed());
-        let recordTime = format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + 8 * 3600 * 1000;
+        let recordTime = format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
         let token = md5(timestamp + companyId + key);
         let postDataStr = {};
 

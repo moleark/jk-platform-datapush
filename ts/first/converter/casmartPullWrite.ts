@@ -338,8 +338,12 @@ function GetStockamount(amount: number): number {
         result = 40;
     } else if (amount > 40 && amount < 51) {
         result = 50;
-    } else if (amount > 50) {
+    } else if (amount > 50 && amount < 61) {
         result = 60;
+    } else if (amount > 60 && amount < 100) {
+        result = 99;
+    } else if (amount > 99) {
+        result = 100;
     }
     return result;
 }
