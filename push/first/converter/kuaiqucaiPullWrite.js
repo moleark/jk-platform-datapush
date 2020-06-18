@@ -482,7 +482,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         let { companyId, key, hostname, chemAddPath, chemDetailPath, chemUpdatePath, chemDeletePath, bioAddPath, bioDetailPath, bioUpdatePath, bioDeletePath, clAddPath, clDetailPath, clUpdatePath, clDeletePath } = kuaiQuCaiApiSetting;
         let DateTime = Date.now();
         let timestamp = parseFloat((DateTime / 1000).toFixed());
-        let recordTime = date_fns_1.format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        let recordTime = date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss'); // + 8 * 3600 * 1000
         let token = md5(timestamp + companyId + key);
         let postDataStr = {};
         // 用于查询请求 

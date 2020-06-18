@@ -419,7 +419,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
             bioUpdatePath, bioDeletePath, clAddPath, clDetailPath, clUpdatePath, clDeletePath } = kuaiQuCaiApiSetting;
         let DateTime: number = Date.now();
         let timestamp = parseFloat((DateTime / 1000).toFixed());
-        let recordTime = format(Date.now() + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        let recordTime = format(Date.now(), 'yyyy-MM-dd HH:mm:ss'); // + 8 * 3600 * 1000
         let token = md5(timestamp + companyId + key);
         let postDataStr = {};
 
