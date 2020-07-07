@@ -50,12 +50,13 @@ function GetGroups(templatetypeid) {
 function GetExtends(templateTypeId, purity, cascode, mf) {
     let result = [];
     let rPurity = purity.replace('+', '').replace('?', '').replace('#', '').replace('-', '').replace('&', '');
+    let rMF = mf.replace('#', '').replace('^', '').replace('&', '');
     switch (templateTypeId) {
         case 1:
-            result = [{ "key": 9, "value": rPurity }, { "key": 10, "value": cascode }, { "key": 11, "value": mf }];
+            result = [{ "key": 9, "value": rPurity }, { "key": 10, "value": cascode }, { "key": 11, "value": rMF }];
             break;
         case 2:
-            result = [{ "key": 9, "value": rPurity }, { "key": 11, "value": mf }];
+            result = [{ "key": 9, "value": rPurity }, { "key": 11, "value": rMF }];
             break;
         default:
             result = [];
@@ -134,7 +135,7 @@ function GetBrandId(brandName) {
             result = 300150934;
             break;
         case 'J&K Scientific':
-            result = 300150934;
+            result = 300245926;
             break;
         case 'Accela':
             result = 2233;
@@ -162,6 +163,15 @@ function GetBrandId(brandName) {
             break;
         case 'accela':
             result = 2233;
+            break;
+        case 'Apollo':
+            result = 4079;
+            break;
+        case 'Accela':
+            result = 300218916;
+            break;
+        case 'Alfa':
+            result = 324;
             break;
     }
     return result;
@@ -216,6 +226,9 @@ function GetImg(brandName) {
     switch (brandName) {
         case 'J&K':
             result = ['https://www.jkchemical.com/static/casmart/JNK.png'];
+            break;
+        case 'J&K Scientific':
+            result = [''];
             break;
         case 'Amethyst':
             result = ['https://www.jkchemical.com/static/casmart/Amethyst.png'];
@@ -301,8 +314,8 @@ function GetFarmetName(str) {
     let result = '';
     //去除空格、反斜杠、括号、+- &
     //replace(/\s+/g, "")
-    //.replace(/[(]/g, ' ').replace(/[)]/g, ' ').replace(/[（]/g, ' ').replace(/[）]/g, ' ').replace('-', '')
-    result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[&]/g, 'N').replace(/[:]/g, ' ').replace(/[%]/g, ' ').replace(/[+]/g, 'N');
+    //.replace(/[(]/g, ' ').replace(/[)]/g, ' ').replace(/[（]/g, ' ').replace(/[）]/g, ' ').replace('-', '') replace(/[%]/g, '').
+    result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[&]/g, 'N').replace(/[:]/g, ' ').replace(/[+]/g, '');
     return result;
 }
 //喀斯玛平台限制库存为0的产品无法下订单，所以在此把库存为0的变为10 
