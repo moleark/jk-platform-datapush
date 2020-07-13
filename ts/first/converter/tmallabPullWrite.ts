@@ -1,15 +1,182 @@
 import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 //import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
-import _ from 'lodash';
-import { format } from 'date-fns';
+import _, { round } from 'lodash';
+import { format, getUnixTime } from 'date-fns';
 let md5 = require('md5');
 import config from 'config';
 import { logger } from "../../tools/logger";
-import { HttpRequest_GET } from '../../tools/HttpRequestHelper';
+import { HttpRequest_GET, HttpRequest_POST } from '../../tools/HttpRequestHelper';
 
 
 //喀斯玛接口相关配置
-const casmartApiSetting = config.get<any>("casmartApi");
+const tmallabApiSetting = config.get<any>("tmallabApi");
+
+
+function GetProductType(templateTypeId: string): string {
+    let result = '';
+    if (templateTypeId == '1') {
+        result = '化学试剂';
+    }
+    else if (templateTypeId == '2') {
+        result = '生物试剂';
+    } else if (templateTypeId == '3') {
+        result = '实验耗材';
+    }
+    return result;
+}
+
+function GetProductUnit(templateTypeId: string, Packnr: string, Unit: string): string {
+    let result = '';
+    if (templateTypeId == '1' || templateTypeId == '2') {
+        result = Packnr + '瓶';
+    } else if (templateTypeId == '3') {
+        if (Unit == 'APPLS' || Unit == 'MG' || Unit == 'ΜL') {
+            result = Packnr + 'PAK';
+        } else {
+            result = Packnr + Unit;
+        }
+
+    }
+    return result;
+}
+
+function GetStockamount(amount: number): number {
+    let result = 0;
+    if (amount > 0 && amount < 11) {
+        result = 10;
+    } else if (amount > 10 && amount < 21) {
+        result = 20;
+    } else if (amount > 20 && amount < 31) {
+        result = 30;
+    } else if (amount > 30 && amount < 40) {
+        result = 40;
+    } else if (amount > 40 && amount < 51) {
+        result = 50;
+    } else if (amount > 50 && amount < 61) {
+        result = 60;
+    } else if (amount > 60 && amount < 100) {
+        result = 99;
+    } else if (amount > 99) {
+        result = 100;
+    }
+    return result;
+}
+
+function GetDelivetime(Storage: number) {
+
+    let result = '期货';
+    if (Storage > 0) {
+        result = '现货(交货期1-3天)';
+    }
+    return result;
+}
+
+function GetBrand(brandName: string): any {
+    let result = '';
+    if (brandName == 'Frontier') {
+        result = 'Frontier Scientific';
+    }
+    else if (brandName == 'Dr. Ehrenstorfer') {
+        result = 'DR.E';
+    }
+    else {
+        result = brandName;
+    }
+    return result;
+}
+
+function GetDetailUrl(JKid: string): any {
+    let result = '';
+    result = 'http://www.jkchemical.com/CH/Products/' + JKid + '.html';
+    return result;
+}
+
+function GetImg(brandName: string): any {
+
+    let result = '';
+    switch (brandName) {
+        case 'J&K':
+            result = 'https://www.jkchemical.com/static/casmart/JNK.png';
+            break;
+        case 'J&K Scientific':
+            result = '';
+            break;
+        case 'Amethyst':
+            result = 'https://www.jkchemical.com/static/casmart/Amethyst.png';
+            break;
+        case 'Acros':
+            result = 'https://www.jkchemical.com/static/casmart/Acros.png';
+            break;
+        case 'TCI':
+            result = 'https://www.jkchemical.com/static/casmart/TCI.png';
+            break;
+        case 'SERVA':
+            result = 'https://www.jkchemical.com/static/casmart/Serva.jpg';
+            break;
+        case 'Serva':
+            result = 'https://www.jkchemical.com/static/casmart/Serva.jpg';
+            break;
+        case 'Fluorochem':
+            result = 'https://www.jkchemical.com/static/casmart/Fluorochem.jpg';
+            break;
+        case 'AccuStandard':
+            result = 'https://www.jkchemical.com/static/casmart/Accustandard.png';
+            break;
+        case 'Strem':
+            result = 'https://www.jkchemical.com/static/casmart/Strem.png';
+            break;
+        case 'TRC':
+            result = 'https://www.jkchemical.com/static/casmart/TRC.jpg';
+            break;
+        case 'Apollo':
+            result = 'https://www.jkchemical.com/static/casmart/Apollo.jpg';
+            break;
+        case 'Cambridge Isotope Laboratories（CIL）':
+            result = 'https://www.jkchemical.com/static/casmart/CIL.png';
+            break;
+        case 'Polymer Source':
+            result = 'https://www.jkchemical.com/static/casmart/Polymersource.png';
+            break;
+        case 'Matrix':
+            result = 'https://www.jkchemical.com/static/casmart/Matrix.png';
+            break;
+        case 'Rieke Metals':
+            result = 'https://www.jkchemical.com/static/casmart/RiekeMetals.jpg';
+            break;
+        case 'Frontier':
+            result = 'https://www.jkchemical.com/static/casmart/Frontier.png';
+            break;
+        case 'Wilmad':
+            result = 'https://www.jkchemical.com/static/casmart/Wilmad.jpg';
+            break;
+        case '1-Material':
+            result = 'https://www.jkchemical.com/static/casmart/1-Material.png';
+            break;
+        case 'Alfa':
+            result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
+            break;
+        default:
+            result = '';
+            break;
+    }
+    return result;
+}
+
+function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, catalogPrice, activeDiscount, startTime, endTime, appSecurity): any {
+    let PromotionInfo = {
+        vipCode: vipCode,
+        brand: brand,
+        itemNum: itemNum,
+        packingSpecification: packingSpecification,
+        price: Math.round(catalogPrice * activeDiscount),
+        startTime: startTime,
+        endTime: endTime,
+        appSecurity: appSecurity,
+        platform: '',
+        version: '1.0'
+    }
+    return PromotionInfo;
+}
 
 // 推送
 export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Promise<boolean> {
@@ -21,23 +188,24 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     //let mapToUq = new MapToUq(this);
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let { rid, 货号, 品牌, 包装规格, CAS, 目录价str, 中文名称, 英文名称, 交货期, 储存温度, 纯度等级, 库存, MarketingID, templateTypeId, stateName, isDelete } = body;
+    let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+        templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, pStartTime, pEndTime } = body;
 
     try {
         //console.log(body);
         let result = false;
 
-        let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
+        let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
         let datetime = Date.now();
         //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
         let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
-        //let postData = {};
+        let postDataStr = {};
         let options = {
             hostname: hostname,
             path: '',
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json;charset=UTF-8;'
+                'Content-Type': 'application/json;charset=UTF-8'
             }
         };
 
@@ -45,47 +213,85 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         if (isDelete == '1') {
 
             let deleteData = {
-
+                vipCode: vipCode,
+                platform: '',
+                brand: brand,
+                itemNum: itemNum,
+                packingSpecification: packingSpecification,
+                appSecurity: appSecurity,
+                version: '1.0'
             };
 
-            let deleteJson = JSON.stringify(deleteData);
-            let md5Str = md5(appid + deleteJson + timestamp + secret);
-            let deleteProductPath = encodeURI(updatePath + '?appid=' + appid + '&data=' + deleteJson + '&t=' + timestamp + '&sign=' + md5Str);
-            options.path = deleteProductPath;
+            postDataStr = JSON.stringify(deleteData);
+            options.path = deleteOneProductPath;
 
         } else {
-            //新增产品上架情况
-            if (stateName == 'add') {
-
-
-
-            } else {
-
-                //修改产品信息
-
+            //新增和修改产品
+            let addData = {
+                product: [{
+                    "品牌": GetBrand(brand),
+                    "货号": itemNum,
+                    "包装规格": packingSpecification,
+                    "销售单位": GetProductUnit(templateTypeId, packnr, unit),
+                    "英文名称": description,
+                    "中文名称": descriptionC,
+                    "目录价str": catalogPrice,
+                    "纯度/等级": purity,
+                    "库存": GetStockamount(storage),
+                    "交货期": GetDelivetime(storage),
+                    "储存温度": descriptionST,
+                    "来源": "",
+                    "运输条件": "",
+                    "CAS": casFormat,
+                    "MDL": mdlNumber,
+                    "最小包装": "",
+                    "最小包装数量": "",
+                    "产品详情链接": GetDetailUrl(jkid),
+                    "产品图片链接": GetImg(brand)
+                }],
+                productType: GetProductType(templateTypeId),
+                vipCode: vipCode,
+                platform: '',
+                appSecurity: appSecurity,
+                version: '1.0'
             }
+
+            postDataStr = JSON.stringify(addData);
+            options.path = pushProductPath;
         }
 
-        //调用平台的接口推送数据，并返回结果
-        let optionData = await HttpRequest_GET(options);
+        // 调用平台的接口推送数据，并返回结果
+        let optionData = await HttpRequest_POST(options, postDataStr);
         let postResult = JSON.parse(String(optionData));
 
-        if (postResult.retCode != 0) {
+        // 判断推送结果
+        if (postResult.flag != 0) {
 
-            //
-            if (postResult.retCode == 1 && stateName == 'edit' && postResult.message == '商家：448 未找到商品信息') {
+            // 是否为市场活动产品？ 是的话推送活动价
+            if (activeDiscount != '' && activeDiscount != null) {
+                let promotionData = await GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, catalogPrice, activeDiscount, pStartTime, pEndTime, appSecurity);
+                postDataStr = JSON.stringify(promotionData);
+                options.path = updatePromotionInfoPath;
 
-            }
-            //失败
-            else {
-                result = false;
-                logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }');
+                //再次调用平台的接口推送数据，并返回结果
+                let optionDataAgain = await HttpRequest_POST(options, postDataStr);
+                let postResultAgain = JSON.parse(String(optionDataAgain));
+
+                if (postResultAgain.flag != 0) {
+                    console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+                    result = true;
+                } else {
+                    logger.error('TmallabPush Fail:{ Code:' + postResultAgain.CODE + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+                    result = false;
+                }
+            } else {
+                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+                result = true;
             }
 
         } else {
-            //成功
+            logger.error('TmallabPush Fail:{ Code:' + postResult.CODE + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
             result = true;
-            console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionData + '}');
         }
 
         return result;
