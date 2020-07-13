@@ -4,56 +4,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 //import { UqInTuid } from "../../uq-joint";
-const casmartPullWrite_1 = require("../../first/converter/casmartPullWrite");
+const tmallabPullWrite_1 = require("../../first/converter/tmallabPullWrite");
 const config_1 = __importDefault(require("config"));
 const promiseSize = config_1.default.get("promiseSize");
-let pullSql = `SELECT  TOP ${promiseSize} r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, r.CatalogPrice, r.SalePrice, 
-                        r.Storage, p.DescriptionC, p.Description, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, r.StateName, r.IsDelete, 
-                        isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, isnull(p.MF,'N/A') AS MF,
-                        zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime, (CASE WHEN sc.chemid IS NULL  then 'No' ELSE 'Yes' END ) as IsWX,
-                        isnull((SELECT  TOP 1 cc.ClassCode 
-                        FROM	opdata.dbo.SaleProductProductCategory dd
-                                INNER JOIN opdata.dbo.ProductCategoryLanguage ee ON dd.ProductCategoryID=ee.ProductCategoryID AND ee.LanguageID='zh-CN'
-                                inner join ProdData.dbo.PlatformUnitCategoryWithJKMapping pm on pm.JKCategoryId = ee.ProductCategoryID and pm.PlatformUnitCode = 'casmart'
-                                LEFT JOIN  ProdData.dbo.PlatformUnitProductCategory cc ON pm.unitcategoryid = cc.id AND cc.PlatformUnitCode = pm.PlatformUnitCode 
-                                WHERE dd.SaleProductID= j.jkid ),'516') AS CategoryId 
-                FROM    ProdData.dbo.Export_ThirdPartyPlatformEntryResult r
+let pullSql = ` SELECT TOP ${promiseSize} r.ID, m.name as BrandName, p.OriginalId, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
+                        p.DescriptionC, p.Description, r.CatalogPrice, zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime, isnull(p.purity,'N/A') AS Purity, 
+                        zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, r.Storage, r.StateName, r.IsDelete, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, x.MarketingID
+                FROM    (
+                        SELECT TOP 1 ID 
+                        FROM   ProdData.dbo.Export_ThirdPartyPlatformEntryResult
+                        WHERE  CustomerUnitOnPlatformId = '779db9cf4f9b49709ab61140af5e4edf' 
+                                AND Id > @iMaxId 
+                        ORDER BY Id
+                        ) r2
+                        INNER JOIN ProdData.dbo.Export_ThirdPartyPlatformEntryResult r ON r.Id = r2.Id
                         INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId
-                        INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID
+                        INNER JOIN zcl_mess.dbo.products p ON p.JKid = j.JKID
                         INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
-                        LEFT  JOIN zcl_mess.dbo.sc_restrict sc ON sc.chemid = pc.chemid
-                        WHERE   r.CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
-                                AND r.ID > @iMaxId
-                        ORDER BY Id;`;
-exports.Casmart = {
+                        LEFT JOIN (
+                                SELECT  m.MarketingID, pm.jkcat
+                                FROM    zcl_mess.dbo.ProductsMarketing pm
+                                        INNER JOIN dbs.dbo.marketing m ON pm.MarketingID = m.MarketingID
+                                WHERE   m.MStatus = 'E' AND m.Market_code = 'CN' AND m.PStartTime < GETDATE() AND ISNULL( m.PEndTime, '2050-01-01' ) > GETDATE()
+                                ) x ON x.jkcat = r.PackageId `;
+exports.Tmallab = {
     uq: 'platform/Push',
     type: 'tuid',
-    entity: 'casmart',
+    entity: 'tmallab',
     key: 'ID',
     mapper: {
         $id: 'ID',
+        货号: "OriginalId",
+        品牌: "BrandName",
+        包装规格: "Package",
+        CAS: "CasFormat",
+        目录价str: "CatalogPrice",
+        中文名称: "DescriptionC",
+        英文名称: "Description",
+        交货期: "Delivetime",
+        储存温度: "",
+        纯度等级: "Purity",
+        库存: "Storage",
+        MarketingID: "MarketingID",
         templateTypeId: "Templatetypeid",
-        rid: "PackageId",
-        code: "OriginalId",
-        brandName: "BrandName",
-        spec: "Package",
-        cascode: "CasFormat",
-        mktprice: "CatalogPrice",
-        price: "SalePrice",
-        name: "DescriptionC",
-        subname: "Description",
-        deliverycycle: "Delivetime",
-        purity: "Purity",
-        mf: "MF",
-        stockamount: "Storage",
         stateName: 'StateName',
-        isDelete: "IsDelete",
-        typeId: "CategoryId",
-        iswx: "IsWX"
+        isDelete: "IsDelete"
     },
     pull: pullSql,
-    pullWrite: casmartPullWrite_1.CasmartPullWrite,
-    firstPullWrite: casmartPullWrite_1.CasmartPullWrite,
+    pullWrite: tmallabPullWrite_1.tmallabPullWrite,
+    firstPullWrite: tmallabPullWrite_1.tmallabPullWrite,
 };
 //# sourceMappingURL=tmallab.js.map

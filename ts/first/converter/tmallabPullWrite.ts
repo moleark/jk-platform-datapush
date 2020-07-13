@@ -21,8 +21,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     //let mapToUq = new MapToUq(this);
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let { templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount,
-        stateName, isDelete, typeId, iswx } = body;
+    let { rid, 货号, 品牌, 包装规格, CAS, 目录价str, 中文名称, 英文名称, 交货期, 储存温度, 纯度等级, 库存, MarketingID, templateTypeId, stateName, isDelete } = body;
 
     try {
         //console.log(body);
