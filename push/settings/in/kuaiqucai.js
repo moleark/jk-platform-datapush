@@ -15,7 +15,7 @@ let pullSql = ` select  r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFo
                         FROM   ProdData.dbo.Export_ThirdPartyPlatformEntryResult
                         WHERE  CustomerUnitOnPlatformId = 'b8e92ee96df948fe9e9b88a7db5783a2' 
                             AND SalesRegionID = 'CN' 
-                            AND ( CAS<>0 OR BrandId IN ('J18','M64','L50','P30','R35') )
+                            AND ( CAS<>0 OR BrandId IN ('J18','M64','L50','P30','R35') ) AND IsDelete = 0
                             AND ID > @iMaxId
                         ORDER BY Id
                     ) r2
