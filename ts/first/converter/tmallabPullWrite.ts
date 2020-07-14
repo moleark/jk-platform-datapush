@@ -1,5 +1,5 @@
 import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
-//import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
+// import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
 import _, { round } from 'lodash';
 import { format, getUnixTime } from 'date-fns';
 let md5 = require('md5');
@@ -8,10 +8,10 @@ import { logger } from "../../tools/logger";
 import { HttpRequest_GET, HttpRequest_POST } from '../../tools/HttpRequestHelper';
 
 
-//喀斯玛接口相关配置
+// 喀斯玛接口相关配置
 const tmallabApiSetting = config.get<any>("tmallabApi");
 
-
+// 获取产品类型
 function GetProductType(templateTypeId: string): string {
     let result = '';
     if (templateTypeId == '1') {
@@ -25,6 +25,7 @@ function GetProductType(templateTypeId: string): string {
     return result;
 }
 
+// 获取产品单位
 function GetProductUnit(templateTypeId: string, Packnr: string, Unit: string): string {
     let result = '';
     if (templateTypeId == '1' || templateTypeId == '2') {
@@ -40,6 +41,7 @@ function GetProductUnit(templateTypeId: string, Packnr: string, Unit: string): s
     return result;
 }
 
+// 获取库存范围数据
 function GetStockamount(amount: number): number {
     let result = 0;
     if (amount > 0 && amount < 11) {
@@ -62,6 +64,7 @@ function GetStockamount(amount: number): number {
     return result;
 }
 
+// 获取货期
 function GetDelivetime(Storage: number) {
 
     let result = '期货';
@@ -71,6 +74,7 @@ function GetDelivetime(Storage: number) {
     return result;
 }
 
+// 获取品牌
 function GetBrand(brandName: string): any {
     let result = '';
     if (brandName == 'Frontier') {
@@ -85,12 +89,14 @@ function GetBrand(brandName: string): any {
     return result;
 }
 
+// 获取产品链接地址
 function GetDetailUrl(JKid: string): any {
     let result = '';
     result = 'http://www.jkchemical.com/CH/Products/' + JKid + '.html';
     return result;
 }
 
+// 获取产品图片
 function GetImg(brandName: string): any {
 
     let result = '';
@@ -162,6 +168,7 @@ function GetImg(brandName: string): any {
     return result;
 }
 
+// 获取促销产品推送数据格式
 function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, catalogPrice, activeDiscount, startTime, endTime, appSecurity): any {
     let PromotionInfo = {
         vipCode: vipCode,
@@ -192,12 +199,12 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, pStartTime, pEndTime } = body;
 
     try {
-        //console.log(body);
+        // console.log(body);
         let result = false;
 
         let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
         let datetime = Date.now();
-        //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        // let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
         let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
         let postDataStr = {};
         let options = {
@@ -209,7 +216,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             }
         };
 
-        //产品下架的情况
+        // 产品下架的情况
         if (isDelete == '1') {
 
             let deleteData = {
@@ -226,7 +233,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             options.path = deleteOneProductPath;
 
         } else {
-            //新增和修改产品
+            // 新增和修改产品
             let addData = {
                 product: [{
                     "品牌": GetBrand(brand),
@@ -273,7 +280,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 postDataStr = JSON.stringify(promotionData);
                 options.path = updatePromotionInfoPath;
 
-                //再次调用平台的接口推送数据，并返回结果
+                // 再次调用平台的接口推送数据，并返回结果
                 let optionDataAgain = await HttpRequest_POST(options, postDataStr);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
 

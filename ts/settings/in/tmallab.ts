@@ -34,7 +34,7 @@ export const Tmallab: UqInTuid = {
         type: 'tuid',
         entity: 'tmallab',  //修改为 package 报错,修改为package1，命名与moniker表id一致。
         key: 'ID',
-        mapper: {   // 对方给的接口文档中字段信息就是中文，和对方保持一致。
+        mapper: {
                 $id: 'ID',
                 itemNum: "OriginalId",
                 brand: "BrandName",

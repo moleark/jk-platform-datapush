@@ -9,8 +9,9 @@ let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
-//喀斯玛接口相关配置
+// 喀斯玛接口相关配置
 const tmallabApiSetting = config_1.default.get("tmallabApi");
+// 获取产品类型
 function GetProductType(templateTypeId) {
     let result = '';
     if (templateTypeId == '1') {
@@ -24,6 +25,7 @@ function GetProductType(templateTypeId) {
     }
     return result;
 }
+// 获取产品单位
 function GetProductUnit(templateTypeId, Packnr, Unit) {
     let result = '';
     if (templateTypeId == '1' || templateTypeId == '2') {
@@ -39,6 +41,7 @@ function GetProductUnit(templateTypeId, Packnr, Unit) {
     }
     return result;
 }
+// 获取库存范围数据
 function GetStockamount(amount) {
     let result = 0;
     if (amount > 0 && amount < 11) {
@@ -67,6 +70,7 @@ function GetStockamount(amount) {
     }
     return result;
 }
+// 获取货期
 function GetDelivetime(Storage) {
     let result = '期货';
     if (Storage > 0) {
@@ -74,6 +78,7 @@ function GetDelivetime(Storage) {
     }
     return result;
 }
+// 获取品牌
 function GetBrand(brandName) {
     let result = '';
     if (brandName == 'Frontier') {
@@ -87,11 +92,13 @@ function GetBrand(brandName) {
     }
     return result;
 }
+// 获取产品链接地址
 function GetDetailUrl(JKid) {
     let result = '';
     result = 'http://www.jkchemical.com/CH/Products/' + JKid + '.html';
     return result;
 }
+// 获取产品图片
 function GetImg(brandName) {
     let result = '';
     switch (brandName) {
@@ -161,6 +168,7 @@ function GetImg(brandName) {
     }
     return result;
 }
+// 获取促销产品推送数据格式
 function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, catalogPrice, activeDiscount, startTime, endTime, appSecurity) {
     let PromotionInfo = {
         vipCode: vipCode,
@@ -189,11 +197,11 @@ async function tmallabPullWrite(joint, uqIn, data) {
     let body = await mapToUq.map(data, mapper);
     let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, pStartTime, pEndTime } = body;
     try {
-        //console.log(body);
+        // console.log(body);
         let result = false;
         let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
         let datetime = Date.now();
-        //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
+        // let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
         let timestamp = date_fns_1.format(datetime, 'yyyy-MM-dd HH:mm:ss');
         let postDataStr = {};
         let options = {
@@ -204,7 +212,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
         };
-        //产品下架的情况
+        // 产品下架的情况
         if (isDelete == '1') {
             let deleteData = {
                 vipCode: vipCode,
@@ -219,7 +227,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
             options.path = deleteOneProductPath;
         }
         else {
-            //新增和修改产品
+            // 新增和修改产品
             let addData = {
                 product: [{
                         "品牌": GetBrand(brand),
@@ -261,7 +269,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 let promotionData = await GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, catalogPrice, activeDiscount, pStartTime, pEndTime, appSecurity);
                 postDataStr = JSON.stringify(promotionData);
                 options.path = updatePromotionInfoPath;
-                //再次调用平台的接口推送数据，并返回结果
+                // 再次调用平台的接口推送数据，并返回结果
                 let optionDataAgain = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
                 if (postResultAgain.flag != 0) {
