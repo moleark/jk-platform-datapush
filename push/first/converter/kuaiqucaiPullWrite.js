@@ -104,6 +104,15 @@ function GETDELIVERY_TYPE_ID(storage, brandName) {
     }
     else {
         switch (brandName) {
+            case "Acros":
+                result = 1;
+                break;
+            case "Alfa":
+                result = 1;
+                break;
+            case "TCI":
+                result = 1;
+                break;
             case "J&K":
                 result = 2;
                 break;
