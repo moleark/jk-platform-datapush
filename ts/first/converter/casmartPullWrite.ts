@@ -56,7 +56,7 @@ function GetExtends(templateTypeId: any, purity: string, cascode: string, mf: st
 
     let result = [];
     let rPurity = purity.replace('+', '').replace('?', '').replace('#', '').replace('-', '').replace('&', '');
-    let rMF = mf.replace('#', '').replace('^', '').replace('&', '');
+    let rMF = mf.replace(/[#]/g, '').replace('^', '').replace('&', '');
     switch (templateTypeId) {
         case 1:
             result = [{ "key": 9, "value": rPurity }, { "key": 10, "value": cascode }, { "key": 11, "value": rMF }]
