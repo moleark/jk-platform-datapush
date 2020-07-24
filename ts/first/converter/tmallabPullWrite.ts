@@ -196,6 +196,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     //let mapToUq = new MapToUq(this);
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
+    let version = '1.1';
     let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
         templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, pStartTime, pEndTime } = body;
 
@@ -226,7 +227,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 itemNum: itemNum,
                 packingSpecification: packingSpecification,
                 appSecurity: appSecurity,
-                version: '1.0'
+                version: version
             };
 
             postDataStr = JSON.stringify(deleteData);
@@ -260,7 +261,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 vipCode: vipCode,
                 platform: '',
                 appSecurity: appSecurity,
-                version: '1.0'
+                version: version
             }
 
             postDataStr = JSON.stringify(addData);

@@ -195,6 +195,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
     //let mapToUq = new MapToUq(this);
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
+    let version = '1.1';
     let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, pStartTime, pEndTime } = body;
     try {
         // console.log(body);
@@ -220,7 +221,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 itemNum: itemNum,
                 packingSpecification: packingSpecification,
                 appSecurity: appSecurity,
-                version: '1.0'
+                version: version
             };
             postDataStr = JSON.stringify(deleteData);
             options.path = deleteOneProductPath;
@@ -253,7 +254,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 vipCode: vipCode,
                 platform: '',
                 appSecurity: appSecurity,
-                version: '1.0'
+                version: version
             };
             postDataStr = JSON.stringify(addData);
             options.path = pushProductPath;
