@@ -26,14 +26,16 @@ let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.Original
                                 ) x ON x.jkcat = r.PackageId
                         WHERE  CustomerUnitOnPlatformId = '779db9cf4f9b49709ab61140af5e4edf'
                                AND Id > @iMaxId
-                               AND j.JKCat IN (
-                                SELECT  pm.jkcat 
-                                        FROM    zcl_mess.dbo.ProductsMarketing pm
-                                                        INNER JOIN dbs.dbo.marketing m ON pm.MarketingID = m.MarketingID
-                                        WHERE   m.MStatus = 'E' AND m.Market_code = 'CN' AND m.PStartTime < GETDATE() AND ISNULL( m.PEndTime, '2050-01-01' ) > GETDATE() 
-                                )
                         ORDER BY Id `;
 // AND EXISTS ( SELECT 1 FROM zcl_mess.dbo.ProductsMarketing WHERE marketingid = 'A02-20200416A' AND JKCat = PackageId ) AND BrandId = 'A01'
+/*
+AND j.JKCat IN (
+        SELECT  pm.jkcat
+                FROM    zcl_mess.dbo.ProductsMarketing pm
+                                INNER JOIN dbs.dbo.marketing m ON pm.MarketingID = m.MarketingID
+                WHERE   m.MStatus = 'E' AND m.Market_code = 'CN' AND m.PStartTime < GETDATE() AND ISNULL( m.PEndTime, '2050-01-01' ) > GETDATE()
+        )
+ */
 exports.Tmallab = {
     uq: 'platform/Push',
     type: 'tuid',
