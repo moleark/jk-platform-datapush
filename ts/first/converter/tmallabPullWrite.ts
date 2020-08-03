@@ -36,7 +36,6 @@ function GetProductUnit(templateTypeId: string, Packnr: string, Unit: string): s
         } else {
             result = Packnr + Unit;
         }
-
     }
     return result;
 }
@@ -181,9 +180,21 @@ function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, saleP
         endTime: format(endTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
         appSecurity: appSecurity,
         platform: '',
-        version: '1.0'
+        version: '1.2'
     }
     return PromotionInfo;
+}
+
+function GetFarmetName(str: string): string {
+    let result = '';
+    if (str != null) {
+        //去除空格、反斜杠、括号、+- &
+        result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[ ]/g, '');
+        if (result.length > 100) {
+            result = result.substring(0, 99);
+        }
+    }
+    return result;
 }
 
 // 推送
@@ -196,7 +207,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     //let mapToUq = new MapToUq(this);
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let version = '1.1';
+    let version = '1.2';
     let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
         templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, pStartTime, pEndTime } = body;
 
@@ -241,8 +252,8 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     货号: itemNum,
                     包装规格: packingSpecification,
                     销售单位: GetProductUnit(templateTypeId, packnr, unit),
-                    英文名称: description,
-                    中文名称: descriptionC,
+                    英文名称: GetFarmetName(description),
+                    中文名称: GetFarmetName(descriptionC),
                     目录价str: catalogPrice,
                     纯度: purity,
                     库存: GetStockamount(storage),
@@ -290,7 +301,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + '}');
                     result = true;
                 } else {
-                    logger.error('TmallabPush Fail:{ Code:' + postResultAgain.CODE + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+                    logger.error('TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
                     result = false;
                 }
             } else {
@@ -299,7 +310,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             }
 
         } else {
-            logger.error('TmallabPush Fail:{ Code:' + postResult.CODE + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+            logger.error('TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
             result = true;
         }
 
