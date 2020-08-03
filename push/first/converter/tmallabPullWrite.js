@@ -42,39 +42,61 @@ function GetProductUnit(templateTypeId, Packnr, Unit) {
     return result;
 }
 // 获取库存范围数据
-function GetStockamount(amount) {
+function GetStockamount(brandName, amount) {
     let result = 0;
-    if (amount > 0 && amount < 11) {
-        result = 10;
-    }
-    else if (amount > 10 && amount < 21) {
-        result = 20;
-    }
-    else if (amount > 20 && amount < 31) {
-        result = 30;
-    }
-    else if (amount > 30 && amount < 40) {
-        result = 40;
-    }
-    else if (amount > 40 && amount < 51) {
-        result = 50;
-    }
-    else if (amount > 50 && amount < 61) {
-        result = 60;
-    }
-    else if (amount > 60 && amount < 100) {
+    if (brandName == 'Acros') {
         result = 99;
     }
-    else if (amount > 99) {
-        result = 100;
+    else if (brandName == 'TCI') {
+        result = 99;
+    }
+    else if (brandName == 'Alfa') {
+        result = 99;
+    }
+    else {
+        if (amount > 0 && amount < 11) {
+            result = 10;
+        }
+        else if (amount > 10 && amount < 21) {
+            result = 20;
+        }
+        else if (amount > 20 && amount < 31) {
+            result = 30;
+        }
+        else if (amount > 30 && amount < 40) {
+            result = 40;
+        }
+        else if (amount > 40 && amount < 51) {
+            result = 50;
+        }
+        else if (amount > 50 && amount < 61) {
+            result = 60;
+        }
+        else if (amount > 60 && amount < 100) {
+            result = 99;
+        }
+        else if (amount > 99) {
+            result = 100;
+        }
     }
     return result;
 }
 // 获取货期
-function GetDelivetime(Storage) {
+function GetDelivetime(brandName, Storage) {
     let result = '期货';
-    if (Storage > 0) {
-        result = '现货(交货期1-3天)';
+    if (brandName == 'Acros') {
+        result = '2-5个工作日';
+    }
+    else if (brandName == 'TCI') {
+        result = '2-5个工作日';
+    }
+    else if (brandName == 'Alfa') {
+        result = '2-5个工作日';
+    }
+    else {
+        if (Storage > 0) {
+            result = '现货(交货期1-3天)';
+        }
     }
     return result;
 }
@@ -249,8 +271,8 @@ async function tmallabPullWrite(joint, uqIn, data) {
                         中文名称: GetFarmetName(descriptionC),
                         目录价str: catalogPrice,
                         纯度: purity,
-                        库存: GetStockamount(storage),
-                        交货期: GetDelivetime(storage),
+                        库存: GetStockamount(brand, storage),
+                        交货期: GetDelivetime(brand, storage),
                         储存温度: descriptionST,
                         来源: "",
                         运输条件: "",
