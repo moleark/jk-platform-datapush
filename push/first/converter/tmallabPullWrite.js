@@ -292,6 +292,70 @@ async function tmallabPullWrite(joint, uqIn, data) {
             postDataStr = JSON.stringify(addData);
             options.path = pushProductPath;
         }
+        /*
+                // 调用平台的接口推送数据，并返回结果
+                let req = http.request(options, function (res) {
+                    console.log('STATUS: ' + res.statusCode);
+                    console.log('HEADERS: ' + JSON.stringify(res.headers));
+                    res.setEncoding('utf8');
+        
+                    res.on("data", function (r) {
+                        let postResult = JSON.parse(String(r));
+                        if (res.statusCode === 200 && postResult.flag != 0) {
+                            // 是否为市场活动产品？ 是的话推送活动价
+                            if (isDelete == 0 && activeDiscount != '' && activeDiscount != null) {
+                                let promotionData = this.GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, pStartTime, pEndTime, appSecurity);
+                                postDataStr = JSON.stringify(promotionData);
+                                options.path = updatePromotionInfoPath;
+        
+                                // 再次调用平台的接口推送数据，并返回结果
+                                let reqPromotion = http.request(options, function (resPromotion) {
+                                    //console.log('STATUS: ' + res.statusCode);
+                                    //console.log('HEADERS: ' + JSON.stringify(res.headers));
+                                    resPromotion.setEncoding('utf8');
+                                    reqPromotion.on("data", function (p) {
+                                        let postResultAgain = JSON.parse(String(p));
+                                        if (resPromotion.statusCode === 200 && postResultAgain.flag != 0) {
+                                            if (postResultAgain.flag != 0) {
+                                                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
+                                                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(p) + '}');
+                                                result = true;
+                                            } else {
+                                                logger.error('TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
+                                                result = false;
+                                            }
+                                        } else {
+                                            logger.error('TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
+                                            result = false;
+                                        }
+                                    });
+                                });
+                                req.on('error', function (e) {
+                                    throw '请求失败，请检查访问地址或网络连接:' + e;
+                                });
+                                // write data to request body
+                                req.write(postDataStr);
+                                req.end();
+        
+                            } else {
+                                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
+                                result = true;
+                            }
+                        } else {
+                            logger.error('TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
+                            result = false;
+                        }
+                    });
+                });
+                req.on('error', function (e) {
+                    //console.log('problem with request: ' + e.message);
+                    throw '请求失败，请检查访问地址或网络连接:' + e;
+                    result = false;
+                });
+                // write data to request body
+                req.write(postDataStr);
+                req.end();
+        */
         // 调用平台的接口推送数据，并返回结果
         let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
         let postResult = JSON.parse(String(optionData));

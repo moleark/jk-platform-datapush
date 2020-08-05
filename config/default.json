@@ -1,7 +1,7 @@
 {
     "name": "jk-platform-datapush",
     "port": 3018,
-    "interval": 30000,
+    "interval": 3000,
     "firstEntities": [],
     "afterFirstEntities": [
         {
@@ -13,7 +13,7 @@
             "inervalUnit": 1
         },
         {
-            "name": "tmallab",
+            "name": "tmallab1",
             "inervalUnit": 1
         }
     ]

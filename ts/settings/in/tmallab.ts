@@ -24,6 +24,7 @@ let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.Original
                         WHERE  CustomerUnitOnPlatformId = '779db9cf4f9b49709ab61140af5e4edf'
                                AND Id > @iMaxId
                         ORDER BY Id `;
+
 // AND EXISTS ( SELECT 1 FROM zcl_mess.dbo.ProductsMarketing WHERE marketingid = 'A02-20200416A' AND JKCat = PackageId ) AND BrandId = 'A01'
 /*
 AND j.JKCat IN (
