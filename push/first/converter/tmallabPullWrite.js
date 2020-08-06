@@ -295,8 +295,8 @@ async function tmallabPullWrite(joint, uqIn, data) {
         /*
                 // 调用平台的接口推送数据，并返回结果
                 let req = http.request(options, function (res) {
-                    console.log('STATUS: ' + res.statusCode);
-                    console.log('HEADERS: ' + JSON.stringify(res.headers));
+                    //console.log('STATUS: ' + res.statusCode);
+                    //console.log('HEADERS: ' + JSON.stringify(res.headers));
                     res.setEncoding('utf8');
         
                     res.on("data", function (r) {
@@ -342,7 +342,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
                                 result = true;
                             }
                         } else {
-                            logger.error('TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
+                            logger.error('TmallabPush Fail:{ Code:' + res.statusCode + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
                             result = false;
                         }
                     });
