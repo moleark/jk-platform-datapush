@@ -1,12 +1,14 @@
 import { Casmart } from "./casmart";
 import { Kuaiqucai } from "./kuaiqucai";
 import { Tmallab } from "./tmallab";
+import { Cobazaar } from "./cobazaar";
 
 
 const uqIns = [
     Casmart,
     Kuaiqucai,
-    Tmallab
+    Tmallab,
+    Cobazaar
 ]
 
 export default uqIns;
