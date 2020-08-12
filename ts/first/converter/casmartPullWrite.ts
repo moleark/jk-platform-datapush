@@ -361,6 +361,16 @@ function GetStockamount(amount: number): number {
     return result;
 }
 
+function GeyDeliveryCycle(amount: number, deliveryCycle: string): string {
+    let result = '';
+    if (amount > 0) {
+        result = '1-3天';
+    } else {
+        result = deliveryCycle;
+    }
+    return result;
+}
+
 function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx) {
 
     //定义商品类型、产品分类、产品分组 
@@ -374,6 +384,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     let csubname = GetSubname(subname);
     let image = GetImg(brandName);
     let stock = GetStockamount(Number(stockamount));
+    let delivery = GeyDeliveryCycle(Number(stockamount), deliverycycle);
 
     return {
         rid: rid,
@@ -394,7 +405,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
         maker: maker,
         packinglist: '',
         service: '',
-        deliverycycle: deliverycycle,
+        deliverycycle: delivery,
         cascode: cascode,
         extends: extend,
         instructions: [],
@@ -402,12 +413,13 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     };
 }
 
-function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount) {
+function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount, deliverycycle) {
 
     let cname = GetName(name, subname, cascode);
     let csubname = GetSubname(subname);
     let stock = GetStockamount(Number(stockamount));
     let image = GetImg(brandName);
+    let delivery = GeyDeliveryCycle(Number(stockamount), deliverycycle);
     return {
         rid: rid,
         name: cname,
@@ -415,6 +427,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
         mktprice: mktprice,
         price: Math.round(price),
         stockamount: stock,
+        deliverycycle: delivery,
         isinsale: 1,
         intro: '',
         instructions: [],
@@ -480,7 +493,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             } else {
 
                 //修改产品信息
-                let updateData = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount);
+                let updateData = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount, deliverycycle);
                 let updateJson = JSON.stringify(updateData);
                 let md5Str = md5(appid + updateJson + timestamp + secret);
                 let updateProductPath = encodeURI(updatePath + '?appid=' + appid + '&data=' + updateJson + '&t=' + timestamp + '&sign=' + md5Str);
@@ -519,7 +532,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             //新增转修改  && (name == null || name == '')
             else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步') {
                 stateName = 'edit';
-                let updateDataAgain = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount);
+                let updateDataAgain = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount, deliverycycle);
                 let updateJsonAgain = JSON.stringify(updateDataAgain);
                 let md5StrAgain = md5(appid + updateJsonAgain + timestamp + secret);
                 let updateProductPathAgain = encodeURI(updatePath + '?appid=' + appid + '&data=' + updateJsonAgain + '&t=' + timestamp + '&sign=' + md5StrAgain);
