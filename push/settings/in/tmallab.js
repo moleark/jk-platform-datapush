@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //import { UqInTuid } from "../../uq-joint";
 const tmallabPullWrite_1 = require("../../first/converter/tmallabPullWrite");
 const config_1 = __importDefault(require("config"));
-const promiseSize = config_1.default.get("promiseSize");
+const promiseSize = config_1.default.get("promiseSizeFY");
 let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.OriginalId, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
                         p.DescriptionC, p.Description, r.CatalogPrice, r.saleprice, isnull(p.purity,'N/A') AS Purity, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, t.DescriptionST, 
                         rp.mdl as mdlNumber, r.Storage, r.IsDelete, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, j.JKid, j.packnr,j.unit, r.StateName,

@@ -2,7 +2,7 @@ import { UqInTuid } from "uq-joint";
 //import { UqInTuid } from "../../uq-joint";
 import { tmallabPullWrite } from '../../first/converter/tmallabPullWrite';
 import config from 'config';
-const promiseSize = config.get<number>("promiseSize");
+const promiseSize = config.get<number>("promiseSizeFY");
 
 let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.OriginalId, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
                         p.DescriptionC, p.Description, r.CatalogPrice, r.saleprice, isnull(p.purity,'N/A') AS Purity, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, t.DescriptionST, 
