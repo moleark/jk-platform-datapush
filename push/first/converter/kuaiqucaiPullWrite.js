@@ -657,7 +657,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         // 判断请求结果 并记录 
         if (postResult.CODE != 200) {
             result = false;
-            throw 'KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}';
+            logger_1.logger.error('KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
         }
         else {
             if (Number(postResult.DATA.SUCCESS_NUM) < 1) {

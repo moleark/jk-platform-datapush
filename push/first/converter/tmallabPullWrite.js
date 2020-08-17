@@ -280,11 +280,12 @@ async function tmallabPullWrite(joint, uqIn, data) {
             tmallabDataList_1.deleteDataList.push(body);
             console.log(tmallabDataList_1.addOrEditDataList.length);
         }
-        if (tmallabDataList_1.addOrEditDataList.length > 100) {
+        if (tmallabDataList_1.addOrEditDataList.length > 9) {
             let productList_addOrEdit = [];
             for (let i = tmallabDataList_1.addOrEditDataList.length - 1; i >= 0; i--) {
                 let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, packageId, mdlNumber, packnr, unit, activeDiscount, delivetime, pStartTime, pEndTime } = tmallabDataList_1.addOrEditDataList[i];
-                productList_addOrEdit.push(GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime));
+                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime);
+                productList_addOrEdit.push(AddOrEditFormat);
             }
             let addData = {
                 product: productList_addOrEdit,
@@ -296,6 +297,16 @@ async function tmallabPullWrite(joint, uqIn, data) {
             };
             postDataStr = JSON.stringify(addData);
             options.path = pushProductPath;
+            // 调用平台的接口推送数据，并返回结果
+            let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
+            let postResult = JSON.parse(String(optionData));
+            // 判断推送结果
+            if (postResult.flag != 0) {
+            }
+            else {
+                result = false;
+                //throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
+            }
         }
         else if (tmallabDataList_1.deleteDataList.length > 1) {
             for (let i = tmallabDataList_1.addOrEditDataList.length - 1; i >= 0; i--) {
@@ -312,16 +323,16 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 postDataStr = JSON.stringify(deleteData);
                 options.path = deleteOneProductPath;
             }
-        }
-        // 调用平台的接口推送数据，并返回结果
-        let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
-        let postResult = JSON.parse(String(optionData));
-        // 判断推送结果
-        if (postResult.flag != 0) {
-        }
-        else {
-            result = false;
-            //throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
+            // 调用平台的接口推送数据，并返回结果
+            let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
+            let postResult = JSON.parse(String(optionData));
+            // 判断推送结果
+            if (postResult.flag != 0) {
+            }
+            else {
+                result = false;
+                //throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
+            }
         }
         return result;
     }

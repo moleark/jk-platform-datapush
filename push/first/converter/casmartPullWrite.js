@@ -494,6 +494,11 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 result = false;
                 throw 'CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }';
             }
+            // 没有销售资质，这种情况可以跳过；
+            else if (postResult.retCode == 1 && postResult.message == '没有危化品销售资质') {
+                result = true;
+                logger_1.logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }');
+            }
             else if (postResult.retCode == 1 && stateName == 'edit' && postResult.message == '商家：448 未找到商品信息') {
                 stateName = 'add';
                 let addDataAgain = GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx);
