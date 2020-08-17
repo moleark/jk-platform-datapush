@@ -26,7 +26,7 @@ let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.Original
                                 ) x ON x.jkcat = r.PackageId
                         WHERE  CustomerUnitOnPlatformId = '779db9cf4f9b49709ab61140af5e4edf'
                                AND Id > @iMaxId
-                        ORDER BY Id `;
+                        ORDER BY Id; `;
 exports.Tmallab = {
     uq: 'platform/Push',
     type: 'tuid',

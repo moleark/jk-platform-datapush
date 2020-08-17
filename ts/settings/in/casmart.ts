@@ -22,7 +22,7 @@ let pullSql = `SELECT  TOP ${promiseSize} r.ID, r.PackageId, zcl_mess.dbo.fc_reC
                         LEFT  JOIN zcl_mess.dbo.sc_restrict sc ON sc.chemid = pc.chemid
                         WHERE   r.CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
                                 AND r.ID > @iMaxId
-                        ORDER BY Id;`;
+                        ORDER BY Id; `;
 
 export const Casmart: UqInTuid = {
         uq: 'platform/Push',

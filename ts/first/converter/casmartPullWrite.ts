@@ -365,7 +365,7 @@ function GeyDeliveryCycle(amount: number, brandName: string, deliveryCycle: stri
 
     let result = '';
     if (amount > 0) {
-        result = '1-3天';
+        result = '现货';
     } else {
         if (brandName == 'Acros') {
             result = '2-5个工作日';
@@ -517,7 +517,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
         if (postResult.retCode != 0) {
 
-            //不成功的原因是有区分的：1、平台上没有产品但是要修改却修改失败，这种情况转为新增；2、平台上存在产品但是要再次添加，这种情况转为修改； 3、平台上没有找到产品但是要删除，这种情况不用处理；
+            //不成功的原因是有区分的：1、平台上没有产品但是要修改却修改失败，这种情况转为新增；2、平台上存在产品但是要再次添加，这种情况转为修改；3、平台上没有找到产品但是要删除，这种情况不用处理；
             //修改转新增
             if (postResult.retCode == -1 && postResult.message == '导入时间为18点到第二天8点') {
                 result = false;

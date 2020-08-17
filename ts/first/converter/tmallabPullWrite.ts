@@ -415,7 +415,6 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             result = false;
             throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
         }
-
         return result;
 
     } catch (error) {
