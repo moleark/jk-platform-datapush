@@ -15,7 +15,7 @@ let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.Original
 		        INNER join OPDATA.dbo.JKProdIDInOut oi on oi.JKIDOut = p.Originalid and p.manufactory in ( 'A01', 'A10' )
                         INNER join OPDATA.dbo.PProducts rp on rp.OriginalID = oi.JKIDIN
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
-                        LEFT JOIN (
+                         LEFT JOIN (
                                 SELECT  pm.ActiveDiscount, m.PStartTime, m.PEndTime, pm.jkcat 
                                 FROM    zcl_mess.dbo.ProductsMarketing pm
                                         INNER JOIN dbs.dbo.marketing m ON pm.MarketingID = m.MarketingID

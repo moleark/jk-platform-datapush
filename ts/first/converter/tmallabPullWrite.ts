@@ -7,6 +7,7 @@ import http from 'http';
 import config from 'config';
 import { logger } from "../../tools/logger";
 import { HttpRequest_GET, HttpRequest_POST } from '../../tools/HttpRequestHelper';
+import { addOrEditDataList, deleteDataList } from '../../tools/tmallabDataList';
 
 
 // 喀斯玛接口相关配置
@@ -210,6 +211,35 @@ function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, saleP
     return PromotionInfo;
 }
 
+// 获取新增或者修改推送数据格式
+function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+    templateTypeId, mdlNumber, packnr, unit, delivetime) {
+
+    let productInfo = {
+        品牌: GetBrand(brand),
+        货号: itemNum,
+        包装规格: packingSpecification,
+        销售单位: GetProductUnit(templateTypeId, packnr, unit),
+        英文名称: GetFarmetName(description),
+        中文名称: GetFarmetName(descriptionC),
+        目录价str: catalogPrice,
+        纯度: purity,
+        库存: GetStockamount(brand, storage),
+        交货期: GetDelivetime(brand, storage, delivetime),
+        储存温度: descriptionST,
+        来源: "",
+        运输条件: "",
+        CAS: casFormat,
+        MDL: mdlNumber,
+        最小包装: "",
+        最小包装数量: "",
+        产品链接: GetDetailUrl(jkid),
+        图片链接: GetImg(brand)
+    }
+    return productInfo;
+}
+
+
 function GetFarmetName(str: string): string {
     let result = '';
     if (str != null) {
@@ -234,22 +264,8 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     let body = await mapToUq.map(data, mapper);
     let version = '1.2';
 
-    /*
-    for (let i = body.length - 1; i >= 0; i--) {
-        let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-            templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, pStartTime, pEndTime } = body[i];
-        console.log(body[i]);
-    }
-    return false;
-    */
-    let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-        templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, delivetime, pStartTime, pEndTime } = body;
-
-
     try {
-        // console.log(body);
         let result = false;
-
         let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
         let datetime = Date.now();
         let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
@@ -263,9 +279,104 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             }
         };
 
+        if (body.isDelete == 0) {
+            addOrEditDataList.push(body);
+            console.log(addOrEditDataList.length);
+        } else if (body.isDelete == 1) {
+            deleteDataList.push(body);
+            console.log(addOrEditDataList.length);
+        }
+
+        if (addOrEditDataList.length > 100) {
+
+            let productList_addOrEdit: any = [];
+            for (let i = addOrEditDataList.length - 1; i >= 0; i--) {
+                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                    templateTypeId, packageId, mdlNumber, packnr, unit, activeDiscount, delivetime, pStartTime, pEndTime } = addOrEditDataList[i];
+
+                productList_addOrEdit.push(GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                    templateTypeId, mdlNumber, packnr, unit, delivetime));
+            }
+
+            let addData = {
+                product: productList_addOrEdit,
+                productType: '',//GetProductType(templateTypeId),
+                vipCode: vipCode,
+                platform: '',
+                appSecurity: appSecurity,
+                version: version
+            }
+
+            postDataStr = JSON.stringify(addData);
+            options.path = pushProductPath;
+
+        } else if (deleteDataList.length > 1) {
+
+            for (let i = addOrEditDataList.length - 1; i >= 0; i--) {
+                let { itemNum, brand, packingSpecification } = addOrEditDataList[i];
+
+                let deleteData = {
+                    vipCode: vipCode,
+                    platform: '',
+                    brand: brand,
+                    itemNum: itemNum,
+                    packingSpecification: packingSpecification,
+                    appSecurity: appSecurity,
+                    version: version
+                };
+                postDataStr = JSON.stringify(deleteData);
+                options.path = deleteOneProductPath;
+            }
+        }
+
+        // 调用平台的接口推送数据，并返回结果
+        let optionData = await HttpRequest_POST(options, postDataStr);
+        let postResult = JSON.parse(String(optionData));
+
+        // 判断推送结果
+        if (postResult.flag != 0) {
+
+
+        } else {
+            result = false;
+            //throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
+        }
+        return result;
+
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+
+
+
+    /*
+        let {
+            itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+            templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, delivetime, pStartTime, pEndTime
+    } = body;
+    
+    
+    try {
+        // console.log(body);
+        let result = false;
+    
+        let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
+        let datetime = Date.now();
+        let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
+        let postDataStr = {};
+        let options = {
+            hostname: hostname,
+            path: '',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' //charset=UTF-8
+            }
+        };
+    
         // 产品下架的情况
         if (isDelete == '1') {
-
+    
             let deleteData = {
                 vipCode: vipCode,
                 platform: '',
@@ -275,10 +386,10 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 appSecurity: appSecurity,
                 version: version
             };
-
+    
             postDataStr = JSON.stringify(deleteData);
             options.path = deleteOneProductPath;
-
+    
         } else {
             // 新增和修改产品
             let addData = {
@@ -309,100 +420,34 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 appSecurity: appSecurity,
                 version: version
             }
-
+    
             postDataStr = JSON.stringify(addData);
             options.path = pushProductPath;
         }
-
-        /*
-                // 调用平台的接口推送数据，并返回结果
-                let req = http.request(options, function (res) {
-                    //console.log('STATUS: ' + res.statusCode);
-                    //console.log('HEADERS: ' + JSON.stringify(res.headers));
-                    res.setEncoding('utf8');
-        
-                    res.on("data", function (r) {
-                        let postResult = JSON.parse(String(r));
-                        if (res.statusCode === 200 && postResult.flag != 0) {
-                            // 是否为市场活动产品？ 是的话推送活动价
-                            if (isDelete == 0 && activeDiscount != '' && activeDiscount != null) {
-                                let promotionData = this.GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, pStartTime, pEndTime, appSecurity);
-                                postDataStr = JSON.stringify(promotionData);
-                                options.path = updatePromotionInfoPath;
-        
-                                // 再次调用平台的接口推送数据，并返回结果
-                                let reqPromotion = http.request(options, function (resPromotion) {
-                                    //console.log('STATUS: ' + res.statusCode);
-                                    //console.log('HEADERS: ' + JSON.stringify(res.headers));
-                                    resPromotion.setEncoding('utf8');
-                                    reqPromotion.on("data", function (p) {
-                                        let postResultAgain = JSON.parse(String(p));
-                                        if (resPromotion.statusCode === 200 && postResultAgain.flag != 0) {
-                                            if (postResultAgain.flag != 0) {
-                                                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
-                                                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(p) + '}');
-                                                result = true;
-                                            } else {
-                                                logger.error('TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
-                                                result = false;
-                                            }
-                                        } else {
-                                            logger.error('TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
-                                            result = false;
-                                        }
-                                    });
-                                });
-                                req.on('error', function (e) {
-                                    throw '请求失败，请检查访问地址或网络连接:' + e;
-                                });
-                                // write data to request body
-                                req.write(postDataStr);
-                                req.end();
-        
-                            } else {
-                                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
-                                result = true;
-                            }
-                        } else {
-                            logger.error('TmallabPush Fail:{ Code:' + res.statusCode + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + String(r) + '}');
-                            result = false;
-                        }
-                    });
-                });
-                req.on('error', function (e) {
-                    //console.log('problem with request: ' + e.message);
-                    throw '请求失败，请检查访问地址或网络连接:' + e;
-                    result = false;
-                });
-                // write data to request body
-                req.write(postDataStr);
-                req.end();
-        */
-
-
+    
         // 调用平台的接口推送数据，并返回结果
         let optionData = await HttpRequest_POST(options, postDataStr);
         let postResult = JSON.parse(String(optionData));
-
+    
         // 判断推送结果
         if (postResult.flag != 0) {
-
+    
             // 是否为市场活动产品？ 是的话推送活动价
             if (isDelete == 0 && activeDiscount != '' && activeDiscount != null) {
                 let promotionData = await GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, pStartTime, pEndTime, appSecurity);
                 postDataStr = JSON.stringify(promotionData);
                 options.path = updatePromotionInfoPath;
-
+    
                 // 再次调用平台的接口推送数据，并返回结果
                 let optionDataAgain = await HttpRequest_POST(options, postDataStr);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
-
+    
                 if (postResultAgain.flag != 0) {
                     result = true;
                     console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
                     console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + '}');
                 } else {
-
+    
                     result = false;
                     throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
                 }
@@ -410,16 +455,17 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
                 result = true;
             }
-
+    
         } else {
             result = false;
             throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
         }
         return result;
-
+    
     } catch (error) {
         logger.error(error);
         throw error;
     }
+    */
 
 }
