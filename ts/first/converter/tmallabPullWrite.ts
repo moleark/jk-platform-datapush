@@ -76,21 +76,23 @@ function GetStockamount(brandName: string, amount: number): number {
 }
 
 // 获取货期
-function GetDelivetime(brandName: string, Storage: number) {
+function GetDelivetime(brandName: string, Storage: number, deliveryCycle: string) {
 
     let result = '期货';
-    if (brandName == 'Acros') {
-        result = '2-5个工作日'
-    }
-    else if (brandName == 'TCI') {
-        result = '2-5个工作日'
-    }
-    else if (brandName == 'Alfa') {
-        result = '2-5个工作日'
+    if (Storage > 0) {
+        result = '现货(交货期1-3天)';
     }
     else {
-        if (Storage > 0) {
-            result = '现货(交货期1-3天)';
+        if (brandName == 'Acros') {
+            result = '2-5个工作日';
+        }
+        else if (brandName == 'TCI') {
+            result = '2-5个工作日';
+        }
+        else if (brandName == 'Alfa') {
+            result = '2-5个工作日';
+        } else {
+            result = deliveryCycle;
         }
     }
     return result;
@@ -231,8 +233,18 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
     let version = '1.2';
+
+    /*
+    for (let i = body.length - 1; i >= 0; i--) {
+        let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+            templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, pStartTime, pEndTime } = body[i];
+        console.log(body[i]);
+    }
+    return false;
+    */
     let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-        templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, pStartTime, pEndTime } = body;
+        templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, delivetime, pStartTime, pEndTime } = body;
+
 
     try {
         // console.log(body);
@@ -280,7 +292,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     目录价str: catalogPrice,
                     纯度: purity,
                     库存: GetStockamount(brand, storage),
-                    交货期: GetDelivetime(brand, storage),
+                    交货期: GetDelivetime(brand, storage, delivetime),
                     储存温度: descriptionST,
                     来源: "",
                     运输条件: "",
@@ -409,4 +421,5 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         logger.error(error);
         throw error;
     }
+
 }

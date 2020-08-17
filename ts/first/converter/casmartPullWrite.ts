@@ -361,12 +361,23 @@ function GetStockamount(amount: number): number {
     return result;
 }
 
-function GeyDeliveryCycle(amount: number, deliveryCycle: string): string {
+function GeyDeliveryCycle(amount: number, brandName: string, deliveryCycle: string): string {
+
     let result = '';
     if (amount > 0) {
         result = '1-3天';
     } else {
-        result = deliveryCycle;
+        if (brandName == 'Acros') {
+            result = '2-5个工作日';
+        }
+        else if (brandName == 'TCI') {
+            result = '2-5个工作日';
+        }
+        else if (brandName == 'Alfa') {
+            result = '2-5个工作日';
+        } else {
+            result = deliveryCycle;
+        }
     }
     return result;
 }
@@ -384,7 +395,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     let csubname = GetSubname(subname);
     let image = GetImg(brandName);
     let stock = GetStockamount(Number(stockamount));
-    let delivery = GeyDeliveryCycle(Number(stockamount), deliverycycle);
+    let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
 
     return {
         rid: rid,
@@ -419,7 +430,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
     let csubname = GetSubname(subname);
     let stock = GetStockamount(Number(stockamount));
     let image = GetImg(brandName);
-    let delivery = GeyDeliveryCycle(Number(stockamount), deliverycycle);
+    let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
     return {
         rid: rid,
         name: cname,

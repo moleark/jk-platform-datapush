@@ -10,7 +10,7 @@ const promiseSize = config_1.default.get("promiseSize");
 let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.OriginalId, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, 
                         p.DescriptionC, p.Description, r.CatalogPrice, r.saleprice, isnull(p.purity,'N/A') AS Purity, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, t.DescriptionST, 
                         rp.mdl as mdlNumber, r.Storage, r.IsDelete, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, j.JKid, j.packnr,j.unit, r.StateName,
-                        r.packageid, x.ActiveDiscount, x.PStartTime, x.PEndTime 
+                        zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime, r.packageid, x.ActiveDiscount, x.PStartTime, x.PEndTime 
                 FROM    ProdData.dbo.Export_ThirdPartyPlatformEntryResult r
                         INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId
                         INNER JOIN zcl_mess.dbo.products p ON p.JKid = j.JKID
