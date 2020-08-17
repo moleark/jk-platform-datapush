@@ -656,18 +656,18 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
         let postResult = JSON.parse(String(optionData));
         // 判断请求结果 并记录 
         if (postResult.CODE != 200) {
-            logger_1.logger.error('KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
             result = false;
+            throw 'KuaiQuCaiPush Fail: {Code:' + postResult.CODE + ',PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}';
         }
         else {
             if (Number(postResult.DATA.SUCCESS_NUM) < 1) {
                 //  此情况说明接口认证没有问题，但是可能数据上不符合，所以返回 true， 记录错误信息 继续执行；
+                result = true; //
                 logger_1.logger.error('KuaiQuCaiPush Fail:{ Code:' + postResult.CODE + ',PackageId:' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
-                result = true; //  false;
             }
             else {
-                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
                 result = true;
+                console.log('KuaiQuCaiPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:' + optionData + '}');
             }
         }
         return result;

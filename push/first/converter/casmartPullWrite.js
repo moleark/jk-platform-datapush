@@ -439,9 +439,9 @@ async function CasmartPullWrite(joint, uqIn, data) {
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
     let { templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, stateName, isDelete, typeId, iswx } = body;
+    let result = false;
     try {
         //console.log(body);
-        let result = false;
         let { hostname, appid, secret, addPath, updatePath } = casmartApiSetting;
         let datetime = Date.now();
         //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
@@ -490,7 +490,11 @@ async function CasmartPullWrite(joint, uqIn, data) {
         if (postResult.retCode != 0) {
             //不成功的原因是有区分的：1、平台上没有产品但是要修改却修改失败，这种情况转为新增；2、平台上存在产品但是要再次添加，这种情况转为修改； 3、平台上没有找到产品但是要删除，这种情况不用处理；
             //修改转新增
-            if (postResult.retCode == 1 && stateName == 'edit' && postResult.message == '商家：448 未找到商品信息') {
+            if (postResult.retCode == -1 && postResult.message == '导入时间为18点到第二天8点') {
+                result = false;
+                throw 'CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }';
+            }
+            else if (postResult.retCode == 1 && stateName == 'edit' && postResult.message == '商家：448 未找到商品信息') {
                 stateName = 'add';
                 let addDataAgain = GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx);
                 let addJsonAgain = JSON.stringify(addDataAgain);
@@ -502,7 +506,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 let postResultAgain = JSON.parse(String(optionDataAgain));
                 if (postResultAgain.retCode != 0) {
                     result = false;
-                    logger_1.logger.error('CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }');
+                    throw 'CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }';
                 }
                 else {
                     result = true;
@@ -522,7 +526,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 let postResultAgain = JSON.parse(String(optionDataAgain));
                 if (postResultAgain.retCode != 0) {
                     result = false;
-                    logger_1.logger.error('CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }');
+                    throw 'CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }';
                 }
                 else {
                     result = true;
@@ -532,7 +536,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
             //失败
             else {
                 result = false;
-                logger_1.logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }');
+                throw 'CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }';
             }
         }
         else {
@@ -540,12 +544,12 @@ async function CasmartPullWrite(joint, uqIn, data) {
             result = true;
             console.log('CasmartPush Success: { Packageid: ' + rid + ', Type:' + stateName + ', Datetime:' + timestamp + ', Message:' + optionData + '}');
         }
-        return result;
     }
     catch (error) {
         logger_1.logger.error(error);
         throw error;
     }
+    return result;
 }
 exports.CasmartPullWrite = CasmartPullWrite;
 //# sourceMappingURL=casmartPullWrite.js.map

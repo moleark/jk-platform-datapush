@@ -381,13 +381,13 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 let optionDataAgain = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
                 if (postResultAgain.flag != 0) {
+                    result = true;
                     console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
                     console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + '}');
-                    result = true;
                 }
                 else {
-                    logger_1.logger.error('TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
                     result = false;
+                    throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
                 }
             }
             else {
@@ -396,8 +396,8 @@ async function tmallabPullWrite(joint, uqIn, data) {
             }
         }
         else {
-            logger_1.logger.error('TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
-            result = true;
+            result = false;
+            throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
         }
         return result;
     }

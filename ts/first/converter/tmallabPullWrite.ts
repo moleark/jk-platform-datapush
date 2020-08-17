@@ -398,12 +398,13 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 let postResultAgain = JSON.parse(String(optionDataAgain));
 
                 if (postResultAgain.flag != 0) {
+                    result = true;
                     console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
                     console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + '}');
-                    result = true;
                 } else {
-                    logger.error('TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+
                     result = false;
+                    throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
                 }
             } else {
                 console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
@@ -411,8 +412,8 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             }
 
         } else {
-            logger.error('TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
-            result = true;
+            result = false;
+            throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
         }
 
         return result;

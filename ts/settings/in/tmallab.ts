@@ -25,16 +25,6 @@ let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.Original
                                AND Id > @iMaxId
                         ORDER BY Id `;
 
-// AND EXISTS ( SELECT 1 FROM zcl_mess.dbo.ProductsMarketing WHERE marketingid = 'A02-20200416A' AND JKCat = PackageId ) AND BrandId = 'A01'
-/*
-AND j.JKCat IN (
-        SELECT  pm.jkcat 
-                FROM    zcl_mess.dbo.ProductsMarketing pm
-                                INNER JOIN dbs.dbo.marketing m ON pm.MarketingID = m.MarketingID
-                WHERE   m.MStatus = 'E' AND m.Market_code = 'CN' AND m.PStartTime < GETDATE() AND ISNULL( m.PEndTime, '2050-01-01' ) > GETDATE() 
-        )
- */
-
 export const Tmallab: UqInTuid = {
         uq: 'platform/Push',
         type: 'tuid',
@@ -70,4 +60,3 @@ export const Tmallab: UqInTuid = {
         pullWrite: tmallabPullWrite,
         firstPullWrite: tmallabPullWrite,
 };
-
