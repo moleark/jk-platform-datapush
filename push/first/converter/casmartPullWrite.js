@@ -49,8 +49,8 @@ function GetGroups(templatetypeid) {
 //获取扩展属性
 function GetExtends(templateTypeId, purity, cascode, mf) {
     let result = [];
-    let rPurity = purity.replace('+', '').replace('?', '').replace('#', '').replace('-', '').replace('&', '');
-    let rMF = mf.replace(/[#]/g, '').replace('^', '').replace('&', '');
+    let rPurity = purity.replace(/[+]/g, '').replace(/[?]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, '');
+    let rMF = mf.replace(/[#]/g, '').replace(/[^]/g, '').replace(/[&]/g, '');
     switch (templateTypeId) {
         case 1:
             result = [{ "key": 9, "value": rPurity }, { "key": 10, "value": cascode }, { "key": 11, "value": rMF }];
@@ -281,14 +281,14 @@ function GetImg(brandName) {
         case 'Alfa':
             result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
             break;
-        case 'accela':
-            result = [''];
+        case 'Accela':
+            result = ['https://www.jkchemical.com/static/casmart/accela.jpg'];
             break;
         case 'J&K-Abel':
-            result = [''];
+            result = ['https://www.jkchemical.com/static/casmart/JNKAbel.jpg'];
             break;
         case 'J&K Scientific':
-            result = [''];
+            result = ['https://www.jkchemical.com/static/casmart/JNKScientific_200416.png'];
             break;
     }
     return result;
