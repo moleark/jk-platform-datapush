@@ -1,1 +1,1 @@
-{"version":3,"file":"tmallabDataList.js","sourceRoot":"","sources":["../../ts/tools/tmallabDataList.ts"],"names":[],"mappings":";;AAAW,QAAA,iBAAiB,GAAQ,EAAE,CAAC;AAC5B,QAAA,cAAc,GAAQ,EAAE,CAAC"}
+{"version":3,"file":"tmallabDataList.js","sourceRoot":"","sources":["../../ts/tools/tmallabDataList.ts"],"names":[],"mappings":";;AACA,IAAI,kBAAkB,GAAU,EAAE,CAAC;AAI1B,gDAAkB;AAH3B,IAAI,iBAAiB,GAAU,EAAE,CAAC;AAGL,8CAAiB;AAF9C,IAAI,gBAAgB,GAAU,EAAE,CAAC;AAEe,4CAAgB"}

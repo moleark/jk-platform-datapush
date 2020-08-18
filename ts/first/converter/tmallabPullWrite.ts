@@ -6,8 +6,8 @@ let md5 = require('md5');
 import http from 'http';
 import config from 'config';
 import { logger } from "../../tools/logger";
-import { HttpRequest_GET, HttpRequest_POST } from '../../tools/HttpRequestHelper';
-import { addOrEditDataList, deleteDataList } from '../../tools/tmallabDataList';
+import { HttpRequest_POST } from '../../tools/HttpRequestHelper';
+import { DataList } from '../../tools/tmallabGlobalVar';
 
 
 // 喀斯玛接口相关配置
@@ -267,6 +267,9 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     try {
         let result = false;
         let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
+        let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+            templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, delivetime, pStartTime, pEndTime } = body;
+
         let datetime = Date.now();
         let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
         let postDataStr = {};
@@ -275,33 +278,123 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             path: '',
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json' //charset=UTF-8
+                'Content-Type': 'application/json;charset=UTF-8'
             }
         };
 
-        if (body.isDelete == 0) {
-            addOrEditDataList.push(body);
-            console.log(addOrEditDataList.length);
-        } else if (body.isDelete == 1) {
-            deleteDataList.push(body);
-            console.log(addOrEditDataList.length);
+        // 产品下架的情况，删除接口是单个删除。
+        if (isDelete == 1) {
+            // deleteList.push(body);
+            let deleteData = {
+                vipCode: vipCode,
+                platform: '',
+                brand: brand,
+                itemNum: itemNum,
+                packingSpecification: packingSpecification,
+                appSecurity: appSecurity,
+                version: version
+            };
+
+            postDataStr = JSON.stringify(deleteData);
+            options.path = deleteOneProductPath;
+
+            // 调用平台的接口推送数据，并返回结果
+            let optionData = await HttpRequest_POST(options, postDataStr);
+            let postResult = JSON.parse(String(optionData));
+
+            // 判断推送结果
+            if (postResult.flag != 0) {
+                result = true;
+                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+            } else {
+                result = false;
+                throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
+            }
+
         }
 
-        if (addOrEditDataList.length > 9) {
+        // 市场活动产品，需要调用平台市场活动接口。但是调用市场活动接口前提得保证数据添加到对方平台上，所以在此市场活动单个产品先调用推送接口后 再调用市场活动接口。
+        else if (isDelete == 0 && activeDiscount != '' && activeDiscount != null) {
+
+            let product = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                templateTypeId, mdlNumber, packnr, unit, delivetime);
+
+            let addData = {
+                product: [product],
+                productType: GetProductType(templateTypeId),
+                vipCode: vipCode,
+                platform: '',
+                appSecurity: appSecurity,
+                version: version
+            }
+            postDataStr = JSON.stringify(addData);
+            options.path = pushProductPath;
+
+            // 调用平台的接口推送数据，并返回结果;
+            let optionData = await HttpRequest_POST(options, postDataStr);
+            let postResult = JSON.parse(String(optionData));
+
+            // 判断推送结果
+            if (postResult.flag != 0) {
+                let promotionData = await GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, pStartTime, pEndTime, appSecurity);
+                postDataStr = JSON.stringify(promotionData);
+                options.path = updatePromotionInfoPath;
+
+                // 再次调用平台的接口推送数据，并返回结果
+                let optionDataAgain = await HttpRequest_POST(options, postDataStr);
+                let postResultAgain = JSON.parse(String(optionDataAgain));
+
+                if (postResultAgain.flag != 0) {
+                    result = true;
+                    console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+                    console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + '}');
+
+                } else {
+                    result = false;
+                    throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
+                }
+            } else {
+                result = false;
+                throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
+            }
+
+        }
+
+        // 产品 “新增”或者“修改”的情况。需要批量推送。先判断单个数据对应的处理情况，存储到数组中（等存储够一定量的数据批量推送）。
+        else if (isDelete == 0) {
+
+            if (templateTypeId == 1) {
+                console.log(DataList.addOrEditList_chem.length);
+                DataList.addOrEditList_chem.push(body);
+                console.log(DataList.addOrEditList_chem.length + '----');
+            } else if (templateTypeId == 2) {
+                console.log(DataList.addOrEditList_bio.length);
+                DataList.addOrEditList_bio.push(body);
+            } else if (templateTypeId == 3) {
+                console.log(DataList.addOrEditList_cl.length);
+                DataList.addOrEditList_cl.push(body);
+            }
+        }
+
+        // 化学试剂 推送，满足1000条数据推送一次；
+        if (DataList.addOrEditList_chem.length > 9) {
 
             let productList_addOrEdit: any = [];
-            for (let i = addOrEditDataList.length - 1; i >= 0; i--) {
+            for (let i = DataList.addOrEditList_chem.length - 1; i >= 0; i--) {
                 let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, packageId, mdlNumber, packnr, unit, activeDiscount, delivetime, pStartTime, pEndTime } = addOrEditDataList[i];
+                    templateTypeId, mdlNumber, packnr, unit, delivetime } = DataList.addOrEditList_chem[i];
 
                 let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
                     templateTypeId, mdlNumber, packnr, unit, delivetime);
                 productList_addOrEdit.push(AddOrEditFormat);
+                DataList.addOrEditList_chem = DataList.addOrEditList_chem.filter(a => a !== DataList.addOrEditList_chem[i]);
+                // delete addOrEditList_chem[i];
+                console.log(DataList.addOrEditList_chem.length);
             }
 
             let addData = {
                 product: productList_addOrEdit,
-                productType: '',//GetProductType(templateTypeId),
+                productType: GetProductType('1'),
                 vipCode: vipCode,
                 platform: '',
                 appSecurity: appSecurity,
@@ -317,43 +410,16 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             // 判断推送结果
             if (postResult.flag != 0) {
-
-
-            } else {
-                result = false;
-                //throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
-            }
-
-        } else if (deleteDataList.length > 1) {
-
-            for (let i = addOrEditDataList.length - 1; i >= 0; i--) {
-                let { itemNum, brand, packingSpecification } = addOrEditDataList[i];
-
-                let deleteData = {
-                    vipCode: vipCode,
-                    platform: '',
-                    brand: brand,
-                    itemNum: itemNum,
-                    packingSpecification: packingSpecification,
-                    appSecurity: appSecurity,
-                    version: version
-                };
-                postDataStr = JSON.stringify(deleteData);
-                options.path = deleteOneProductPath;
-            }
-            // 调用平台的接口推送数据，并返回结果
-            let optionData = await HttpRequest_POST(options, postDataStr);
-            let postResult = JSON.parse(String(optionData));
-
-            // 判断推送结果
-            if (postResult.flag != 0) {
-
+                result = true;
+                logger.log('success');
 
             } else {
                 result = false;
                 //throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
             }
+
         }
+
         return result;
 
     } catch (error) {

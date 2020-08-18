@@ -227,9 +227,6 @@ function GetImg(brandName) {
         case 'J&K':
             result = ['https://www.jkchemical.com/static/casmart/JNK.png'];
             break;
-        case 'J&K Scientific':
-            result = [''];
-            break;
         case 'Amethyst':
             result = ['https://www.jkchemical.com/static/casmart/Amethyst.png'];
             break;
@@ -284,7 +281,13 @@ function GetImg(brandName) {
         case 'Alfa':
             result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
             break;
-        default:
+        case 'accela':
+            result = [''];
+            break;
+        case 'J&K-Abel':
+            result = [''];
+            break;
+        case 'J&K Scientific':
             result = [''];
             break;
     }
