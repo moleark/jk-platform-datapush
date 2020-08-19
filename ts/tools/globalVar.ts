@@ -7,7 +7,9 @@ class globalVar {
     public addOrEditList_cl: any[] = [];
 
     // 库巴扎平台存储获取token的时间
-    public getTokenTime: any;
+    public token: any;
+    public ucode: any;
+    public timestamp: any;
 }
 
 export var GlobalVar = new globalVar();
