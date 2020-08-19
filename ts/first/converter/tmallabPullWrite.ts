@@ -129,9 +129,6 @@ function GetImg(brandName: string): any {
         case 'J&K':
             result = 'https://www.jkchemical.com/static/casmart/JNK.png';
             break;
-        case 'J&K Scientific':
-            result = '';
-            break;
         case 'Amethyst':
             result = 'https://www.jkchemical.com/static/casmart/Amethyst.png';
             break;
@@ -186,8 +183,17 @@ function GetImg(brandName: string): any {
         case 'Alfa':
             result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
             break;
+        case 'Accela':
+            result = 'https://www.jkchemical.com/static/casmart/accela.jpg';
+            break;
+        case 'J&K-Abel':
+            result = 'https://www.jkchemical.com/static/casmart/JNKAbel.jpg';
+            break;
+        case 'J&K Scientific':
+            result = 'https://www.jkchemical.com/static/casmart/JNKScientific_200416.png';
+            break;
         default:
-            result = '';
+            result = 'https://www.jkchemical.com/image/map-jk.gif';
             break;
     }
     return result;
@@ -364,20 +370,23 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         else if (isDelete == 0) {
 
             if (templateTypeId == 1) {
-                console.log(DataList.addOrEditList_chem.length);
                 DataList.addOrEditList_chem.push(body);
-                console.log(DataList.addOrEditList_chem.length + '----');
+                //console.log('addOrEditList_chem：' + DataList.addOrEditList_chem.length + '----');
             } else if (templateTypeId == 2) {
-                console.log(DataList.addOrEditList_bio.length);
                 DataList.addOrEditList_bio.push(body);
+                //console.log('addOrEditList_bio' + DataList.addOrEditList_bio.length + '----');
             } else if (templateTypeId == 3) {
-                console.log(DataList.addOrEditList_cl.length);
                 DataList.addOrEditList_cl.push(body);
+                //console.log('addOrEditList_cl' + DataList.addOrEditList_cl.length + '----');
             }
         }
 
-        // 化学试剂 推送，满足1000条数据推送一次；
-        if (DataList.addOrEditList_chem.length > 9) {
+        // 化学试剂 推送，满足500 条数据推送一次；
+        if (DataList.addOrEditList_chem.length > 499) {
+
+            console.log('化学试剂 数量累计够500，准备推送...' + timestamp);
+            console.log('生物试剂 数量' + DataList.addOrEditList_bio.length);
+            console.log('仪器耗材 数量' + DataList.addOrEditList_cl.length);
 
             let productList_addOrEdit: any = [];
             for (let i = DataList.addOrEditList_chem.length - 1; i >= 0; i--) {
@@ -388,8 +397,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     templateTypeId, mdlNumber, packnr, unit, delivetime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 DataList.addOrEditList_chem = DataList.addOrEditList_chem.filter(a => a !== DataList.addOrEditList_chem[i]);
-                // delete addOrEditList_chem[i];
-                console.log(DataList.addOrEditList_chem.length);
+                // console.log(DataList.addOrEditList_chem.length);
             }
 
             let addData = {
@@ -411,13 +419,105 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             // 判断推送结果
             if (postResult.flag != 0) {
                 result = true;
-                logger.log('success');
+                console.log('TmallabPush Success: { Type:' + GetProductType('1') + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
 
             } else {
                 result = false;
-                //throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',PackageId:' + packageId + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + '}'
+                throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',Type:' + GetProductType('1') + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
             }
 
+        }
+
+        // 生物试剂 推送，满足500 条数据推送一次；
+        if (DataList.addOrEditList_bio.length > 499) {
+
+            console.log('生物试剂 数量累计够500，准备推送...' + timestamp);
+            console.log('仪器耗材 数量' + DataList.addOrEditList_cl.length);
+            console.log('化学试剂 数量' + DataList.addOrEditList_chem.length);
+
+            let productList_addOrEdit: any = [];
+            for (let i = DataList.addOrEditList_bio.length - 1; i >= 0; i--) {
+                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                    templateTypeId, mdlNumber, packnr, unit, delivetime } = DataList.addOrEditList_bio[i];
+
+                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                    templateTypeId, mdlNumber, packnr, unit, delivetime);
+                productList_addOrEdit.push(AddOrEditFormat);
+                DataList.addOrEditList_bio = DataList.addOrEditList_bio.filter(a => a !== DataList.addOrEditList_bio[i]);
+                // console.log(DataList.addOrEditList_bio.length);
+            }
+
+            let addData = {
+                product: productList_addOrEdit,
+                productType: GetProductType('2'),
+                vipCode: vipCode,
+                platform: '',
+                appSecurity: appSecurity,
+                version: version
+            }
+
+            postDataStr = JSON.stringify(addData);
+            options.path = pushProductPath;
+
+            // 调用平台的接口推送数据，并返回结果
+            let optionData = await HttpRequest_POST(options, postDataStr);
+            let postResult = JSON.parse(String(optionData));
+
+            // 判断推送结果
+            if (postResult.flag != 0) {
+                result = true;
+                console.log('TmallabPush Success: { Type:' + GetProductType('1') + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+
+            } else {
+                result = false;
+                throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',Type:' + GetProductType('1') + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
+            }
+
+        }
+
+        // 仪器耗材 推送，满足100 条数据推送一次；
+        if (DataList.addOrEditList_cl.length > 99) {
+
+            console.log('仪器耗材 数量累计够100，准备推送...' + timestamp);
+            console.log('化学试剂 数量' + DataList.addOrEditList_chem.length);
+            console.log('生物试剂 数量' + DataList.addOrEditList_bio.length);
+            let productList_addOrEdit: any = [];
+            for (let i = DataList.addOrEditList_cl.length - 1; i >= 0; i--) {
+                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                    templateTypeId, mdlNumber, packnr, unit, delivetime } = DataList.addOrEditList_cl[i];
+
+                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                    templateTypeId, mdlNumber, packnr, unit, delivetime);
+                productList_addOrEdit.push(AddOrEditFormat);
+                DataList.addOrEditList_cl = DataList.addOrEditList_cl.filter(a => a !== DataList.addOrEditList_cl[i]);
+                // console.log(DataList.addOrEditList_cl.length);
+            }
+
+            let addData = {
+                product: productList_addOrEdit,
+                productType: GetProductType('3'),
+                vipCode: vipCode,
+                platform: '',
+                appSecurity: appSecurity,
+                version: version
+            }
+
+            postDataStr = JSON.stringify(addData);
+            options.path = pushProductPath;
+
+            // 调用平台的接口推送数据，并返回结果
+            let optionData = await HttpRequest_POST(options, postDataStr);
+            let postResult = JSON.parse(String(optionData));
+
+            // 判断推送结果
+            if (postResult.flag != 0) {
+                result = true;
+                console.log('TmallabPush Success: { Type:' + GetProductType('1') + ',Datetime:' + timestamp + ',Message:' + optionData + '}');
+
+            } else {
+                result = false;
+                throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',Type:' + GetProductType('1') + ',Datetime:' + timestamp + ',Message:' + optionData + '}';
+            }
         }
 
         return result;

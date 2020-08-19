@@ -303,6 +303,9 @@ function GetImg(brandName: string): any {
         case 'J&K Scientific':
             result = ['https://www.jkchemical.com/static/casmart/JNKScientific_200416.png'];
             break;
+        default:
+            result = ['https://www.jkchemical.com/image/map-jk.gif'];
+            break;
     }
     return result;
 }
