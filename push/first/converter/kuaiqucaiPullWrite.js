@@ -147,11 +147,80 @@ function GETSPEC_MARK(packnr, packageSize, unit) {
     return result;
 }
 // 获取产品图片，仪器耗材（其它类型产品不传）现在统一为一张logo。逐步实现一个品牌一张照片然后一个产品一张照片；
-function GetImg(templateTypeId) {
+function GetImg(brandName) {
     let result = [];
+    switch (brandName) {
+        case 'J&K':
+            result = ['https://www.jkchemical.com/static/casmart/JNK.png'];
+            break;
+        case 'Amethyst':
+            result = ['https://www.jkchemical.com/static/casmart/Amethyst.png'];
+            break;
+        case 'Acros':
+            result = ['https://www.jkchemical.com/static/casmart/Acros.png'];
+            break;
+        case 'TCI':
+            result = ['https://www.jkchemical.com/static/casmart/TCI.png'];
+            break;
+        case 'SERVA':
+            result = ['https://www.jkchemical.com/static/casmart/Serva.jpg'];
+            break;
+        case 'Serva':
+            result = ['https://www.jkchemical.com/static/casmart/Serva.jpg'];
+            break;
+        case 'Fluorochem':
+            result = ['https://www.jkchemical.com/static/casmart/Fluorochem.jpg'];
+            break;
+        case 'AccuStandard':
+            result = ['https://www.jkchemical.com/static/casmart/Accustandard.png'];
+            break;
+        case 'Strem':
+            result = ['https://www.jkchemical.com/static/casmart/Strem.png'];
+            break;
+        case 'TRC':
+            result = ['https://www.jkchemical.com/static/casmart/TRC.jpg'];
+            break;
+        case 'Apollo':
+            result = ['https://www.jkchemical.com/static/casmart/Apollo.jpg'];
+            break;
+        case 'Cambridge Isotope Laboratories（CIL）':
+            result = ['https://www.jkchemical.com/static/casmart/CIL.png'];
+            break;
+        case 'Polymer Source':
+            result = ['https://www.jkchemical.com/static/casmart/Polymersource.png'];
+            break;
+        case 'Matrix':
+            result = ['https://www.jkchemical.com/static/casmart/Matrix.png'];
+            break;
+        case 'Rieke Metals':
+            result = ['https://www.jkchemical.com/static/casmart/RiekeMetals.jpg'];
+            break;
+        case 'Frontier':
+            result = ['https://www.jkchemical.com/static/casmart/Frontier.png'];
+            break;
+        case 'Wilmad':
+            result = ['https://www.jkchemical.com/static/casmart/Wilmad.jpg'];
+            break;
+        case '1-Material':
+            result = ['https://www.jkchemical.com/static/casmart/1-Material.png'];
+            break;
+        case 'Alfa':
+            result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
+            break;
+        case 'Accela':
+            result = ['https://www.jkchemical.com/static/casmart/accela.jpg'];
+            break;
+        case 'J&K-Abel':
+            result = ['https://www.jkchemical.com/static/casmart/JNKAbel.jpg'];
+            break;
+        case 'J&K Scientific':
+            result = ['https://www.jkchemical.com/static/casmart/JNKScientific_200416.png'];
+            break;
+    }
+    /*
     if (templateTypeId == 3) {
         result = ['https://www.jkchemical.com/image/map-jk.gif'];
-    }
+    }*/
     return result;
 }
 // 获取规格单位 
@@ -540,7 +609,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
             let BIO_TYPE_ID = GetBIO_TYPE_ID(body["TemplateTypeId"]);
             let CL_TYPE_ID = GetCL_TYPE_ID(body["TemplateTypeId"]);
             let PACKAGE_TYPE = GetPACKAGE_TYPE(body["TemplateTypeId"], body["VALUME"], body["VALUMEUNIT_ID"]);
-            let IMG = GetImg(body["TemplateTypeId"]);
+            let IMG = GetImg(body["BRAND_NAME"]);
             let StockAmount = GetStockamount(Number(body["STOCK"]));
             let postDataJson = {
                 COMPANY_SALE_NO: body["COMPANY_SALE_NO"],
