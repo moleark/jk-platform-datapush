@@ -1,7 +1,7 @@
 {
     "name": "jk-platform-datapush",
     "port": 3018,
-    "interval": 3000,
+    "interval": 30000,
     "firstEntities": [],
     "afterFirstEntities": [
         {
