@@ -378,9 +378,9 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
         // 化学试剂 推送，满足500 条数据推送一次；
         if (GlobalVar.addOrEditList_chem.length > 499) {
-            console.log('化学试剂 数量累计够500，准备推送...' + timestamp);
-            console.log('生物试剂 数量' + GlobalVar.addOrEditList_bio.length);
-            console.log('仪器耗材 数量' + GlobalVar.addOrEditList_cl.length);
+            console.log('化学试剂 数量 500，准备推送...' + timestamp);
+            console.log('生物试剂 数量 ' + GlobalVar.addOrEditList_bio.length);
+            console.log('仪器耗材 数量 ' + GlobalVar.addOrEditList_cl.length);
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_chem.length - 1; i >= 0; i--) {
@@ -422,9 +422,9 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
         // 生物试剂 推送，满足500 条数据推送一次；
         if (GlobalVar.addOrEditList_bio.length > 499) {
-            console.log('生物试剂 数量累计够500，准备推送...' + timestamp);
-            console.log('仪器耗材 数量' + GlobalVar.addOrEditList_cl.length);
-            console.log('化学试剂 数量' + GlobalVar.addOrEditList_chem.length);
+            console.log('生物试剂 数量 500，准备推送...' + timestamp);
+            console.log('仪器耗材 数量 ' + GlobalVar.addOrEditList_cl.length);
+            console.log('化学试剂 数量 ' + GlobalVar.addOrEditList_chem.length);
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_bio.length - 1; i >= 0; i--) {
@@ -466,9 +466,9 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
         // 仪器耗材 推送，满足100 条数据推送一次；
         if (GlobalVar.addOrEditList_cl.length > 99) {
-            console.log('仪器耗材 数量累计够100，准备推送...' + timestamp);
-            console.log('化学试剂 数量' + GlobalVar.addOrEditList_chem.length);
-            console.log('生物试剂 数量' + GlobalVar.addOrEditList_bio.length);
+            console.log('仪器耗材 数量 100，准备推送...' + timestamp);
+            console.log('化学试剂 数量 ' + GlobalVar.addOrEditList_chem.length);
+            console.log('生物试剂 数量 ' + GlobalVar.addOrEditList_bio.length);
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_cl.length - 1; i >= 0; i--) {
