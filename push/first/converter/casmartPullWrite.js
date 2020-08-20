@@ -290,6 +290,9 @@ function GetImg(brandName) {
         case 'J&K Scientific':
             result = ['https://www.jkchemical.com/static/casmart/JNKScientific_200416.png'];
             break;
+        case 'Echelon':
+            result = ['https://www.jkchemical.com/static/casmart/Echelon1.jpg', 'https://www.jkchemical.com/static/casmart/Echelon2.jpg', 'https://www.jkchemical.com/static/casmart/Echelon3.jpg'];
+            break;
         default:
             result = ['https://www.jkchemical.com/image/map-jk.gif'];
             break;

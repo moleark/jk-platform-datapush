@@ -192,6 +192,9 @@ function GetImg(brandName: string): any {
         case 'J&K Scientific':
             result = 'https://www.jkchemical.com/static/casmart/JNKScientific_200416.png';
             break;
+        case 'Echelon':
+            result = 'https://www.jkchemical.com/static/casmart/Echelon1.jpg';
+            break;
         default:
             result = 'https://www.jkchemical.com/image/map-jk.gif';
             break;
@@ -306,6 +309,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             // 调用平台的接口推送数据，并返回结果
             let optionData = await HttpRequest_POST(options, postDataStr);
+            console.log(optionData);
             let postResult = JSON.parse(String(optionData));
 
             // 判断推送结果
@@ -337,6 +341,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             // 调用平台的接口推送数据，并返回结果;
             let optionData = await HttpRequest_POST(options, postDataStr);
+            console.log(optionData);
             let postResult = JSON.parse(String(optionData));
 
             // 判断推送结果
@@ -347,6 +352,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
                 // 再次调用平台的接口推送数据，并返回结果
                 let optionDataAgain = await HttpRequest_POST(options, postDataStr);
+                console.log(optionDataAgain);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
 
                 if (postResultAgain.flag != 0) {
@@ -408,6 +414,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             // 调用平台的接口推送数据，并返回结果
             let optionData = await HttpRequest_POST(options, postDataStr);
+            console.log(optionData);
             let postResult = JSON.parse(String(optionData));
 
             // 判断推送结果
