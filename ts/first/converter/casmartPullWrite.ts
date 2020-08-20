@@ -536,6 +536,10 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 result = true;
                 logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }');
             }
+            else if (postResult.retCode == 1 && stateName == 'delete' && postResult.message == '商家：448 未找到商品信息') {
+                result = true;
+                logger.error('CasmartPush Fail: { retCode: ' + postResult.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionData + ' }');
+            }
             else if (postResult.retCode == 1 && stateName == 'edit' && postResult.message == '商家：448 未找到商品信息') {
 
                 stateName = 'add';
