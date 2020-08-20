@@ -10,7 +10,7 @@ import { isNullOrUndefined } from "util";
 import { GlobalVar } from '../../tools/globalVar';
 
 // 库巴扎接口相关配置
-const cobazaarApiSetting = config.get<any>("cobazaarApi");
+const cobazaarApiSetting = config.get<any>("tmallabApi");
 
 
 function getTokenInfo(hostname, gettokenPath, loginname, ukey) {

@@ -12,7 +12,7 @@ const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 const util_1 = require("util");
 const globalVar_1 = require("../../tools/globalVar");
 // 库巴扎接口相关配置
-const cobazaarApiSetting = config_1.default.get("cobazaarApi");
+const cobazaarApiSetting = config_1.default.get("tmallabApi");
 function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     let vcode = md5(loginname + ukey + 'kbz');
     let result = {};
