@@ -550,7 +550,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
                 if (postResultAgain.retCode != 0) {
                     result = false;
-                    throw 'CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }';
+                    console.log('CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }');
                 } else {
                     result = true;
                     console.log('CasmartPush Success: { Packageid: ' + rid + ', Type: edit 转 ' + stateName + ', Datetime:' + timestamp + ', Message:' + optionDataAgain + '}');

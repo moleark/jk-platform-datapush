@@ -520,7 +520,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
                 let postResultAgain = JSON.parse(String(optionDataAgain));
                 if (postResultAgain.retCode != 0) {
                     result = false;
-                    throw 'CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }';
+                    console.log('CasmartPush Fail: { retCode: ' + postResultAgain.retCode + ', Packageid:' + rid + ',Type:' + stateName + ',Datetime:' + timestamp + ',Message:' + optionDataAgain + ' }');
                 }
                 else {
                     result = true;
