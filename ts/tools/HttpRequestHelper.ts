@@ -2,7 +2,7 @@ import http from 'http';
 
 // nodejs的http是使用异步方式调用接口，通过此方法可以实现同步调用）
 
-export function HttpRequest_GET(options) {
+export function HttpRequest_GET(options: any) {
 
     let data = '';
     return new Promise(function (resolve, reject) {
@@ -22,7 +22,7 @@ export function HttpRequest_GET(options) {
     });
 }
 
-export function HttpRequest_POST(options, writeData) {
+export function HttpRequest_POST(options: any, writeData: any) {
 
     let data = '';
     return new Promise(function (resolve, reject) {

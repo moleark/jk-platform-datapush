@@ -37,8 +37,7 @@
         "mssql": "^4.3.0",
         "mysql": "^2.17.1",
         "node-fetch": "^2.3.0",
-        "requset": "0.0.1-security",
         "typescript": "^3.7.4",
-        "uq-joint": "^1.0.38"
+        "uq-joint": "^1.0.39"
     }
 }

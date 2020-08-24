@@ -137,9 +137,6 @@ function GetBrandId(brandName) {
         case 'J&K Scientific':
             result = 300245926;
             break;
-        case 'Accela':
-            result = 2233;
-            break;
         case '3M':
             result = 418;
             break;
@@ -160,9 +157,6 @@ function GetBrandId(brandName) {
             break;
         case 'Serva':
             result = 193;
-            break;
-        case 'accela':
-            result = 2233;
             break;
         case 'Apollo':
             result = 4079;
@@ -248,6 +242,7 @@ function GetImg(brandName) {
         case 'AccuStandard':
             result = ['https://www.jkchemical.com/static/casmart/Accustandard.png'];
             break;
+            0;
         case 'Strem':
             result = ['https://www.jkchemical.com/static/casmart/Strem.png'];
             break;

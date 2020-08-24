@@ -11,32 +11,116 @@ const logger_1 = require("../../tools/logger");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 const util_1 = require("util");
 const globalVar_1 = require("../../tools/globalVar");
+var qs = require('querystring');
 // 库巴扎接口相关配置
 const cobazaarApiSetting = config_1.default.get("tmallabApi");
-function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
+// 获取Token接口信息
+async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     let vcode = md5(loginname + ukey + 'kbz');
-    let result = {};
+    let requestData = qs.stringify({
+        'loginname': loginname,
+        'ukey': ukey,
+        'vcode': vcode
+    });
     let options = {
+        method: 'POST',
         hostname: hostname,
         path: gettokenPath,
-        method: 'POST',
         headers: {
-            'Content-Type': 'application/json;charset=UTF-8;'
-        }
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        'maxRedirects': requestData.length
     };
-    let postData = { "loginname": loginname, "ukey": ukey, "vcode": vcode };
-    let optionData = HttpRequestHelper_1.HttpRequest_POST(options, postData);
+    let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, requestData);
     let postResult = JSON.parse(String(optionData));
     if (postResult.flag != 1) {
         throw ('获取token失败');
     }
     else {
-        result = postResult.rdate;
+        let result = postResult.rdate;
         globalVar_1.GlobalVar.token = result[0].token;
         globalVar_1.GlobalVar.ucode = result[0].ucode;
         globalVar_1.GlobalVar.timestamp = result[0].timestamp;
     }
 }
+// 获取产品类型
+function GetProductType(typeId) {
+    let result = '';
+    switch (typeId) {
+        case '1':
+            result = '化学试剂';
+            break;
+        case '2':
+            result = '生物试剂';
+            break;
+        case '3':
+            result = '仪器耗材';
+            break;
+    }
+    return result;
+}
+// 获取到货期
+function GetFutureDelivery(amount, brandName, deliveryCycle) {
+    let result = 3;
+    if (amount > 0) {
+        result = 1;
+    }
+    else {
+        if (brandName == 'Acros') {
+            result = 2;
+        }
+        else if (brandName == 'TCI') {
+            result = 2;
+        }
+        else if (brandName == 'Alfa') {
+            result = 2;
+        }
+        else {
+            result = deliveryCycle;
+        }
+    }
+    return result;
+}
+// 获取产品链接地址
+function GetDetailUrl(JKid) {
+    let result = '';
+    result = 'https://www.jkchemical.com/CH/Products/' + JKid + '.html';
+    return result;
+}
+// 获取删除格式数据
+function GetDeleteFormat(brandName, originalId, packageSize) {
+    return [{
+            品牌: brandName,
+            货号: originalId,
+            包装规格: packageSize
+        }];
+}
+// 获取新增或者修改格式数据
+function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
+    return [{
+            品牌: brandName,
+            货号: originalId,
+            包装规格: packageSize,
+            产品分类: GetProductType(typeId),
+            中文名称: chineseName,
+            英文名称: englishName,
+            '目录价(RMB)': catalogPrice,
+            CAS: CAS,
+            质量等级: '',
+            包装单位: '瓶',
+            交货期: GetFutureDelivery(stock, brandName, deliveryCycle),
+            纯度: purity,
+            保存条件: '',
+            运输条件: '',
+            中文别名: '',
+            英文别名: '',
+            关键词: '',
+            其他描述: '',
+            MDL: MDL,
+            链接地址: GetDetailUrl(jkid)
+        }];
+}
+// 推送
 async function CobazaarPullWrite(joint, uqIn, data) {
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
     if (key === undefined)
@@ -44,57 +128,55 @@ async function CobazaarPullWrite(joint, uqIn, data) {
     if (uqFullName === undefined)
         throw 'tuid ' + tuid + ' not defined';
     let keyVal = data[key];
-    //let mapToUq = new MapToUq(this);
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    console.log(globalVar_1.GlobalVar.timestamp);
     let { loginname, ukey, hostname, gettokenPath, delproductPath, addproduct } = cobazaarApiSetting;
+    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete } = body;
+    let result = false;
     try {
-        let result = false;
-        let recordTime = date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss'); // + 8 * 3600 * 1000
-        if (util_1.isNullOrUndefined(globalVar_1.GlobalVar.token) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.ucode) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.timestamp) || date_fns_1.differenceInHours(globalVar_1.GlobalVar.timestamp, Date.now()) > 50) {
+        // 判断有没有获取到 token 信息
+        if (util_1.isNullOrUndefined(globalVar_1.GlobalVar.token) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.ucode) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.timestamp)) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
+        // 判断获取到的 token 信息有没有过期（接口token有效时间60分钟，此处设置为超过50分钟则重新获取）
+        if (date_fns_1.differenceInHours(new Date(globalVar_1.GlobalVar.timestamp), Date.now()) > 50) {
+            await getTokenInfo(hostname, gettokenPath, loginname, ukey);
+        }
+        let postDataStr = {};
+        let postOptions = {
+            hostname: hostname,
+            path: '',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            }
+        };
+        if (isDelete == 1) {
+            let deleteData = await GetDeleteFormat(brandName, originalId, packageSize);
+            postOptions.path = delproductPath;
+            postDataStr = JSON.stringify(deleteData);
+        }
         else {
-            let { 品牌, 货号, 包装规格, 产品分类, 中文名称, 英文名称, 目录价, CAS, 交货期, 纯度, 保存条件, MDL, typeId, stateName, isDelete } = body;
-            let postDataStr = {};
-            let postOptions = {
-                hostname: hostname,
-                path: '',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=UTF-8'
-                }
-            };
-            if (isDelete == 1) {
-                let deleteData = {
-                    rid: body["rid"],
-                    isinsale: 0
-                };
-                postDataStr = JSON.stringify(deleteData);
-            }
-            else {
-                let addData = {
-                    product: '',
-                    productType: '',
-                    vipCode: '',
-                    platform: '',
-                    appSecurity: '',
-                    version: ''
-                };
-                postDataStr = JSON.stringify(addData);
-            }
-            // 调用平台的接口推送数据，并返回结果 
-            let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, postDataStr);
-            let postResult = JSON.parse(String(optionData));
-            if (postResult.flag == 0) {
-                result = false;
-                console.log('cobazaarPush Fail: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:平台不存在无需删除');
-            }
-            else {
-                result = true;
-                console.log('cobazaarPush Success: { PackageId: ' + body["COMPANY_SALE_NO"] + ',Type:' + postOptions.path + ',Datetime:' + recordTime + ',Message:平台不存在无需删除');
-            }
+            let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+            postOptions.path = addproduct;
+            postDataStr = JSON.stringify(addData);
+        }
+        let requestData = qs.stringify({
+            'ucode': globalVar_1.GlobalVar.ucode,
+            'token': globalVar_1.GlobalVar.token,
+            'timestamp': globalVar_1.GlobalVar.timestamp,
+            'reqcontent': postDataStr
+        });
+        // 调用平台的接口推送数据，并返回结果
+        let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestData);
+        let postResult = JSON.parse(String(optionData));
+        if (postResult.flag == 0) {
+            result = false;
+            console.log('cobazaarPush Fail: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
+        }
+        else {
+            result = true;
+            console.log('cobazaarPush Success: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
         }
         return result;
     }

@@ -14,10 +14,10 @@ let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.Original
                 FROM    ProdData.dbo.Export_ThirdPartyPlatformEntryResult r
                         INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId
                         INNER JOIN zcl_mess.dbo.products p ON p.JKid = j.JKID
-                        INNER join zcl_mess.dbo.storage t on t.CodeST = p.storage
-		        INNER join OPDATA.dbo.JKProdIDInOut oi on oi.JKIDOut = p.Originalid and p.manufactory in ( 'A01', 'A10' )
-                        INNER join OPDATA.dbo.PProducts rp on rp.OriginalID = oi.JKIDIN
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
+                         LEFT JOIN zcl_mess.dbo.storage t on t.CodeST = p.storage
+		         LEFT JOIN OPDATA.dbo.JKProdIDInOut oi on oi.JKIDOut = p.Originalid and p.manufactory in ( 'A01', 'A10' )
+                         LEFT JOIN OPDATA.dbo.PProducts rp on rp.OriginalID = oi.JKIDIN
                          LEFT JOIN (
                                 SELECT  pm.ActiveDiscount, m.PStartTime, m.PEndTime, pm.jkcat 
                                 FROM    zcl_mess.dbo.ProductsMarketing pm
