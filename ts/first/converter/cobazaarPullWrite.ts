@@ -29,7 +29,7 @@ async function getTokenInfo(hostname: string, gettokenPath: string, loginname: s
         hostname: hostname,
         path: gettokenPath,
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
         'maxRedirects': requestData.length
     };
@@ -52,13 +52,13 @@ function GetProductType(typeId: any): string {
 
     let result = '';
     switch (typeId) {
-        case '1':
+        case 1:
             result = '化学试剂';
             break;
-        case '2':
+        case 2:
             result = '生物试剂';
             break;
-        case '3':
+        case 3:
             result = '仪器耗材';
             break;
     }
@@ -88,7 +88,7 @@ function GetFutureDelivery(amount: number, brandName: string, deliveryCycle: num
 }
 
 // 获取产品链接地址
-function GetDetailUrl(JKid: string): any {
+function GetDetaUrl(JKid: string): any {
     let result = '';
     result = 'https://www.jkchemical.com/CH/Products/' + JKid + '.html';
     return result;
@@ -126,7 +126,7 @@ function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, c
         关键词: '',
         其他描述: '',
         MDL: MDL,
-        链接地址: GetDetailUrl(jkid)
+        链接地址: GetDetaUrl(jkid)
     }];
 }
 
@@ -145,12 +145,12 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
     let result = false;
 
     try {
-        // 判断有没有获取到 token 信息
+        // 判断有没有获取到token信息
         if (isNullOrUndefined(GlobalVar.token) || isNullOrUndefined(GlobalVar.ucode) || isNullOrUndefined(GlobalVar.timestamp)) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
 
-        // 判断获取到的 token 信息有没有过期（接口token有效时间60分钟，此处设置为超过50分钟则重新获取）
+        // 判断获取到的token信息有没有过期（接口token有效时间60分钟，此处设置为超过50分钟则重新获取）
         if (differenceInHours(new Date(GlobalVar.timestamp), Date.now()) > 50) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }

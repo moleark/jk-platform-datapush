@@ -115,7 +115,7 @@ function GetBrand(brandName: string): any {
 }
 
 // 获取产品链接地址
-function GetDetailUrl(JKid: string): any {
+function GetDetaUrl(JKid: string): any {
     let result = '';
     result = 'https://www.jkchemical.com/CH/Products/' + JKid + '.html';
     return result;
@@ -242,7 +242,7 @@ function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, cat
         MDL: mdlNumber,
         最小包装: "",
         最小包装数量: "",
-        产品链接: GetDetailUrl(jkid),
+        产品链接: GetDetaUrl(jkid),
         图片链接: GetImg(brand)
     }
     return productInfo;

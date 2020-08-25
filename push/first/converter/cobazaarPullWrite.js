@@ -27,7 +27,7 @@ async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
         hostname: hostname,
         path: gettokenPath,
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
         'maxRedirects': requestData.length
     };
@@ -47,13 +47,13 @@ async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
 function GetProductType(typeId) {
     let result = '';
     switch (typeId) {
-        case '1':
+        case 1:
             result = '化学试剂';
             break;
-        case '2':
+        case 2:
             result = '生物试剂';
             break;
-        case '3':
+        case 3:
             result = '仪器耗材';
             break;
     }
@@ -82,7 +82,7 @@ function GetFutureDelivery(amount, brandName, deliveryCycle) {
     return result;
 }
 // 获取产品链接地址
-function GetDetailUrl(JKid) {
+function GetDetaUrl(JKid) {
     let result = '';
     result = 'https://www.jkchemical.com/CH/Products/' + JKid + '.html';
     return result;
@@ -117,7 +117,7 @@ function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, eng
             关键词: '',
             其他描述: '',
             MDL: MDL,
-            链接地址: GetDetailUrl(jkid)
+            链接地址: GetDetaUrl(jkid)
         }];
 }
 // 推送
@@ -134,11 +134,11 @@ async function CobazaarPullWrite(joint, uqIn, data) {
     let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete } = body;
     let result = false;
     try {
-        // 判断有没有获取到 token 信息
+        // 判断有没有获取到token信息
         if (util_1.isNullOrUndefined(globalVar_1.GlobalVar.token) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.ucode) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.timestamp)) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
-        // 判断获取到的 token 信息有没有过期（接口token有效时间60分钟，此处设置为超过50分钟则重新获取）
+        // 判断获取到的token信息有没有过期（接口token有效时间60分钟，此处设置为超过50分钟则重新获取）
         if (date_fns_1.differenceInHours(new Date(globalVar_1.GlobalVar.timestamp), Date.now()) > 50) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
