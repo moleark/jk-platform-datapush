@@ -13,7 +13,7 @@ const util_1 = require("util");
 const globalVar_1 = require("../../tools/globalVar");
 var qs = require('querystring');
 // 库巴扎接口相关配置
-const cobazaarApiSetting = config_1.default.get("tmallabApi");
+const cobazaarApiSetting = config_1.default.get("cobazaarApi");
 // 获取Token接口信息
 async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     let vcode = md5(loginname + ukey + 'kbz');

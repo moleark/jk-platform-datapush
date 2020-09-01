@@ -11,7 +11,7 @@ import { GlobalVar } from '../../tools/globalVar';
 var qs = require('querystring');
 
 // 库巴扎接口相关配置
-const cobazaarApiSetting = config.get<any>("tmallabApi");
+const cobazaarApiSetting = config.get<any>("cobazaarApi");
 
 
 // 获取Token接口信息

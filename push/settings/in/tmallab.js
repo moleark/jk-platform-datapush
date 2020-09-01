@@ -24,9 +24,9 @@ let pullSql = ` SELECT  TOP ${promiseSize} r.ID, m.name as BrandName, p.Original
                                         INNER JOIN dbs.dbo.marketing m ON pm.MarketingID = m.MarketingID
                                 WHERE   m.MStatus = 'E' AND m.Market_code = 'CN' AND m.PStartTime < GETDATE() AND ISNULL( m.PEndTime, '2050-01-01' ) > GETDATE()
                                 ) x ON x.jkcat = r.PackageId
-                        WHERE  CustomerUnitOnPlatformId = '779db9cf4f9b49709ab61140af5e4edf'
-                               AND Id > @iMaxId
-                        ORDER BY Id; `;
+                WHERE   CustomerUnitOnPlatformId = '779db9cf4f9b49709ab61140af5e4edf'
+                        AND Id > @iMaxId
+                ORDER BY Id; `;
 exports.Tmallab = {
     uq: 'platform/Push',
     type: 'tuid',

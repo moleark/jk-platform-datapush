@@ -20,9 +20,9 @@ let pullSql = `SELECT  TOP ${promiseSize} r.ID, r.PackageId, zcl_mess.dbo.fc_reC
                         INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
                         LEFT  JOIN zcl_mess.dbo.sc_restrict sc ON sc.chemid = pc.chemid
-                        WHERE   r.CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
-                                AND r.ID > @iMaxId
-                        ORDER BY Id; `;
+                WHERE   r.CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a' 
+                        AND r.ID > @iMaxId
+                ORDER BY Id; `;
 
 export const Casmart: UqInTuid = {
         uq: 'platform/Push',
