@@ -107,26 +107,26 @@ function GetDeleteFormat(brandName: any, originalId: any, packageSize: any) {
 function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
     , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
     return [{
-        品牌: brandName,
-        货号: originalId,
-        包装规格: packageSize,
-        产品分类: GetProductType(typeId),
-        中文名称: chineseName,
-        英文名称: englishName,
+        '品牌': brandName,
+        '货号': originalId,
+        '包装规格': packageSize,
+        '产品分类': GetProductType(typeId),
+        '中文名称': chineseName,
+        '英文名称': englishName,
         '目录价(RMB)': catalogPrice,
-        CAS: CAS,
-        质量等级: '',
-        包装单位: '瓶',
-        交货期: GetFutureDelivery(stock, brandName, deliveryCycle),
-        纯度: purity,
-        保存条件: '',
-        运输条件: '',
-        中文别名: '',
-        英文别名: '',
-        关键词: '',
-        其他描述: '',
-        MDL: MDL,
-        链接地址: GetDetaUrl(jkid)
+        'CAS': CAS,
+        '质量等级': '',
+        '包装单位': '瓶',
+        '交货期': GetFutureDelivery(stock, brandName, deliveryCycle),
+        '纯度': purity,
+        '保存条件': '',
+        '运输条件': '',
+        '中文别名': '',
+        '英文别名': '',
+        '关键词': '',
+        '其他描述': '',
+        'MDL': MDL,
+        '链接地址': GetDetaUrl(jkid)
     }];
 }
 

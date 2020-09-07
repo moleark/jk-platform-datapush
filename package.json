@@ -29,7 +29,6 @@
         "dateformat": "^3.0.3",
         "express": "^4.17.1",
         "gh-pages": "^2.0.1",
-        "http": "0.0.1-security",
         "jwt-decode": "^2.2.0",
         "lodash": "^4.17.11",
         "log4js": "^4.5.1",
