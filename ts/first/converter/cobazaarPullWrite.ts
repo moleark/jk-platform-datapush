@@ -165,26 +165,29 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
             }
         };
 
-        if (isDelete == 1) {
+        if (String(isDelete) == '1') {
             let deleteData = await GetDeleteFormat(brandName, originalId, packageSize);
             postOptions.path = delproductPath;
             postDataStr = JSON.stringify(deleteData);
 
         } else {
             let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+            console.log(addData);
             postOptions.path = addproduct;
             postDataStr = JSON.stringify(addData);
         }
 
         let requestData = qs.stringify({
-            'ucode': GlobalVar.ucode,
-            'token': GlobalVar.token,
-            'timestamp': GlobalVar.timestamp,
-            'reqcontent': postDataStr
+            ucode: GlobalVar.ucode,
+            token: GlobalVar.token,
+            timestamp: GlobalVar.timestamp,
+            reqcontent: postDataStr
         });
 
+        console.log(requestData);
         // 调用平台的接口推送数据，并返回结果
         let optionData = await HttpRequest_POST(postOptions, requestData);
+        console.log(optionData);
         let postResult = JSON.parse(String(optionData));
 
         if (postResult.flag == 0) {

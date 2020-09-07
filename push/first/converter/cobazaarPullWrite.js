@@ -152,24 +152,27 @@ async function CobazaarPullWrite(joint, uqIn, data) {
                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
             }
         };
-        if (isDelete == 1) {
+        if (String(isDelete) == '1') {
             let deleteData = await GetDeleteFormat(brandName, originalId, packageSize);
             postOptions.path = delproductPath;
             postDataStr = JSON.stringify(deleteData);
         }
         else {
             let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+            console.log(addData);
             postOptions.path = addproduct;
             postDataStr = JSON.stringify(addData);
         }
         let requestData = qs.stringify({
-            'ucode': globalVar_1.GlobalVar.ucode,
-            'token': globalVar_1.GlobalVar.token,
-            'timestamp': globalVar_1.GlobalVar.timestamp,
-            'reqcontent': postDataStr
+            ucode: globalVar_1.GlobalVar.ucode,
+            token: globalVar_1.GlobalVar.token,
+            timestamp: globalVar_1.GlobalVar.timestamp,
+            reqcontent: postDataStr
         });
+        console.log(requestData);
         // 调用平台的接口推送数据，并返回结果
         let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestData);
+        console.log(optionData);
         let postResult = JSON.parse(String(optionData));
         if (postResult.flag == 0) {
             result = false;
