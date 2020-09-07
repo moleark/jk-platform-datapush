@@ -5,13 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const uq_joint_1 = require("uq-joint");
 const date_fns_1 = require("date-fns");
-let md5 = require('md5');
+const md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 const util_1 = require("util");
 const globalVar_1 = require("../../tools/globalVar");
-var qs = require('querystring');
+let qs = require('querystring');
 // 库巴扎接口相关配置
 const cobazaarApiSetting = config_1.default.get("cobazaarApi");
 // 获取Token接口信息
@@ -25,11 +25,11 @@ async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     let options = {
         method: 'POST',
         hostname: hostname,
-        path: gettokenPath,
+        path: gettokenPath + '?',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
-        'maxRedirects': requestData.length
+        maxRedirects: requestData.length
     };
     let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, requestData);
     let postResult = JSON.parse(String(optionData));
@@ -172,7 +172,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
         let postResult = JSON.parse(String(optionData));
         if (postResult.flag == 0) {
             result = false;
-            console.log('cobazaarPush Fail: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
+            throw 'cobazaarPush Fail: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData;
         }
         else {
             result = true;

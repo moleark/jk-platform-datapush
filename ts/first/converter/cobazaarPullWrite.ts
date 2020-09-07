@@ -2,17 +2,16 @@ import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 //import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
 import _, { toPath } from 'lodash';
 import { format, differenceInHours } from 'date-fns';
-let md5 = require('md5');
+const md5 = require('md5');
 import config from 'config';
 import { logger } from "../../tools/logger";
 import { HttpRequest_POST } from '../../tools/HttpRequestHelper';
 import { isNullOrUndefined } from "util";
 import { GlobalVar } from '../../tools/globalVar';
-var qs = require('querystring');
+let qs = require('querystring');
 
 // 库巴扎接口相关配置
 const cobazaarApiSetting = config.get<any>("cobazaarApi");
-
 
 // 获取Token接口信息
 async function getTokenInfo(hostname: string, gettokenPath: string, loginname: string, ukey: string) {
@@ -27,11 +26,11 @@ async function getTokenInfo(hostname: string, gettokenPath: string, loginname: s
     let options = {
         method: 'POST',
         hostname: hostname,
-        path: gettokenPath,
+        path: gettokenPath + '?',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
-        'maxRedirects': requestData.length
+        maxRedirects: requestData.length
     };
 
     let optionData = await HttpRequest_POST(options, requestData);
@@ -189,7 +188,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
 
         if (postResult.flag == 0) {
             result = false;
-            console.log('cobazaarPush Fail: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
+            throw 'cobazaarPush Fail: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData;
 
         } else {
             result = true;

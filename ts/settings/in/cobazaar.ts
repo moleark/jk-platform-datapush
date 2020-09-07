@@ -13,7 +13,7 @@ let pullSql = `SELECT TOP ${promiseSize} r.ID, m.name, p.OriginalId, zcl_mess.db
                         INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID
                         INNER JOIN zcl_mess.dbo.productschem pc ON pc.JKID = p.JKID
                         INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
-                WHERE   r.CustomerUnitOnPlatformId = 'e3f8f71734e84d5ba37d37bbd4d7238a'
+                WHERE   r.CustomerUnitOnPlatformId = '1cff471fa68949bcb51731e5c6fb176b'
                 AND r.ID > @iMaxId
                 ORDER BY Id;`;
 
