@@ -183,7 +183,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
             timestamp: GlobalVar.timestamp,
             reqcontent: postDataStr
         });
-
+        console.log(postDataStr); console.log(postOptions);
         console.log(requestData);
         // 调用平台的接口推送数据，并返回结果
         let optionData = await HttpRequest_POST(postOptions, requestData);
