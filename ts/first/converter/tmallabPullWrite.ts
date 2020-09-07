@@ -424,7 +424,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         }
 
         // 生物试剂 推送，满足500 条数据推送一次；
-        if (GlobalVar.addOrEditList_bio.length > 99) {
+        if (GlobalVar.addOrEditList_bio.length > 1) {
             console.log(format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 100 ，准备推送... , 仪器耗材数量: ' + GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + GlobalVar.addOrEditList_chem.length);
 
             let productList_addOrEdit: any = [];
@@ -466,7 +466,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         }
 
         // 仪器耗材 推送，满足100 条数据推送一次；
-        if (GlobalVar.addOrEditList_cl.length > 9) {
+        if (GlobalVar.addOrEditList_cl.length > 1) {
             console.log(format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 10 ，准备推送... , 化学试剂数量: ' + GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + GlobalVar.addOrEditList_bio.length);
 
             let productList_addOrEdit: any = [];
