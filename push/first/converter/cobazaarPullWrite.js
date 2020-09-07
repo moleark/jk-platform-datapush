@@ -131,7 +131,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
     let keyVal = data[key];
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let { loginname, ukey, hostname, gettokenPath, delproductPath, addproduct } = cobazaarApiSetting;
+    let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath } = cobazaarApiSetting;
     let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete } = body;
     let result = false;
     try {
@@ -159,8 +159,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
         }
         else {
             let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
-            console.log(addData);
-            postOptions.path = addproduct;
+            postOptions.path = addproductPath;
             postDataStr = JSON.stringify(addData);
         }
         let requestData = qs.stringify({
@@ -169,12 +168,8 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             timestamp: globalVar_1.GlobalVar.timestamp,
             reqcontent: postDataStr
         });
-        console.log(postDataStr);
-        console.log(postOptions);
-        console.log(requestData);
         // 调用平台的接口推送数据，并返回结果
         let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestData);
-        console.log(optionData);
         let postResult = JSON.parse(String(optionData));
         if (postResult.flag == 0) {
             result = false;
