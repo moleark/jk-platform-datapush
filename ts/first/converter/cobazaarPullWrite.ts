@@ -39,6 +39,7 @@ async function getTokenInfo(hostname: string, gettokenPath: string, loginname: s
         throw ('获取token失败');
     }
     else {
+        console.log(String(optionData));
         let result = postResult.rdate;
         GlobalVar.token = result[0].token;
         GlobalVar.ucode = result[0].ucode;
