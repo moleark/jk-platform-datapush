@@ -82,6 +82,20 @@ function GetFutureDelivery(amount, brandName, deliveryCycle) {
     }
     return result;
 }
+// 获取品牌名称（平台上维护的品牌有些与我司数据库中名称有差异）
+function GetBrandName(brandName) {
+    let result = "";
+    if (brandName == "J&K") {
+        result = '百灵威J&K';
+    }
+    else if (brandName == "Alfa") {
+        result = 'Alfa Aesar';
+    }
+    else {
+        result = brandName;
+    }
+    return result;
+}
 // 获取产品链接地址
 function GetDetaUrl(JKid) {
     let result = '';
@@ -91,15 +105,15 @@ function GetDetaUrl(JKid) {
 // 获取删除格式数据
 function GetDeleteFormat(brandName, originalId, packageSize) {
     return [{
-            品牌: brandName,
-            货号: originalId,
-            包装规格: packageSize
+            '品牌': GetBrandName(brandName),
+            '货号': originalId,
+            '包装规格': packageSize
         }];
 }
 // 获取新增或者修改格式数据
 function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
     return [{
-            '品牌': brandName,
+            '品牌': GetBrandName(brandName),
             '货号': originalId,
             '包装规格': packageSize,
             '产品分类': GetProductType(typeId),
