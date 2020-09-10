@@ -464,7 +464,9 @@ function GetPACKAGE_TYPE(templatetypeid, packageSize: any, unit: string): string
 
 function GetStockamount(amount: number): number {
     let result = 0;
-    if (amount > 0 && amount < 11) {
+    if (amount < 1) {
+        result = 100;
+    } else if (amount > 0 && amount < 11) {
         result = 10;
     } else if (amount > 10 && amount < 21) {
         result = 20;
