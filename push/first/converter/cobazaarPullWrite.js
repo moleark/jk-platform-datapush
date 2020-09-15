@@ -34,6 +34,7 @@ async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, requestData);
     let postResult = JSON.parse(String(optionData));
     if (postResult.flag != 1) {
+        console.log(String(optionData));
         throw ('获取token失败');
     }
     else {
