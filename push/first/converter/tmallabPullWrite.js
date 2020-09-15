@@ -113,6 +113,15 @@ function GetBrand(brandName) {
     else if (brandName == 'Dr. Ehrenstorfer') {
         result = 'DR.E';
     }
+    else if (brandName == 'Alfa') {
+        result = 'ALFA';
+    }
+    else if (brandName == 'ChromaDex') {
+        result = 'Chromadex';
+    }
+    else if (brandName == 'SERVA') {
+        result = 'Serva';
+    }
     else {
         result = brandName;
     }
@@ -207,7 +216,7 @@ function GetImg(brandName) {
 function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, startTime, endTime, appSecurity) {
     let PromotionInfo = {
         vipCode: vipCode,
-        brand: brand,
+        brand: GetBrand(brand),
         itemNum: itemNum,
         packingSpecification: packingSpecification,
         price: Math.round(salePrice),
@@ -286,7 +295,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
             let deleteData = {
                 vipCode: vipCode,
                 platform: '',
-                brand: brand,
+                brand: GetBrand(brand),
                 itemNum: itemNum,
                 packingSpecification: packingSpecification,
                 appSecurity: appSecurity,
