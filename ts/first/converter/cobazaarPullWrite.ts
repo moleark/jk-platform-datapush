@@ -60,7 +60,7 @@ function GetProductType(typeId: any): string {
             result = '生物试剂';
             break;
         case 3:
-            result = '仪器耗材';
+            result = '耗材';
             break;
     }
     return result;
