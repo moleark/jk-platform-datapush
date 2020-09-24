@@ -154,8 +154,8 @@ async function CobazaarPullWrite(joint, uqIn, data) {
         if (util_1.isNullOrUndefined(globalVar_1.GlobalVar.token) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.ucode) || util_1.isNullOrUndefined(globalVar_1.GlobalVar.timestamp)) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
-        // 判断获取到的token信息有没有过期（接口token有效时间60分钟，此处设置为超过50分钟则重新获取）
-        if (date_fns_1.differenceInHours(new Date(globalVar_1.GlobalVar.timestamp), Date.now()) > 50) {
+        // 判断获取到的token信息有没有过期（接口token有效时间60分钟，此处设置为超过45分钟则重新获取）
+        if (date_fns_1.differenceInHours(new Date(globalVar_1.GlobalVar.timestamp), Date.now()) > 45) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
         let postDataStr = {};

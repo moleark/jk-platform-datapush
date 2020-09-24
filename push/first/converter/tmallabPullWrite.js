@@ -352,6 +352,10 @@ async function tmallabPullWrite(joint, uqIn, data) {
                     throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
                 }
             }
+            else if (String(postResult.data).substr(0, 8) == "此处禁止上传管控品") {
+                result = true;
+                console.log('TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
+            }
             else {
                 result = false;
                 throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
@@ -440,7 +444,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 throw 'TmallabPush Fail:{ Code:' + postResult.Code + ', queue_in:' + keyVal + ',Type:' + GetProductType('1') + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
-        // 仪器耗材 推送，满足100 条数据推送一次；
+        // 仪器耗材 推送，满足1 条数据推送一次；
         if (globalVar_1.GlobalVar.addOrEditList_cl.length > 0) {
             console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 10 ，准备推送... , 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length);
             let productList_addOrEdit = [];
