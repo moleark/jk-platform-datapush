@@ -410,9 +410,9 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 throw 'TmallabPush Fail{ Code:' + postResult.Code + ', queue_in:' + keyVal + ',Type:' + GetProductType('1') + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
-        // 生物试剂 推送，满足500 条数据推送一次；
-        if (globalVar_1.GlobalVar.addOrEditList_bio.length > 0) {
-            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 100 ，准备推送... , 仪器耗材数量: ' + globalVar_1.GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length);
+        // 生物试剂 推送，满足 4 条数据推送一次；
+        if (globalVar_1.GlobalVar.addOrEditList_bio.length > 4) {
+            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 4 ，准备推送... , 仪器耗材数量: ' + globalVar_1.GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length);
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_bio.length - 1; i >= 0; i--) {
                 let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_bio[i];
@@ -444,9 +444,9 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 throw 'TmallabPush Fail:{ Code:' + postResult.Code + ', queue_in:' + keyVal + ',Type:' + GetProductType('1') + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
-        // 仪器耗材 推送，满足1 条数据推送一次；
-        if (globalVar_1.GlobalVar.addOrEditList_cl.length > 0) {
-            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 10 ，准备推送... , 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length);
+        // 仪器耗材 推送，满足5 条数据推送一次；
+        if (globalVar_1.GlobalVar.addOrEditList_cl.length > 4) {
+            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 5 ，准备推送... , 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length);
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_cl.length - 1; i >= 0; i--) {
                 let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_cl[i];
