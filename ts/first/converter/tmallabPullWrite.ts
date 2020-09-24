@@ -366,7 +366,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     result = false;
                     throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
                 }
-            } else if (String(postResult.data).substr(0, 8) == "此处禁止上传管控品") {
+            } else if (String(postResult.data).includes("此处禁止上传管控品")) {
 
                 result = true;
                 console.log('TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');

@@ -352,7 +352,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
                     throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
                 }
             }
-            else if (String(postResult.data).substr(0, 8) == "此处禁止上传管控品") {
+            else if (String(postResult.data).includes("此处禁止上传管控品")) {
                 result = true;
                 console.log('TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
             }
