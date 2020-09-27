@@ -110,6 +110,9 @@ function GETDELIVERY_TYPE_ID(storage, brandName) {
             case "Alfa":
                 result = 1;
                 break;
+            case "Alfa Aesar":
+                result = 1;
+                break;
             case "TCI":
                 result = 1;
                 break;
@@ -205,6 +208,9 @@ function GetImg(brandName) {
             result = ['https://www.jkchemical.com/static/casmart/1-Material.png'];
             break;
         case 'Alfa':
+            result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
+            break;
+        case 'Alfa Aesar':
             result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
             break;
         case 'Accela':

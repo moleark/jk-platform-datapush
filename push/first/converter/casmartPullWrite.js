@@ -167,6 +167,9 @@ function GetBrandId(brandName) {
         case 'Alfa':
             result = 324;
             break;
+        case 'Alfa Aesar':
+            result = 324;
+            break;
     }
     return result;
 }
@@ -274,6 +277,9 @@ function GetImg(brandName) {
             result = ['https://www.jkchemical.com/static/casmart/1-Material.png'];
             break;
         case 'Alfa':
+            result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
+            break;
+        case 'Alfa Aesar':
             result = ['https://www.jkchemical.com/static/casmart/ALFA.jpg'];
             break;
         case 'Accela':

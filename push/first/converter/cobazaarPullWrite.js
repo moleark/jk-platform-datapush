@@ -77,6 +77,9 @@ function GetFutureDelivery(amount, brandName, deliveryCycle) {
         else if (brandName == 'Alfa') {
             result = 2;
         }
+        else if (brandName == 'Alfa Aesar') {
+            result = 2;
+        }
         else {
             result = deliveryCycle;
         }
@@ -90,6 +93,9 @@ function GetBrandName(brandName) {
         result = '百灵威J&K';
     }
     else if (brandName == "Alfa") {
+        result = 'Alfa Aesar';
+    }
+    else if (brandName == "Alfa Aesar") {
         result = 'Alfa Aesar';
     }
     else {

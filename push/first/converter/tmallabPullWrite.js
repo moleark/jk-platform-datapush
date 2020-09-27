@@ -98,6 +98,9 @@ function GetDelivetime(brandName, Storage, deliveryCycle) {
         else if (brandName == 'Alfa') {
             result = '2-5个工作日';
         }
+        else if (brandName == 'Alfa Aesar') {
+            result = '2-5个工作日';
+        }
         else {
             result = deliveryCycle;
         }
@@ -114,6 +117,9 @@ function GetBrand(brandName) {
         result = 'DR.E';
     }
     else if (brandName == 'Alfa') {
+        result = 'ALFA';
+    }
+    else if (brandName == 'Alfa Aesar') {
         result = 'ALFA';
     }
     else if (brandName == 'ChromaDex') {
@@ -194,6 +200,9 @@ function GetImg(brandName) {
         case 'Alfa':
             result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
             break;
+        case 'Alfa Aesar':
+            result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
+            break;
         case 'Accela':
             result = 'https://www.jkchemical.com/static/casmart/accela.jpg';
             break;
@@ -224,7 +233,7 @@ function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, saleP
         endTime: date_fns_1.format(endTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
         appSecurity: appSecurity,
         platform: '',
-        version: '1.2'
+        version: '1.3'
     };
     return PromotionInfo;
 }
@@ -275,7 +284,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
     //let mapToUq = new MapToUq(this);
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let version = '1.2';
+    let version = '1.3';
     try {
         let result = false;
         let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;

@@ -82,15 +82,14 @@ function GetDelivetime(brandName: string, Storage: number, deliveryCycle: string
     let result = '期货';
     if (Storage > 0) {
         result = '现货(交货期1-3天)';
-    }
-    else {
+    } else {
         if (brandName == 'Acros') {
             result = '2-5个工作日';
-        }
-        else if (brandName == 'TCI') {
+        } else if (brandName == 'TCI') {
             result = '2-5个工作日';
-        }
-        else if (brandName == 'Alfa') {
+        } else if (brandName == 'Alfa') {
+            result = '2-5个工作日';
+        } else if (brandName == 'Alfa Aesar') {
             result = '2-5个工作日';
         } else {
             result = deliveryCycle;
@@ -104,10 +103,11 @@ function GetBrand(brandName: string): any {
     let result = '';
     if (brandName == 'Frontier') {
         result = 'Frontier Scientific';
-    }
-    else if (brandName == 'Dr. Ehrenstorfer') {
+    } else if (brandName == 'Dr. Ehrenstorfer') {
         result = 'DR.E';
     } else if (brandName == 'Alfa') {
+        result = 'ALFA';
+    } else if (brandName == 'Alfa Aesar') {
         result = 'ALFA';
     } else if (brandName == 'ChromaDex') {
         result = 'Chromadex';
@@ -189,6 +189,9 @@ function GetImg(brandName: string): any {
         case 'Alfa':
             result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
             break;
+        case 'Alfa Aesar':
+            result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
+            break;
         case 'Accela':
             result = 'https://www.jkchemical.com/static/casmart/accela.jpg';
             break;
@@ -221,7 +224,7 @@ function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, saleP
         endTime: format(endTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
         appSecurity: appSecurity,
         platform: '',
-        version: '1.2'
+        version: '1.3'
     }
     return PromotionInfo;
 }
@@ -277,7 +280,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     //let mapToUq = new MapToUq(this);
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let version = '1.2';
+    let version = '1.3';
 
     try {
         let result = false;
