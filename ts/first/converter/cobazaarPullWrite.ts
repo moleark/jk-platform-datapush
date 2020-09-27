@@ -141,7 +141,7 @@ function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, c
         '英文别名': '',
         '关键词': '',
         '其他描述': '',
-        'MDL': MDL,
+        'MDL': MDL.replace(' ', '').replace(' ', ''),
         '链接地址': GetDetaUrl(jkid)
     }];
 }
