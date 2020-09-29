@@ -396,7 +396,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             console.log('cobazaarPush Success: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
             // 如果是危险品数据重新推送给苏州大学，增加10块
             // console.log(isHazard);
-            if (isHazard == true) {
+            if (isHazard == true && String(isDelete) == '0') {
                 let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
                 postDataStr = JSON.stringify(sudaData);
                 let requestDataAgain = qs.stringify({
