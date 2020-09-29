@@ -307,7 +307,7 @@ function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName
             '包装规格': packageSize,
             '产品分类': GetProductType(typeId),
             '售价': catalogPrice + 10,
-            '特惠结束时间': '2021-12-31 23:59:50',
+            '特惠结束时间': date_fns_1.format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),
             '平台编号': 'suda',
             '中文名称': chineseName,
             '英文名称': englishName,
@@ -351,7 +351,6 @@ async function CobazaarPullWrite(joint, uqIn, data) {
         let strattTime = new Date(globalVar_1.GlobalVar.timestamp);
         let endTime = new Date(Date.now() + 60000);
         let diffMinutes = lodash_1.round((endTime - strattTime) / (1000 * 60));
-        console.log(diffMinutes);
         if (diffMinutes > 100) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
@@ -396,9 +395,8 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             result = true;
             console.log('cobazaarPush Success: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
             // 如果是危险品数据重新推送给苏州大学，增加10块
-            console.log(isHazard);
+            // console.log(isHazard);
             if (isHazard == true) {
-                console.log("危险品推送苏大");
                 let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
                 postDataStr = JSON.stringify(sudaData);
                 let requestDataAgain = qs.stringify({
@@ -410,7 +408,6 @@ async function CobazaarPullWrite(joint, uqIn, data) {
                 postOptions.path = addproductPricePath;
                 // 再次调用平台的接口推送数据，并返回结果
                 let optionDataAgain = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestDataAgain);
-                console.log(optionDataAgain);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
                 if (postResultAgain.flag != 0) {
                     result = true;
