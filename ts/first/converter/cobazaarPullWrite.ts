@@ -1,13 +1,15 @@
 import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 //import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
-import _, { toPath } from 'lodash';
-import { format, differenceInHours } from 'date-fns';
+import { format, differenceInHours, differenceInMinutes } from 'date-fns';
 const md5 = require('md5');
 import config from 'config';
 import { logger } from "../../tools/logger";
 import { HttpRequest_POST } from '../../tools/HttpRequestHelper';
-import { isNullOrUndefined } from "util";
+// import { isNullOrUndefined } from "util";
+import { StringUtils } from "../../tools/stringUtils";
 import { GlobalVar } from '../../tools/globalVar';
+import { createPrinter } from "typescript";
+import { round } from "lodash";
 let qs = require('querystring');
 
 // 库巴扎接口相关配置
@@ -107,6 +109,124 @@ function GetBrandName(brandName: string): string {
     return result;
 }
 
+// 获取产品图片
+function GetImg(brandName: string): any {
+
+    let result = '';
+    switch (brandName) {
+        case 'J&K':
+            result = 'https://www.jkchemical.com/static/casmart/JNK.png';
+            break;
+        case 'Amethyst':
+            result = 'https://www.jkchemical.com/static/casmart/Amethyst.png';
+            break;
+        case 'Acros':
+            result = 'https://www.jkchemical.com/static/casmart/Acros.png';
+            break;
+        case 'TCI':
+            result = 'https://www.jkchemical.com/static/casmart/TCI.png';
+            break;
+        case 'SERVA':
+            result = 'https://www.jkchemical.com/static/casmart/Serva.jpg';
+            break;
+        case 'Serva':
+            result = 'https://www.jkchemical.com/static/casmart/Serva.jpg';
+            break;
+        case 'Fluorochem':
+            result = 'https://www.jkchemical.com/static/casmart/Fluorochem.jpg';
+            break;
+        case 'AccuStandard':
+            result = 'https://www.jkchemical.com/static/casmart/Accustandard.png';
+            break;
+        case 'Strem':
+            result = 'https://www.jkchemical.com/static/casmart/Strem.png';
+            break;
+        case 'TRC':
+            result = 'https://www.jkchemical.com/static/casmart/TRC.jpg';
+            break;
+        case 'Apollo':
+            result = 'https://www.jkchemical.com/static/casmart/Apollo.jpg';
+            break;
+        case 'Cambridge Isotope Laboratories（CIL）':
+            result = 'https://www.jkchemical.com/static/casmart/CIL.png';
+            break;
+        case 'Polymer Source':
+            result = 'https://www.jkchemical.com/static/casmart/Polymersource.png';
+            break;
+        case 'Matrix':
+            result = 'https://www.jkchemical.com/static/casmart/Matrix.png';
+            break;
+        case 'Rieke Metals':
+            result = 'https://www.jkchemical.com/static/casmart/RiekeMetals.jpg';
+            break;
+        case 'Frontier':
+            result = 'https://www.jkchemical.com/static/casmart/Frontier.png';
+            break;
+        case 'Wilmad':
+            result = 'https://www.jkchemical.com/static/casmart/Wilmad.jpg';
+            break;
+        case '1-Material':
+            result = 'https://www.jkchemical.com/static/casmart/1-Material.png';
+            break;
+        case 'Alfa':
+            result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
+            break;
+        case 'Alfa Aesar':
+            result = 'https://www.jkchemical.com/static/casmart/ALFA.jpg';
+            break;
+        case 'Accela':
+            result = 'https://www.jkchemical.com/static/casmart/accela.jpg';
+            break;
+        case 'J&K-Abel':
+            result = 'https://www.jkchemical.com/static/casmart/JNKAbel.jpg';
+            break;
+        case 'J&K Scientific':
+            result = 'https://www.jkchemical.com/static/casmart/JNKScientific_200416.png';
+            break;
+        case 'Echelon':
+            result = 'https://www.jkchemical.com/static/casmart/Echelon1.jpg';
+            break;
+        default:
+            result = 'https://www.jkchemical.com/image/map-jk.gif';
+            break;
+    }
+    return result;
+}
+
+// 获取库存范围数据
+function GetStockamount(brandName: string, amount: number): number {
+    let result = 0;
+    if (brandName == 'Acros') {
+        result = 99
+    }
+    else if (brandName == 'TCI') {
+        result = 99
+    }
+    else if (brandName == 'Alfa') {
+        result = 99
+    }
+    else {
+        if (amount > 0 && amount < 11) {
+            result = 10;
+        } else if (amount > 10 && amount < 21) {
+            result = 20;
+        } else if (amount > 20 && amount < 31) {
+            result = 30;
+        } else if (amount > 30 && amount < 40) {
+            result = 40;
+        } else if (amount > 40 && amount < 51) {
+            result = 50;
+        } else if (amount > 50 && amount < 61) {
+            result = 60;
+        } else if (amount > 60 && amount < 100) {
+            result = 99;
+        } else if (amount > 99) {
+            result = 100;
+        }
+    }
+    return result;
+}
+
 // 获取产品链接地址
 function GetDetaUrl(JKid: string): any {
     let result = '';
@@ -133,6 +253,7 @@ function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, c
         '产品分类': GetProductType(typeId),
         '中文名称': chineseName,
         '英文名称': englishName,
+        '主图': GetImg(brandName),
         '目录价(RMB)': catalogPrice,
         'CAS': CAS,
         '质量等级': '',
@@ -146,7 +267,71 @@ function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, c
         '关键词': '',
         '其他描述': '',
         'MDL': MDL.replace(' ', '').replace(' ', ''),
-        '链接地址': GetDetaUrl(jkid)
+        '链接地址': GetDetaUrl(jkid),
+        '库存': GetStockamount(brandName, stock)
+    }];
+}
+// 获取促销产品格式数据
+function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
+    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, salePrice: any, pEndTime: any) {
+    return [{
+        '品牌': GetBrandName(brandName),
+        '货号': originalId,
+        '包装规格': packageSize,
+        '产品分类': GetProductType(typeId),
+        '售价': salePrice,
+        '特惠结束时间': pEndTime,
+        '平台编号': '全部',
+        '中文名称': chineseName,
+        '英文名称': englishName,
+        '主图': GetImg(brandName),
+        '目录价(RMB)': catalogPrice,
+        'CAS': CAS,
+        '质量等级': '',
+        '包装单位': '瓶',
+        '交货期': GetFutureDelivery(stock, brandName, deliveryCycle),
+        '纯度': purity,
+        '保存条件': '',
+        '运输条件': '',
+        '中文别名': '',
+        '英文别名': '',
+        '关键词': '',
+        '其他描述': '',
+        'MDL': MDL.replace(' ', '').replace(' ', ''),
+        '链接地址': GetDetaUrl(jkid),
+        '库存': GetStockamount(brandName, stock)
+    }];
+}
+
+// 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
+function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
+    , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
+    return [{
+        '品牌': GetBrandName(brandName),
+        '货号': originalId,
+        '包装规格': packageSize,
+        '产品分类': GetProductType(typeId),
+        '售价': catalogPrice + 10,
+        '特惠结束时间': '2021-12-31 23:59:50',  // ptm:9605966 汤施丹反馈使用此时间作为结束时间；
+        '平台编号': 'suda',
+        '中文名称': chineseName,
+        '英文名称': englishName,
+        '主图': GetImg(brandName),
+        '目录价(RMB)': catalogPrice + 10,
+        'CAS': CAS,
+        '质量等级': '',
+        '包装单位': '瓶',
+        '交货期': GetFutureDelivery(stock, brandName, deliveryCycle),
+        '纯度': purity,
+        '保存条件': '',
+        '运输条件': '',
+        '中文别名': '',
+        '英文别名': '',
+        '关键词': '',
+        '其他描述': '',
+        'MDL': MDL.replace(' ', '').replace(' ', ''),
+        '链接地址': GetDetaUrl(jkid),
+        '库存': GetStockamount(brandName, stock)
     }];
 }
 
@@ -160,18 +345,25 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
 
-    let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath } = cobazaarApiSetting;
-    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete } = body;
+    let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
+    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete,
+        activeDiscount, salePrice, pStartTime, pEndTime, isHazard } = body;
     let result = false;
 
     try {
         // 判断有没有获取到token信息
-        if (isNullOrUndefined(GlobalVar.token) || isNullOrUndefined(GlobalVar.ucode) || isNullOrUndefined(GlobalVar.timestamp)) {
+
+        if (StringUtils.isEmpty(GlobalVar.token) || StringUtils.isEmpty(GlobalVar.ucode) || StringUtils.isEmpty(GlobalVar.timestamp)) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
 
         // 判断获取到的token信息有没有过期（接口token有效时间60分钟，此处设置为超过45分钟则重新获取）
-        if (differenceInHours(new Date(GlobalVar.timestamp), Date.now()) > 45) {
+
+        let strattTime: any = new Date(GlobalVar.timestamp);
+        let endTime: any = new Date(Date.now() + 60000);
+        let diffMinutes = round((endTime - strattTime) / (1000 * 60));
+        // console.log(diffMinutes);
+        if (diffMinutes > 100) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
 
@@ -189,6 +381,12 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
             let deleteData = await GetDeleteFormat(brandName, originalId, packageSize);
             postOptions.path = delproductPath;
             postDataStr = JSON.stringify(deleteData);
+
+        }
+        else if (String(isDelete) == '0' && activeDiscount != '' && activeDiscount != null) {
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, salePrice, pEndTime);
+            postOptions.path = addproductPricePath;
+            postDataStr = JSON.stringify(promotionData);
 
         } else {
             let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
@@ -214,6 +412,34 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
         } else {
             result = true;
             console.log('cobazaarPush Success: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
+
+            // 如果是危险品数据重新推送给苏州大学，增加10块
+            if (isHazard == true) {
+                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+                postDataStr = JSON.stringify(sudaData);
+
+                let requestDataAgain = qs.stringify({
+                    ucode: GlobalVar.ucode,
+                    token: GlobalVar.token,
+                    timestamp: GlobalVar.timestamp,
+                    reqcontent: postDataStr
+                });
+                postOptions.path = addproductPricePath;
+
+                // 再次调用平台的接口推送数据，并返回结果
+                let optionDataAgain = await HttpRequest_POST(postOptions, requestDataAgain);
+                // console.log(optionDataAgain);
+                let postResultAgain = JSON.parse(String(optionDataAgain));
+
+                if (postResultAgain.flag != 0) {
+                    result = true;
+                    console.log('cobazaarPush convertSuDa Success: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}');
+                } else {
+                    result = false;
+                    throw 'cobazaarPush convertSuDa Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}';
+                }
+            }
+
         }
 
         return result;

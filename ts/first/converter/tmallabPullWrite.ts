@@ -3,7 +3,6 @@ import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 import _, { round } from 'lodash';
 import { format } from 'date-fns';
 let md5 = require('md5');
-import http from 'http';
 import config from 'config';
 import { logger } from "../../tools/logger";
 import { HttpRequest_POST } from '../../tools/HttpRequestHelper';
@@ -211,6 +210,7 @@ function GetImg(brandName: string): any {
     return result;
 }
 
+/*
 // 获取促销产品推送数据格式
 function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, startTime, endTime, appSecurity): any {
 
@@ -227,11 +227,11 @@ function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, saleP
         version: '1.3'
     }
     return PromotionInfo;
-}
+}*/
 
 // 获取新增或者修改推送数据格式
 function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-    templateTypeId, mdlNumber, packnr, unit, delivetime) {
+    templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, startTime, endTime) {
 
     let productInfo = {
         品牌: GetBrand(brand),
@@ -252,11 +252,14 @@ function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, cat
         最小包装: "",
         最小包装数量: "",
         产品链接: GetDetaUrl(jkid),
-        图片链接: GetImg(brand)
+        图片链接: GetImg(brand),
+        促销平台: "",
+        促销开始日期: format(startTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
+        促销截止日期: format(endTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
+        促销价: Math.round(salePrice)
     }
     return productInfo;
 }
-
 
 function GetFarmetName(str: string): string {
     let result = '';
@@ -328,6 +331,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             }
         }
 
+        /*
         // 市场活动产品，需要调用平台市场活动接口。但是调用市场活动接口前提得保证数据添加到对方平台上，所以在此市场活动单个产品先调用推送接口后 再调用市场活动接口。
         else if (isDelete == 0 && activeDiscount != '' && activeDiscount != null) {
 
@@ -378,6 +382,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                 throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
+        */
 
         // 产品 “新增”或者“修改”的情况。需要批量推送。先判断单个数据对应的处理情况，存储到数组中（等存储够一定量的数据批量推送）。
         else if (isDelete == 0) {
@@ -404,7 +409,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     templateTypeId, mdlNumber, packnr, unit, delivetime } = GlobalVar.addOrEditList_chem[i];
 
                 let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime);
+                    templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 GlobalVar.addOrEditList_chem = GlobalVar.addOrEditList_chem.filter(a => a !== GlobalVar.addOrEditList_chem[i]);
                 // console.log(DataList.addOrEditList_chem.length);
@@ -436,9 +441,9 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             }
         }
 
-        // 生物试剂 推送，满足 4 条数据推送一次；
-        if (GlobalVar.addOrEditList_bio.length > 4) {
-            console.log(format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 4 ，准备推送... , 仪器耗材数量: ' + GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + GlobalVar.addOrEditList_chem.length);
+        // 生物试剂 推送，满足 10 条数据推送一次；
+        if (GlobalVar.addOrEditList_bio.length > 9) {
+            console.log(format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 10 ，准备推送... , 仪器耗材数量: ' + GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + GlobalVar.addOrEditList_chem.length);
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_bio.length - 1; i >= 0; i--) {
@@ -446,7 +451,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     templateTypeId, mdlNumber, packnr, unit, delivetime } = GlobalVar.addOrEditList_bio[i];
 
                 let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime);
+                    templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 GlobalVar.addOrEditList_bio = GlobalVar.addOrEditList_bio.filter(a => a !== GlobalVar.addOrEditList_bio[i]);
                 // console.log(DataList.addOrEditList_bio.length);
@@ -478,9 +483,9 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             }
         }
 
-        // 仪器耗材 推送，满足5 条数据推送一次；
-        if (GlobalVar.addOrEditList_cl.length > 4) {
-            console.log(format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 5 ，准备推送... , 化学试剂数量: ' + GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + GlobalVar.addOrEditList_bio.length);
+        // 仪器耗材 推送，满足 10 条数据推送一次；
+        if (GlobalVar.addOrEditList_cl.length > 9) {
+            console.log(format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 10 ，准备推送... , 化学试剂数量: ' + GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + GlobalVar.addOrEditList_bio.length);
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_cl.length - 1; i >= 0; i--) {
@@ -488,7 +493,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
                     templateTypeId, mdlNumber, packnr, unit, delivetime } = GlobalVar.addOrEditList_cl[i];
 
                 let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime);
+                    templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 GlobalVar.addOrEditList_cl = GlobalVar.addOrEditList_cl.filter(a => a !== GlobalVar.addOrEditList_cl[i]);
                 // console.log(DataList.addOrEditList_cl.length);

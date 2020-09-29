@@ -2,12 +2,12 @@ import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 // import { Joint, UqInTuid, UqIn, Tuid } from "../../uq-joint";
 import _ from 'lodash';
 import { format, isSameWeek } from 'date-fns';
-import http from 'http';
 import { HttpRequest_GET, HttpRequest_POST } from '../../tools/HttpRequestHelper'
 let md5 = require('md5');
 import config from 'config';
 import { logger } from "../../tools/logger";
-import { isNullOrUndefined } from "util";
+// import { isNullOrUndefined } from "util";
+import { StringUtils } from "../../tools/stringUtils";
 
 
 // 快去采接口相关配置
@@ -36,7 +36,7 @@ function GETCOMPANY_CHEM_NAME(templatetypeid, productName: string, productNameCh
 
     let result = '';
     if (templatetypeid == 1) {
-        if (isNullOrUndefined(productNameChinese) || productNameChinese == '') {
+        if (StringUtils.isEmpty(productNameChinese)) {
             result = productName;
         } else {
             result = productNameChinese;
@@ -50,7 +50,7 @@ function GETCOMPANY_BIO_NAME(templatetypeid, productName: string, productNameChi
 
     let result = '';
     if (templatetypeid == 2) {
-        if (isNullOrUndefined(productNameChinese) || productNameChinese === '') {
+        if (StringUtils.isEmpty(productNameChinese)) {
             result = productName;
         } else {
             result = productNameChinese;
@@ -64,7 +64,7 @@ function GETCOMPANY_CL_NAME(templatetypeid, productName: string, productNameChin
 
     let result = '';
     if (templatetypeid == 3) {
-        if (isNullOrUndefined(productNameChinese) || productNameChinese === '') {
+        if (StringUtils.isEmpty(productNameChinese)) {
             result = productName;
         } else {
             result = productNameChinese;
@@ -80,7 +80,7 @@ function GETDELIVERYTIME_ID(storage: string, deliveryTime: string): string {
     if (Number(storage) > 0) {
         result = "01";      // 跟舒经理核实，现货产品传最小时间单位
     } else {
-        if (isNullOrUndefined(deliveryTime)) {
+        if (StringUtils.isEmpty(deliveryTime)) {
             result = '21';
         } else if (Number(deliveryTime) <= 9) {
             result = '0' + deliveryTime;

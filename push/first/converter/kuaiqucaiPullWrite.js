@@ -9,7 +9,8 @@ const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
-const util_1 = require("util");
+// import { isNullOrUndefined } from "util";
+const stringUtils_1 = require("../../tools/stringUtils");
 // 快去采接口相关配置
 const kuaiQuCaiApiSetting = config_1.default.get("kuaiQuCaiApi");
 // 获取不同的chemid，化学试剂传cas号码、生物试剂传文档中固定的分类、耗材产品传''  
@@ -32,7 +33,7 @@ function GETCHEM_ID(templatetypeid, casFormat) {
 function GETCOMPANY_CHEM_NAME(templatetypeid, productName, productNameChinese) {
     let result = '';
     if (templatetypeid == 1) {
-        if (util_1.isNullOrUndefined(productNameChinese) || productNameChinese == '') {
+        if (stringUtils_1.StringUtils.isEmpty(productNameChinese)) {
             result = productName;
         }
         else {
@@ -45,7 +46,7 @@ function GETCOMPANY_CHEM_NAME(templatetypeid, productName, productNameChinese) {
 function GETCOMPANY_BIO_NAME(templatetypeid, productName, productNameChinese) {
     let result = '';
     if (templatetypeid == 2) {
-        if (util_1.isNullOrUndefined(productNameChinese) || productNameChinese === '') {
+        if (stringUtils_1.StringUtils.isEmpty(productNameChinese)) {
             result = productName;
         }
         else {
@@ -58,7 +59,7 @@ function GETCOMPANY_BIO_NAME(templatetypeid, productName, productNameChinese) {
 function GETCOMPANY_CL_NAME(templatetypeid, productName, productNameChinese) {
     let result = '';
     if (templatetypeid == 3) {
-        if (util_1.isNullOrUndefined(productNameChinese) || productNameChinese === '') {
+        if (stringUtils_1.StringUtils.isEmpty(productNameChinese)) {
             result = productName;
         }
         else {
@@ -75,7 +76,7 @@ function GETDELIVERYTIME_ID(storage, deliveryTime) {
         result = "01"; // 跟舒经理核实，现货产品传最小时间单位
     }
     else {
-        if (util_1.isNullOrUndefined(deliveryTime)) {
+        if (stringUtils_1.StringUtils.isEmpty(deliveryTime)) {
             result = '21';
         }
         else if (Number(deliveryTime) <= 9) {

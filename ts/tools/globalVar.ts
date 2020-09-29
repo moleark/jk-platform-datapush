@@ -1,7 +1,7 @@
 
 class globalVar {
 
-    // 方元平台存储数据用，存储够500条数据统一推送一次；
+    // 方元平台存储数据用，存储够100条数据统一推送一次；
     public addOrEditList_chem: any[] = [];
     public addOrEditList_bio: any[] = [];
     public addOrEditList_cl: any[] = [];

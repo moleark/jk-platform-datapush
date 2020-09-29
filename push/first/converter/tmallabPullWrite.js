@@ -221,24 +221,26 @@ function GetImg(brandName) {
     }
     return result;
 }
+/*
 // 获取促销产品推送数据格式
-function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, startTime, endTime, appSecurity) {
+function GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, startTime, endTime, appSecurity): any {
+
     let PromotionInfo = {
         vipCode: vipCode,
         brand: GetBrand(brand),
         itemNum: itemNum,
         packingSpecification: packingSpecification,
         price: Math.round(salePrice),
-        startTime: date_fns_1.format(startTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
-        endTime: date_fns_1.format(endTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
+        startTime: format(startTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
+        endTime: format(endTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
         appSecurity: appSecurity,
         platform: '',
         version: '1.3'
-    };
+    }
     return PromotionInfo;
-}
+}*/
 // 获取新增或者修改推送数据格式
-function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime) {
+function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, startTime, endTime) {
     let productInfo = {
         品牌: GetBrand(brand),
         货号: itemNum,
@@ -258,7 +260,11 @@ function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, cat
         最小包装: "",
         最小包装数量: "",
         产品链接: GetDetaUrl(jkid),
-        图片链接: GetImg(brand)
+        图片链接: GetImg(brand),
+        促销平台: "",
+        促销开始日期: date_fns_1.format(startTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
+        促销截止日期: date_fns_1.format(endTime - 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:SS'),
+        促销价: Math.round(salePrice)
     };
     return productInfo;
 }
@@ -326,9 +332,13 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
+        /*
         // 市场活动产品，需要调用平台市场活动接口。但是调用市场活动接口前提得保证数据添加到对方平台上，所以在此市场活动单个产品先调用推送接口后 再调用市场活动接口。
         else if (isDelete == 0 && activeDiscount != '' && activeDiscount != null) {
-            let product = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime);
+
+            let product = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
+                templateTypeId, mdlNumber, packnr, unit, delivetime);
+
             let addData = {
                 product: [product],
                 productType: GetProductType(templateTypeId),
@@ -336,40 +346,44 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 platform: '',
                 appSecurity: appSecurity,
                 version: version
-            };
+            }
             postDataStr = JSON.stringify(addData);
             options.path = pushProductPath;
+
             // 调用平台的接口推送数据，并返回结果;
-            let optionData = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
+            let optionData = await HttpRequest_POST(options, postDataStr);
             let postResult = JSON.parse(String(optionData));
+
             // 判断推送结果
             if (postResult.flag != 0) {
-                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
+
+                console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
                 let promotionData = await GetPromotionFormat(vipCode, brand, itemNum, packingSpecification, salePrice, pStartTime, pEndTime, appSecurity);
                 postDataStr = JSON.stringify(promotionData);
                 options.path = updatePromotionInfoPath;
+
                 // 再次调用平台的接口推送数据，并返回结果
-                let optionDataAgain = await HttpRequestHelper_1.HttpRequest_POST(options, postDataStr);
+                let optionDataAgain = await HttpRequest_POST(options, postDataStr);
                 // console.log(optionDataAgain);
                 let postResultAgain = JSON.parse(String(optionDataAgain));
+
                 if (postResultAgain.flag != 0) {
                     result = true;
-                    console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}');
-                }
-                else {
+                    console.log('TmallabPush Success: { PackageId: ' + packageId + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}');
+                } else {
                     result = false;
-                    throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
+                    throw 'TmallabPush Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
                 }
-            }
-            else if (String(postResult.data).includes("此处禁止上传管控品")) {
+            } else if (String(postResult.data).includes("此处禁止上传管控品")) {
+
                 result = true;
-                console.log('TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
-            }
-            else {
+                console.log('TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}');
+            } else {
                 result = false;
-                throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
+                throw 'TmallabPush Fail:{ Code:' + postResult.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
+        */
         // 产品 “新增”或者“修改”的情况。需要批量推送。先判断单个数据对应的处理情况，存储到数组中（等存储够一定量的数据批量推送）。
         else if (isDelete == 0) {
             if (templateTypeId == 1) {
@@ -391,7 +405,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_chem.length - 1; i >= 0; i--) {
                 let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_chem[i];
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime);
+                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 globalVar_1.GlobalVar.addOrEditList_chem = globalVar_1.GlobalVar.addOrEditList_chem.filter(a => a !== globalVar_1.GlobalVar.addOrEditList_chem[i]);
                 // console.log(DataList.addOrEditList_chem.length);
@@ -419,13 +433,13 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 throw 'TmallabPush Fail{ Code:' + postResult.Code + ', queue_in:' + keyVal + ',Type:' + GetProductType('1') + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
-        // 生物试剂 推送，满足 4 条数据推送一次；
-        if (globalVar_1.GlobalVar.addOrEditList_bio.length > 4) {
-            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 4 ，准备推送... , 仪器耗材数量: ' + globalVar_1.GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length);
+        // 生物试剂 推送，满足 10 条数据推送一次；
+        if (globalVar_1.GlobalVar.addOrEditList_bio.length > 9) {
+            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 10 ，准备推送... , 仪器耗材数量: ' + globalVar_1.GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length);
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_bio.length - 1; i >= 0; i--) {
                 let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_bio[i];
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime);
+                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 globalVar_1.GlobalVar.addOrEditList_bio = globalVar_1.GlobalVar.addOrEditList_bio.filter(a => a !== globalVar_1.GlobalVar.addOrEditList_bio[i]);
                 // console.log(DataList.addOrEditList_bio.length);
@@ -453,13 +467,13 @@ async function tmallabPullWrite(joint, uqIn, data) {
                 throw 'TmallabPush Fail:{ Code:' + postResult.Code + ', queue_in:' + keyVal + ',Type:' + GetProductType('1') + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionData + '}';
             }
         }
-        // 仪器耗材 推送，满足5 条数据推送一次；
-        if (globalVar_1.GlobalVar.addOrEditList_cl.length > 4) {
-            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 5 ，准备推送... , 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length);
+        // 仪器耗材 推送，满足 10 条数据推送一次；
+        if (globalVar_1.GlobalVar.addOrEditList_cl.length > 9) {
+            console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 10 ，准备推送... , 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length);
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_cl.length - 1; i >= 0; i--) {
                 let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_cl[i];
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime);
+                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 globalVar_1.GlobalVar.addOrEditList_cl = globalVar_1.GlobalVar.addOrEditList_cl.filter(a => a !== globalVar_1.GlobalVar.addOrEditList_cl[i]);
                 // console.log(DataList.addOrEditList_cl.length);
