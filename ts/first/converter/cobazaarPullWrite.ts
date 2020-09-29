@@ -357,12 +357,11 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
 
-        // 判断获取到的token信息有没有过期（接口token有效时间60分钟，此处设置为超过45分钟则重新获取）
-
+        // 判断获取到的token信息有没有过期（接口token有效时间120分钟，此处设置为超过100分钟则重新获取）
         let strattTime: any = new Date(GlobalVar.timestamp);
         let endTime: any = new Date(Date.now() + 60000);
         let diffMinutes = round((endTime - strattTime) / (1000 * 60));
-        // console.log(diffMinutes);
+        console.log(diffMinutes);
         if (diffMinutes > 100) {
             await getTokenInfo(hostname, gettokenPath, loginname, ukey);
         }
@@ -438,6 +437,8 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
                     result = false;
                     throw 'cobazaarPush convertSuDa Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}';
                 }
+            } else {
+                result = true;
             }
 
         }
