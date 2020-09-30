@@ -340,7 +340,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
     let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
-    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, activeDiscount, salePrice, pStartTime, pEndTime, isHazard } = body;
+    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, activeDiscount, salePrice, pEndTime, isHazard } = body;
     let result = false;
     try {
         // 判断有没有获取到token信息

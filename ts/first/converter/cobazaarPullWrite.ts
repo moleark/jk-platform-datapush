@@ -347,7 +347,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
 
     let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
     let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete,
-        activeDiscount, salePrice, pStartTime, pEndTime, isHazard } = body;
+        activeDiscount, salePrice, pEndTime, isHazard } = body;
     let result = false;
 
     try {
