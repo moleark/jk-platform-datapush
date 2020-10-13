@@ -421,7 +421,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
     let cname = GetName(name, subname, cascode);
     let csubname = GetSubname(subname);
     let stock = GetStockamount(Number(stockamount));
-    let image = GetImg(brandName);
+    // let image = GetImg(brandName); // 会覆盖手动上传的图片，在此修改更新不修改图片；
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
     return {
         rid: rid,
@@ -433,8 +433,8 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
         deliverycycle: delivery,
         isinsale: 1,
         intro: '',
-        instructions: [],
-        imgs: image
+        instructions: []
+        // imgs: image
     };
 }
 // 推送
