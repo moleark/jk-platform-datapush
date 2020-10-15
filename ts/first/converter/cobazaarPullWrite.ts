@@ -304,20 +304,20 @@ function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any, chin
 }
 
 // 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
-function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
+function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, discount: any, salePrice: any, CAS: any, deliveryCycle: any
     , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
         '包装规格': packageSize,
         '产品分类': GetProductType(typeId),
-        '售价': catalogPrice + 10,
+        '售价': round(salePrice + 10),
         '特惠结束时间': format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),   // ptm:9605966 汤施丹反馈使用此时间作为结束时间；
         '平台编号': 'suda',
         '中文名称': chineseName,
         '英文名称': englishName,
         '主图': GetImg(brandName),
-        '目录价(RMB)': catalogPrice + 10,
+        '目录价(RMB)': round((salePrice + 10) / discount),
         'CAS': CAS,
         '质量等级': '',
         '包装单位': '瓶',
@@ -347,7 +347,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
 
     let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
     let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete,
-        activeDiscount, salePrice, pEndTime, isHazard } = body;
+        discount, activeDiscount, salePrice, pEndTime, isHazard } = body;
     let result = false;
 
     try {
@@ -414,7 +414,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
             // 如果是危险品数据重新推送给苏州大学，增加10块
             // console.log(isHazard);
             if (isHazard == true && String(isDelete) == '0') {
-                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, discount, salePrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
                 postDataStr = JSON.stringify(sudaData);
 
                 let requestDataAgain = qs.stringify({

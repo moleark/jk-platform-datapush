@@ -300,19 +300,19 @@ function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englis
         }];
 }
 // 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
-function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
+function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, discount, salePrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
             '包装规格': packageSize,
             '产品分类': GetProductType(typeId),
-            '售价': catalogPrice + 10,
+            '售价': lodash_1.round(salePrice + 10),
             '特惠结束时间': date_fns_1.format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),
             '平台编号': 'suda',
             '中文名称': chineseName,
             '英文名称': englishName,
             '主图': GetImg(brandName),
-            '目录价(RMB)': catalogPrice + 10,
+            '目录价(RMB)': lodash_1.round((salePrice + 10) / discount),
             'CAS': CAS,
             '质量等级': '',
             '包装单位': '瓶',
@@ -340,7 +340,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
     let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
-    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, activeDiscount, salePrice, pEndTime, isHazard } = body;
+    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, discount, activeDiscount, salePrice, pEndTime, isHazard } = body;
     let result = false;
     try {
         // 判断有没有获取到token信息
@@ -397,7 +397,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             // 如果是危险品数据重新推送给苏州大学，增加10块
             // console.log(isHazard);
             if (isHazard == true && String(isDelete) == '0') {
-                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, discount, salePrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
                 postDataStr = JSON.stringify(sudaData);
                 let requestDataAgain = qs.stringify({
                     ucode: globalVar_1.GlobalVar.ucode,
