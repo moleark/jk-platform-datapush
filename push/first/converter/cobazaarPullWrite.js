@@ -270,7 +270,11 @@ function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, eng
         }];
 }
 // 获取促销产品格式数据
-function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, salePrice, pEndTime) {
+function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, isHazard) {
+    let salePrice = lodash_1.round(catalogPrice * (1 - activeDiscount));
+    if (isHazard == true) {
+        salePrice = lodash_1.round(catalogPrice * (1 - activeDiscount)) + 10;
+    }
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
@@ -306,13 +310,13 @@ function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName
             '货号': originalId,
             '包装规格': packageSize,
             '产品分类': GetProductType(typeId),
-            '售价': lodash_1.round(salePrice + 10),
+            '售价': lodash_1.round(salePrice + 13),
             '特惠结束时间': date_fns_1.format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),
             '平台编号': 'suda',
             '中文名称': chineseName,
             '英文名称': englishName,
             '主图': GetImg(brandName),
-            '目录价(RMB)': lodash_1.round((salePrice + 10) / discount),
+            '目录价(RMB)': lodash_1.round((salePrice + 13) / discount),
             'CAS': CAS,
             '质量等级': '',
             '包装单位': '瓶',
@@ -369,7 +373,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             postDataStr = JSON.stringify(deleteData);
         }
         else if (String(isDelete) == '0' && activeDiscount != '' && activeDiscount != null) {
-            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, salePrice, pEndTime);
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, isHazard);
             postOptions.path = addproductPricePath;
             postDataStr = JSON.stringify(promotionData);
         }

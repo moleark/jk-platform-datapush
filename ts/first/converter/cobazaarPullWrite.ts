@@ -272,8 +272,14 @@ function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, c
     }];
 }
 // 获取促销产品格式数据
-function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
-    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, salePrice: any, pEndTime: any) {
+function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, activeDiscount: any, CAS: any, deliveryCycle: any
+    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, pEndTime: any, isHazard: any) {
+
+    let salePrice: any = round(catalogPrice * (1 - activeDiscount));
+    if (isHazard == true) {
+        salePrice = round(catalogPrice * (1 - activeDiscount)) + 10;
+    }
+
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
@@ -311,13 +317,13 @@ function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: a
         '货号': originalId,
         '包装规格': packageSize,
         '产品分类': GetProductType(typeId),
-        '售价': round(salePrice + 10),
+        '售价': round(salePrice + 13),
         '特惠结束时间': format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),   // ptm:9605966 汤施丹反馈使用此时间作为结束时间；
         '平台编号': 'suda',
         '中文名称': chineseName,
         '英文名称': englishName,
         '主图': GetImg(brandName),
-        '目录价(RMB)': round((salePrice + 10) / discount),
+        '目录价(RMB)': round((salePrice + 13) / discount),
         'CAS': CAS,
         '质量等级': '',
         '包装单位': '瓶',
@@ -382,7 +388,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
 
         }
         else if (String(isDelete) == '0' && activeDiscount != '' && activeDiscount != null) {
-            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, salePrice, pEndTime);
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, isHazard);
             postOptions.path = addproductPricePath;
             postDataStr = JSON.stringify(promotionData);
 
