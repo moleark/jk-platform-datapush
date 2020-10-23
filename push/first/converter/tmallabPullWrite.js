@@ -404,8 +404,8 @@ async function tmallabPullWrite(joint, uqIn, data) {
             console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 化学试剂数量: 100 ，准备推送... 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length + ', 仪器耗材数量: ' + globalVar_1.GlobalVar.addOrEditList_cl.length);
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_chem.length - 1; i >= 0; i--) {
-                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_chem[i];
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
+                let { itemNum: iItemNum, brand: iBrand, packingSpecification: iPackingSpecification, casFormat: iCasFormat, catalogPrice: iCatalogPrice, descriptionC: iDescriptionC, description: iDescription, descriptionST: iDescriptionST, purity: iPurity, storage: iStorage, jkid: iJkid, templateTypeId: iTemplateTypeId, mdlNumber: iMdlNumber, packnr: iPacknr, unit: iUnit, delivetime: iDelivetime, salePrice: iSalePrice, pStartTime: iPStartTime, pEndTime: iPEndTime } = globalVar_1.GlobalVar.addOrEditList_chem[i];
+                let AddOrEditFormat = GetAddOrEditFormat(iItemNum, iBrand, iPackingSpecification, iCasFormat, iCatalogPrice, iDescriptionC, iDescription, iDescriptionST, iPurity, iStorage, iJkid, iTemplateTypeId, iMdlNumber, iPacknr, iUnit, iDelivetime, iSalePrice, iPStartTime, iPEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 globalVar_1.GlobalVar.addOrEditList_chem = globalVar_1.GlobalVar.addOrEditList_chem.filter(a => a !== globalVar_1.GlobalVar.addOrEditList_chem[i]);
                 // console.log(DataList.addOrEditList_chem.length);
@@ -438,8 +438,8 @@ async function tmallabPullWrite(joint, uqIn, data) {
             console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 生物试剂数量: 10 ，准备推送... , 仪器耗材数量: ' + globalVar_1.GlobalVar.addOrEditList_cl.length + ', 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length);
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_bio.length - 1; i >= 0; i--) {
-                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_bio[i];
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
+                let { itemNum: iItemNum, brand: iBrand, packingSpecification: iPackingSpecification, casFormat: iCasFormat, catalogPrice: iCatalogPrice, descriptionC: iDescriptionC, description: iDescription, descriptionST: iDescriptionST, purity: iPurity, storage: iStorage, jkid: iJkid, templateTypeId: iTemplateTypeId, mdlNumber: iMdlNumber, packnr: iPacknr, unit: iUnit, delivetime: iDelivetime, salePrice: iSalePrice, pStartTime: iPStartTime, pEndTime: iPEndTime } = globalVar_1.GlobalVar.addOrEditList_bio[i];
+                let AddOrEditFormat = GetAddOrEditFormat(iItemNum, iBrand, iPackingSpecification, iCasFormat, iCatalogPrice, iDescriptionC, iDescription, iDescriptionST, iPurity, iStorage, iJkid, iTemplateTypeId, iMdlNumber, iPacknr, iUnit, iDelivetime, iSalePrice, iPStartTime, iPEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 globalVar_1.GlobalVar.addOrEditList_bio = globalVar_1.GlobalVar.addOrEditList_bio.filter(a => a !== globalVar_1.GlobalVar.addOrEditList_bio[i]);
                 // console.log(DataList.addOrEditList_bio.length);
@@ -472,8 +472,8 @@ async function tmallabPullWrite(joint, uqIn, data) {
             console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 仪器耗材数量: 10 ，准备推送... , 化学试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_chem.length + ', 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length);
             let productList_addOrEdit = [];
             for (let i = globalVar_1.GlobalVar.addOrEditList_cl.length - 1; i >= 0; i--) {
-                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime } = globalVar_1.GlobalVar.addOrEditList_cl[i];
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
+                let { itemNum: iItemNum, brand: iBrand, packingSpecification: iPackingSpecification, casFormat: iCasFormat, catalogPrice: iCatalogPrice, descriptionC: iDescriptionC, description: iDescription, descriptionST: iDescriptionST, purity: iPurity, storage: iStorage, jkid: iJkid, templateTypeId: iTemplateTypeId, mdlNumber: iMdlNumber, packnr: iPacknr, unit: iUnit, delivetime: iDelivetime, salePrice: iSalePrice, pStartTime: iPStartTime, pEndTime: iPEndTime } = globalVar_1.GlobalVar.addOrEditList_cl[i];
+                let AddOrEditFormat = GetAddOrEditFormat(iItemNum, iBrand, iPackingSpecification, iCasFormat, iCatalogPrice, iDescriptionC, iDescription, iDescriptionST, iPurity, iStorage, iJkid, iTemplateTypeId, iMdlNumber, iPacknr, iUnit, iDelivetime, iSalePrice, iPStartTime, iPEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 globalVar_1.GlobalVar.addOrEditList_cl = globalVar_1.GlobalVar.addOrEditList_cl.filter(a => a !== globalVar_1.GlobalVar.addOrEditList_cl[i]);
                 // console.log(DataList.addOrEditList_cl.length);

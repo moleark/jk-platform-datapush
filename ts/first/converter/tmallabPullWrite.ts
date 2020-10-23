@@ -405,11 +405,13 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_chem.length - 1; i >= 0; i--) {
-                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime } = GlobalVar.addOrEditList_chem[i];
+                let { itemNum: iItemNum, brand: iBrand, packingSpecification: iPackingSpecification, casFormat: iCasFormat, catalogPrice: iCatalogPrice,
+                    descriptionC: iDescriptionC, description: iDescription, descriptionST: iDescriptionST, purity: iPurity, storage: iStorage, jkid: iJkid,
+                    templateTypeId: iTemplateTypeId, mdlNumber: iMdlNumber, packnr: iPacknr, unit: iUnit, delivetime: iDelivetime, salePrice: iSalePrice,
+                    pStartTime: iPStartTime, pEndTime: iPEndTime } = GlobalVar.addOrEditList_chem[i];
 
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
+                let AddOrEditFormat = GetAddOrEditFormat(iItemNum, iBrand, iPackingSpecification, iCasFormat, iCatalogPrice, iDescriptionC, iDescription, iDescriptionST, iPurity, iStorage, iJkid,
+                    iTemplateTypeId, iMdlNumber, iPacknr, iUnit, iDelivetime, iSalePrice, iPStartTime, iPEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 GlobalVar.addOrEditList_chem = GlobalVar.addOrEditList_chem.filter(a => a !== GlobalVar.addOrEditList_chem[i]);
                 // console.log(DataList.addOrEditList_chem.length);
@@ -447,11 +449,13 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_bio.length - 1; i >= 0; i--) {
-                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime } = GlobalVar.addOrEditList_bio[i];
+                let { itemNum: iItemNum, brand: iBrand, packingSpecification: iPackingSpecification, casFormat: iCasFormat, catalogPrice: iCatalogPrice,
+                    descriptionC: iDescriptionC, description: iDescription, descriptionST: iDescriptionST, purity: iPurity, storage: iStorage, jkid: iJkid,
+                    templateTypeId: iTemplateTypeId, mdlNumber: iMdlNumber, packnr: iPacknr, unit: iUnit, delivetime: iDelivetime, salePrice: iSalePrice,
+                    pStartTime: iPStartTime, pEndTime: iPEndTime } = GlobalVar.addOrEditList_bio[i];
 
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
+                let AddOrEditFormat = GetAddOrEditFormat(iItemNum, iBrand, iPackingSpecification, iCasFormat, iCatalogPrice, iDescriptionC, iDescription, iDescriptionST, iPurity, iStorage, iJkid,
+                    iTemplateTypeId, iMdlNumber, iPacknr, iUnit, iDelivetime, iSalePrice, iPStartTime, iPEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 GlobalVar.addOrEditList_bio = GlobalVar.addOrEditList_bio.filter(a => a !== GlobalVar.addOrEditList_bio[i]);
                 // console.log(DataList.addOrEditList_bio.length);
@@ -489,11 +493,13 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             let productList_addOrEdit: any = [];
             for (let i = GlobalVar.addOrEditList_cl.length - 1; i >= 0; i--) {
-                let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime } = GlobalVar.addOrEditList_cl[i];
+                let { itemNum: iItemNum, brand: iBrand, packingSpecification: iPackingSpecification, casFormat: iCasFormat, catalogPrice: iCatalogPrice,
+                    descriptionC: iDescriptionC, description: iDescription, descriptionST: iDescriptionST, purity: iPurity, storage: iStorage, jkid: iJkid,
+                    templateTypeId: iTemplateTypeId, mdlNumber: iMdlNumber, packnr: iPacknr, unit: iUnit, delivetime: iDelivetime, salePrice: iSalePrice,
+                    pStartTime: iPStartTime, pEndTime: iPEndTime } = GlobalVar.addOrEditList_cl[i];
 
-                let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
-                    templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime);
+                let AddOrEditFormat = GetAddOrEditFormat(iItemNum, iBrand, iPackingSpecification, iCasFormat, iCatalogPrice, iDescriptionC, iDescription, iDescriptionST, iPurity, iStorage, iJkid,
+                    iTemplateTypeId, iMdlNumber, iPacknr, iUnit, iDelivetime, iSalePrice, iPStartTime, iPEndTime);
                 productList_addOrEdit.push(AddOrEditFormat);
                 GlobalVar.addOrEditList_cl = GlobalVar.addOrEditList_cl.filter(a => a !== GlobalVar.addOrEditList_cl[i]);
                 // console.log(DataList.addOrEditList_cl.length);
