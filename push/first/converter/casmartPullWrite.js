@@ -50,7 +50,7 @@ function GetGroups(templatetypeid) {
 function GetExtends(templateTypeId, purity, cascode, mf) {
     let result = [];
     let rPurity = purity.replace(/[+]/g, '').replace(/[?]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, '');
-    let rMF = mf.replace(/[#]/g, '').replace(/[^]/g, '').replace(/[&]/g, '');
+    let rMF = mf.replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, ''); //.replace(/[^]/g, '');
     switch (templateTypeId) {
         case 1:
             result = [{ "key": 9, "value": rPurity }, { "key": 10, "value": cascode }, { "key": 11, "value": rMF }];
@@ -378,6 +378,19 @@ function GeyDeliveryCycle(amount, brandName, deliveryCycle) {
     }
     return result;
 }
+function GetIntro(csubname, name, cascode) {
+    let result = '';
+    if (csubname != null) {
+        result += csubname + ';';
+    }
+    if (name != null) {
+        result += name + ';';
+    }
+    if (cascode != null) {
+        result += cascode + ';';
+    }
+    return result;
+}
 function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx) {
     //定义商品类型、产品分类、产品分组 
     let cateId = GetCateId(iswx, typeId); //商品分类，在sql查询中完成
@@ -391,6 +404,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     let image = GetImg(brandName);
     let stock = GetStockamount(Number(stockamount));
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
+    let introInfo = GetIntro(csubname, name, cascode);
     return {
         rid: rid,
         code: code,
@@ -405,7 +419,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
         imgs: image,
         stockamount: stock,
         isinsale: 1,
-        intro: '',
+        intro: introInfo,
         spec: spec,
         maker: maker,
         packinglist: '',
@@ -423,6 +437,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
     let stock = GetStockamount(Number(stockamount));
     // let image = GetImg(brandName); // 会覆盖手动上传的图片，在此修改更新不修改图片；
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
+    let introInfo = GetIntro(csubname, name, cascode);
     return {
         rid: rid,
         name: cname,
@@ -432,7 +447,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
         stockamount: stock,
         deliverycycle: delivery,
         isinsale: 1,
-        intro: '',
+        intro: introInfo,
         instructions: []
         // imgs: image
     };
