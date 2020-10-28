@@ -318,12 +318,12 @@ function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: a
         '包装规格': packageSize,
         '产品分类': GetProductType(typeId),
         '售价': round(salePrice + 13),
-        '特惠结束时间': format(new Date('2020-10-28 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),   // ptm:9605966 汤施丹反馈使用此时间作为结束时间；2021-12-31 23:59:50
+        '特惠结束时间': format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),   // ptm:9605966 汤施丹反馈使用此时间作为结束时间；
         '平台编号': 'suda',
         '中文名称': chineseName,
         '英文名称': englishName,
         '主图': GetImg(brandName),
-        '目录价(RMB)': catalogPrice, // round((salePrice + 13) / discount),
+        '目录价(RMB)': round((salePrice + 13) / discount),
         'CAS': CAS,
         '质量等级': '',
         '包装单位': '瓶',
