@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HttpRequest_POST = exports.HttpRequest_GET = void 0;
 const http_1 = __importDefault(require("http"));
 // nodejs的http是使用异步方式调用接口，通过此方法可以实现同步调用）
 function HttpRequest_GET(options) {

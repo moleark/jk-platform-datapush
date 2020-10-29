@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GlobalVar = void 0;
 class globalVar {
     constructor() {
         // 方元平台存储数据用，存储够100条数据统一推送一次；

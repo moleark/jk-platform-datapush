@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tmallab = void 0;
 //import { UqInTuid } from "../../uq-joint";
 const tmallabPullWrite_1 = require("../../first/converter/tmallabPullWrite");
 const config_1 = __importDefault(require("config"));

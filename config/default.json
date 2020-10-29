@@ -19,6 +19,10 @@
         {
             "name": "cobazaar",
             "inervalUnit": 1
+        },
+        {
+            "name": "zcygov1",
+            "inervalUnit": 1
         }
     ]
 }

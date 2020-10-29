@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.readMany = exports.uqPullRead = exports.uqOutRead = void 0;
 const tools_1 = require("../../db/mssql/tools");
 async function uqOutRead(sql, maxId) {
     // let iMaxId = maxId === "" ? 0 : Number(maxId);
