@@ -388,11 +388,13 @@ function GetIntro(name, cascode, purity, mf, brandName, code, spec) {
     if (cascode != null) {
         result += ' ' + cascode + ';';
     }
-    if (purity != null) {
-        result += ' ' + purity + ';';
+    let rPurity = purity.replace(/[+]/g, '').replace(/[?]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, '');
+    let rMF = mf.replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, ''); //.replace(/[^]/g, '');
+    if (rPurity != null) {
+        result += ' ' + rPurity + ';';
     }
-    if (mf != null) {
-        result += ' ' + mf + ';';
+    if (rMF != null) {
+        result += ' ' + rMF + ';';
     }
     return result;
 }

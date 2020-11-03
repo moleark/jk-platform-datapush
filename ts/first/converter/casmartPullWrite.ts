@@ -401,11 +401,13 @@ function GetIntro(name: string, cascode: string, purity: any, mf: any, brandName
     if (cascode != null) {
         result += ' ' + cascode + ';';
     }
-    if (purity != null) {
-        result += ' ' + purity + ';';
+    let rPurity = purity.replace(/[+]/g, '').replace(/[?]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, '');
+    let rMF = mf.replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, ''); //.replace(/[^]/g, '');
+    if (rPurity != null) {
+        result += ' ' + rPurity + ';';
     }
-    if (mf != null) {
-        result += ' ' + mf + ';';
+    if (rMF != null) {
+        result += ' ' + rMF + ';';
     }
     return result;
 }
