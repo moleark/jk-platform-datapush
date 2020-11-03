@@ -1,7 +1,7 @@
 import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 //import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
 import _ from 'lodash';
-import { format } from 'date-fns';
+import { compareDesc, format } from 'date-fns';
 let md5 = require('md5');
 import config from 'config';
 import { logger } from "../../tools/logger";
@@ -390,21 +390,22 @@ function GeyDeliveryCycle(amount: number, brandName: string, deliveryCycle: stri
     return result;
 }
 
-function GetIntro(name: string, cascode: string, purity: any, mf: any): string {
+function GetIntro(name: string, cascode: string, purity: any, mf: any, brandName: string, code: string, spec: string): string {
 
     let result = '';
+    result += brandName + '-' + code + '-' + spec + ';';
 
     if (name != null) {
-        result += name + ';';
+        result += ' ' + name + ';';
     }
     if (cascode != null) {
-        result += cascode + ';';
+        result += ' ' + cascode + ';';
     }
     if (purity != null) {
-        result += purity + ';';
+        result += ' ' + purity + ';';
     }
     if (mf != null) {
-        result += mf + ';';
+        result += ' ' + mf + ';';
     }
     return result;
 }
@@ -423,7 +424,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     let image = GetImg(brandName);
     let stock = GetStockamount(Number(stockamount));
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
-    let introInfo = GetIntro(cname, cascode, purity, mf);
+    let introInfo = GetIntro(cname, cascode, purity, mf, brandName, code, spec);
 
     return {
         rid: rid,
@@ -459,7 +460,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
     let stock = GetStockamount(Number(stockamount));
     // let image = GetImg(brandName); // 会覆盖手动上传的图片，在此修改更新不修改图片；
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
-    let introInfo = GetIntro(cname, cascode, purity, mf);
+    //let introInfo = GetIntro(cname, cascode, purity, mf,brandName, );
     return {
         rid: rid,
         name: cname,
@@ -469,7 +470,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
         stockamount: stock,
         deliverycycle: delivery,
         isinsale: 1,
-        intro: introInfo,
+        //intro: introInfo,
         instructions: []
         // imgs: image
     };
