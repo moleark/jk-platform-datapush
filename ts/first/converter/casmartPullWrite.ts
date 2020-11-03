@@ -513,9 +513,12 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         //产品下架的情况
         if (isDelete == '1') {
 
+            let cname = GetName(name, subname, cascode);
+            let introInfo = GetIntro(cname, cascode, purity, mf, brandName, code, spec);
             let deleteData = {
                 rid: body["rid"],
-                isinsale: 0
+                isinsale: 0,
+                intro: introInfo,
             };
             let deleteJson = JSON.stringify(deleteData);
             let md5Str = md5(appid + deleteJson + timestamp + secret);
