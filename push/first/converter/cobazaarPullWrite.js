@@ -99,9 +99,6 @@ function GetBrandName(brandName) {
     else if (brandName == "Alfa") {
         result = 'Alfa Aesar';
     }
-    else if (brandName == "Alfa Aesar") {
-        result = 'Alfa Aesar';
-    }
     else {
         result = brandName;
     }
@@ -199,6 +196,9 @@ function GetStockamount(brandName, amount) {
         result = 99;
     }
     else if (brandName == 'Alfa') {
+        result = 99;
+    }
+    else if (brandName == 'Alfa Aesar') {
         result = 99;
     }
     else {

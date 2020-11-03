@@ -52,6 +52,8 @@ function GetStockamount(brandName: string, amount: number): number {
     }
     else if (brandName == 'Alfa') {
         result = 99
+    } else if (brandName == 'Alfa Aesar') {
+        result = 99
     }
     else {
         if (amount > 0 && amount < 11) {

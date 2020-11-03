@@ -100,8 +100,6 @@ function GetBrandName(brandName: string): string {
         result = '百灵威J&K';
     } else if (brandName == "Alfa") {
         result = 'Alfa Aesar';
-    } else if (brandName == "Alfa Aesar") {
-        result = 'Alfa Aesar';
     }
     else {
         result = brandName;
@@ -203,6 +201,8 @@ function GetStockamount(brandName: string, amount: number): number {
         result = 99
     }
     else if (brandName == 'Alfa') {
+        result = 99
+    } else if (brandName == 'Alfa Aesar') {
         result = 99
     }
     else {
