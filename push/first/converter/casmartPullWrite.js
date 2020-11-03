@@ -436,13 +436,13 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
         groups: groups
     };
 }
-function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf) {
+function GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf) {
     let cname = GetName(name, subname, cascode);
     let csubname = GetSubname(subname);
     let stock = GetStockamount(Number(stockamount));
     // let image = GetImg(brandName); // 会覆盖手动上传的图片，在此修改更新不修改图片；
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
-    //let introInfo = GetIntro(cname, cascode, purity, mf,brandName, );
+    let introInfo = GetIntro(cname, cascode, purity, mf, brandName, code, spec);
     return {
         rid: rid,
         name: cname,
@@ -452,7 +452,7 @@ function GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, sub
         stockamount: stock,
         deliverycycle: delivery,
         isinsale: 1,
-        //intro: introInfo,
+        intro: introInfo,
         instructions: []
         // imgs: image
     };
@@ -507,7 +507,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
             }
             else {
                 //修改产品信息
-                let updateData = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf);
+                let updateData = GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf);
                 let updateJson = JSON.stringify(updateData);
                 let md5Str = md5(appid + updateJson + timestamp + secret);
                 let updateProductPath = encodeURI(updatePath + '?appid=' + appid + '&data=' + updateJson + '&t=' + timestamp + '&sign=' + md5Str);
@@ -555,7 +555,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
             //新增转修改  && (name == null || name == '')
             else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步') {
                 stateName = 'edit';
-                let updateDataAgain = GetUpdateDataFormat(rid, brandName, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf);
+                let updateDataAgain = GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf);
                 let updateJsonAgain = JSON.stringify(updateDataAgain);
                 let md5StrAgain = md5(appid + updateJsonAgain + timestamp + secret);
                 let updateProductPathAgain = encodeURI(updatePath + '?appid=' + appid + '&data=' + updateJsonAgain + '&t=' + timestamp + '&sign=' + md5StrAgain);
