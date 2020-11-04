@@ -393,16 +393,16 @@ function GeyDeliveryCycle(amount: number, brandName: string, deliveryCycle: stri
 function GetIntro(name: string, cascode: string, purity: any, mf: any, brandName: string, code: string, spec: string): string {
 
     let result = '';
-    result += brandName + '-' + code + '-' + spec + ';';
+    result += '品牌：' + brandName + ' 产品编号：' + code + ' 包装规格：' + spec + ';';
 
     if (name != null) {
-        result += ' ' + name + ';';
+        result += ' ' + GetFarmetName(name) + ';';
     }
     if (cascode != null) {
         result += ' ' + cascode + ';';
     }
     let rPurity = purity.replace(/[+]/g, '').replace(/[?]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, '');
-    let rMF = mf.replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, ''); //.replace(/[^]/g, '');
+    let rMF = mf.replace(/[+]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, ''); //.replace(/[^]/g, '');
     if (rPurity != null) {
         result += ' ' + rPurity + ';';
     }
