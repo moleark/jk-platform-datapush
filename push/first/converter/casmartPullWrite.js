@@ -10,6 +10,7 @@ let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
+const stringUtils_1 = require("../../tools/stringUtils");
 //喀斯玛接口相关配置
 const casmartApiSetting = config_1.default.get("casmartApi");
 //获取产品类型
@@ -318,7 +319,7 @@ function GetName(name, subname, cascode) {
 }
 function GetSubname(subName) {
     let result = '';
-    if (subName != null) {
+    if (stringUtils_1.StringUtils.isNotEmpty(subName)) {
         result = GetFarmetName(subName);
     }
     return result;
@@ -381,21 +382,24 @@ function GeyDeliveryCycle(amount, brandName, deliveryCycle) {
     }
     return result;
 }
-function GetIntro(name, cascode, purity, mf, brandName, code, spec) {
+function GetIntro(cname, name, cascode, purity, mf, brandName, code, spec) {
     let result = '';
     result += ' 产品编号' + code + ' 包装规格' + spec + ';';
-    if (name != null) {
+    if (stringUtils_1.StringUtils.isNotEmpty(cname)) {
+        result += ' ' + GetFarmetName(cname) + ';';
+    }
+    if (stringUtils_1.StringUtils.isNotEmpty(name)) {
         result += ' ' + GetFarmetName(name) + ';';
     }
-    if (cascode != null) {
+    if (stringUtils_1.StringUtils.isNotEmpty(cascode)) {
         result += ' CAS号' + cascode + ';';
     }
     let rPurity = purity.replace(/[+]/g, '').replace(/[?]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, '');
     let rMF = mf.replace(/[+]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, ''); //.replace(/[^]/g, '');
-    if (rPurity != null) {
+    if (stringUtils_1.StringUtils.isNotEmpty(rPurity)) {
         result += ' 纯度' + rPurity + ';';
     }
-    if (rMF != null) {
+    if (stringUtils_1.StringUtils.isNotEmpty(rMF)) {
         result += ' 分子式' + rMF + ';';
     }
     return result;
@@ -413,7 +417,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     let image = GetImg(brandName);
     let stock = GetStockamount(Number(stockamount));
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
-    let introInfo = GetIntro(cname, cascode, purity, mf, brandName, code, spec);
+    let introInfo = GetIntro(cname, csubname, cascode, purity, mf, brandName, code, spec);
     return {
         rid: rid,
         code: code,
@@ -446,7 +450,7 @@ function GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, pric
     let stock = GetStockamount(Number(stockamount));
     // let image = GetImg(brandName); // 会覆盖手动上传的图片，在此修改更新不修改图片；
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
-    let introInfo = GetIntro(cname, cascode, purity, mf, brandName, code, spec);
+    let introInfo = GetIntro(cname, csubname, cascode, purity, mf, brandName, code, spec);
     return {
         rid: rid,
         name: cname,
@@ -493,7 +497,7 @@ async function CasmartPullWrite(joint, uqIn, data) {
         //产品下架的情况
         if (isDelete == '1') {
             let cname = GetName(name, subname, cascode);
-            let introInfo = GetIntro(cname, cascode, purity, mf, brandName, code, spec);
+            let introInfo = GetIntro(cname, subname, cascode, purity, mf, brandName, code, spec);
             let deleteData = {
                 rid: body["rid"],
                 isinsale: 0,
