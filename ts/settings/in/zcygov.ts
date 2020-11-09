@@ -15,7 +15,7 @@ let pullSql = ` select r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFor
                         AND ID > @iMaxId
                     ORDER BY Id
                 ) r2
-                INNER JOIN ProdData.dbo.Export_ThirdPartyPlatformEntryResult r ON r2.ID = r.ID                 
+                INNER JOIN ProdData.dbo.Export_ThirdPartyPlatformEntryResult r ON r2.ID = r.ID
                 INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId
                 INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID
                 INNER JOIN zcl_mess.dbo.manufactory m ON m.code = p.Manufactory `;

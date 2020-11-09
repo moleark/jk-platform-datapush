@@ -319,12 +319,14 @@ function GetName(name: string, subname: string, cascode: string): string {
     if (name != null && name != '') {
         result += GetFarmetName(name) + ';';
     }
+    /*
     if (subname != null && subname != '') {
         result += GetFarmetName(subname) + ';';
     }
     if (cascode != null && cascode != '0') {
         result += cascode + ';';
     }
+    */
     return result;
 }
 
@@ -342,7 +344,7 @@ function GetFarmetName(str: string): string {
     //去除空格、反斜杠、括号、+- &
     //replace(/\s+/g, "")
     //.replace(/[(]/g, ' ').replace(/[)]/g, ' ').replace(/[（]/g, ' ').replace(/[）]/g, ' ').replace('-', '') replace(/[%]/g, '').
-    result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[&]/g, 'N').replace(/[:]/g, ' ').replace(/[+]/g, '');
+    result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[&]/g, 'N').replace(/[:]/g, ' ').replace(/[+]/g, '').replace(/[ ]/g, '');
     return result;
 }
 
@@ -393,21 +395,21 @@ function GeyDeliveryCycle(amount: number, brandName: string, deliveryCycle: stri
 function GetIntro(name: string, cascode: string, purity: any, mf: any, brandName: string, code: string, spec: string): string {
 
     let result = '';
-    result += '品牌：' + brandName + ' 产品编号：' + code + ' 包装规格：' + spec + ';';
+    result += ' 产品编号' + code + ' 包装规格' + spec + ';';
 
     if (name != null) {
         result += ' ' + GetFarmetName(name) + ';';
     }
     if (cascode != null) {
-        result += ' ' + cascode + ';';
+        result += ' CAS号' + cascode + ';';
     }
     let rPurity = purity.replace(/[+]/g, '').replace(/[?]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, '');
     let rMF = mf.replace(/[+]/g, '').replace(/[#]/g, '').replace(/[-]/g, '').replace(/[&]/g, ''); //.replace(/[^]/g, '');
     if (rPurity != null) {
-        result += ' ' + rPurity + ';';
+        result += ' 纯度' + rPurity + ';';
     }
     if (rMF != null) {
-        result += ' ' + rMF + ';';
+        result += ' 分子式' + rMF + ';';
     }
     return result;
 }
@@ -500,6 +502,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         let datetime = Date.now();
         //let timestamp = format(datetime + 8 * 3600 * 1000, 'yyyy-MM-dd HH:mm:ss');
         let timestamp = format(datetime, 'yyyy-MM-dd HH:mm:ss');
+        //let timestamp = '2020-11-09 10:22:00';
         //let postData = {};
         let options = {
             hostname: hostname,
