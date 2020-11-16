@@ -243,6 +243,71 @@ function GetDeleteFormat(brandName: any, originalId: any, packageSize: any) {
     }]
 }
 
+function getBrandDiscount(brandName: string): any {
+
+    let result: any;
+    switch (brandName) {
+        case 'J&K':
+            result = 0.78;
+            break;
+        case 'Amethyst':
+            result = 0.78;
+            break;
+        case 'Acros':
+            result = 0.9;
+            break;
+        case 'TCI':
+            result = 0.8;
+            break;
+        case 'Fluorochem':
+            result = 0.85;
+            break;
+        case 'Strem':
+            result = 0.85;
+            break;
+        case 'TRC':
+            result = 0.85;
+            break;
+        case 'Apollo':
+            result = 0.85;
+            break;
+        case 'Polymer Source':
+            result = 0.85;
+            break;
+        case 'Matrix':
+            result = 0.85;
+            break;
+        case 'Rieke Metals':
+            result = 0.9;
+            break;
+        case 'Frontier':
+            result = 0.85;
+            break;
+        case 'Wilmad':
+            result = 0.8;
+            break;
+        case '1-Material':
+            result = 0.75;
+            break;
+        case 'Alfa':
+            result = 0.8;
+            break;
+        case 'Alfa Aesar':
+            result = 0.8;
+            break;
+        case 'Accela':
+            result = 0.9;
+            break;
+        case 'Echelon':
+            result = 0.9;
+            break;
+        default:
+            result = 1;
+            break;
+    }
+    return result;
+}
+
 // 获取新增或者修改格式数据
 function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
     , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
@@ -310,20 +375,23 @@ function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any, chin
 }
 
 // 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
-function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, discount: any, catalogPrice: any, salePrice: any, CAS: any, deliveryCycle: any
+function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
     , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
+
+    let discount: any = getBrandDiscount(brandName);
+    let salePrice: any = round((catalogPrice * discount) + 13);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
         '包装规格': packageSize,
         '产品分类': GetProductType(typeId),
-        '售价': round(salePrice + 13),
+        '售价': salePrice,
         '特惠结束时间': format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),   // ptm:9605966 汤施丹反馈使用此时间作为结束时间；
         '平台编号': 'suda',
         '中文名称': chineseName,
         '英文名称': englishName,
         '主图': GetImg(brandName),
-        '目录价(RMB)': round((salePrice + 13) / discount),
+        '目录价(RMB)': round(salePrice / discount),
         'CAS': CAS,
         '质量等级': '',
         '包装单位': '瓶',
@@ -420,7 +488,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
             // 如果是危险品数据重新推送给苏州大学，增加10块
             // console.log(isHazard);
             if (isHazard == true && String(isDelete) == '0' && StringUtils.isEmpty(activeDiscount)) {
-                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, discount, catalogPrice, salePrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
                 postDataStr = JSON.stringify(sudaData);
 
                 let requestDataAgain = qs.stringify({

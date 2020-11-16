@@ -393,7 +393,7 @@ function GeyDeliveryCycle(amount: number, brandName: string, deliveryCycle: stri
     return result;
 }
 
-function GetIntro(cname: string, name: string, cascode: string, purity: any, mf: any, brandName: string, code: string, spec: string): string {
+function GetIntro(cname: string, name: string, cascode: string, purity: any, mf: any, productId: string, code: string, spec: string): string {
 
     let result = '';
     result += ' 产品编号' + code + ' 包装规格' + spec + ';';
@@ -415,10 +415,21 @@ function GetIntro(cname: string, name: string, cascode: string, purity: any, mf:
     if (StringUtils.isNotEmpty(rMF)) {
         result += ' 分子式' + rMF + ';';
     }
+    if (StringUtils.isNotEmpty(productId)) {
+        result += ' 官网链接' + GetDetaUrl(productId) + ';';
+    }
+
     return result;
 }
 
-function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx) {
+// 获取产品链接地址
+function GetDetaUrl(JKid: string): any {
+    let result = '';
+    result = 'https://www.jkchemical.com/CH/Products/' + JKid + '.html';
+    return result;
+}
+
+function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx, productId) {
 
     //定义商品类型、产品分类、产品分组 
     let cateId = GetCateId(iswx, typeId);  //商品分类，在sql查询中完成
@@ -432,7 +443,7 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     let image = GetImg(brandName);
     let stock = GetStockamount(Number(stockamount));
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
-    let introInfo = GetIntro(cname, csubname, cascode, purity, mf, brandName, code, spec);
+    let introInfo = GetIntro(cname, csubname, cascode, purity, mf, productId, code, spec);
 
     return {
         rid: rid,
@@ -461,14 +472,14 @@ function GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, m
     };
 }
 
-function GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf) {
+function GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf, productId) {
 
     let cname = GetName(name, subname, cascode);
     let csubname = GetSubname(subname);
     let stock = GetStockamount(Number(stockamount));
     // let image = GetImg(brandName); // 会覆盖手动上传的图片，在此修改更新不修改图片；
     let delivery = GeyDeliveryCycle(Number(stockamount), brandName, deliverycycle);
-    let introInfo = GetIntro(cname, csubname, cascode, purity, mf, brandName, code, spec);
+    let introInfo = GetIntro(cname, csubname, cascode, purity, mf, productId, code, spec);
     return {
         rid: rid,
         name: cname,
@@ -496,7 +507,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
     let { templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount,
-        stateName, isDelete, typeId, iswx } = body;
+        stateName, isDelete, typeId, iswx, productId } = body;
     let result = false;
 
     try {
@@ -521,7 +532,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         if (isDelete == '1') {
 
             let cname = GetName(name, subname, cascode);
-            let introInfo = GetIntro(cname, subname, cascode, purity, mf, brandName, code, spec);
+            let introInfo = GetIntro(cname, subname, cascode, purity, mf, productId, code, spec);
             let deleteData = {
                 rid: body["rid"],
                 isinsale: 0,
@@ -536,7 +547,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             //新增产品上架情况
             if (stateName == 'add') {
 
-                let addData = GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx);
+                let addData = GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx, productId);
                 let addJson = JSON.stringify(addData);
                 let md5Str = md5(appid + addJson + timestamp + secret);
                 let addProductPath = encodeURI(addPath + '?appid=' + appid + '&data=' + addJson + '&t=' + timestamp + '&sign=' + md5Str);
@@ -545,7 +556,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             } else {
 
                 //修改产品信息
-                let updateData = GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf);
+                let updateData = GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf, productId);
                 let updateJson = JSON.stringify(updateData);
                 let md5Str = md5(appid + updateJson + timestamp + secret);
                 let updateProductPath = encodeURI(updatePath + '?appid=' + appid + '&data=' + updateJson + '&t=' + timestamp + '&sign=' + md5Str);
@@ -577,7 +588,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             else if (postResult.retCode == 1 && stateName == 'edit' && postResult.message == '商家：448 未找到商品信息') {
 
                 stateName = 'add';
-                let addDataAgain = GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx);
+                let addDataAgain = GetAddDataFormat(templateTypeId, rid, code, brandName, spec, cascode, mktprice, price, name, subname, deliverycycle, purity, mf, stockamount, typeId, iswx, productId);
                 let addJsonAgain = JSON.stringify(addDataAgain);
                 let md5StrAgain = md5(appid + addJsonAgain + timestamp + secret);
                 let addProductPathAgain = encodeURI(addPath + '?appid=' + appid + '&data=' + addJsonAgain + '&t=' + timestamp + '&sign=' + md5StrAgain);
@@ -597,7 +608,7 @@ export async function CasmartPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
             //新增转修改  && (name == null || name == '')
             else if (postResult.retCode == 1 && stateName == 'add' && postResult.message == '商品信息已同步') {
                 stateName = 'edit';
-                let updateDataAgain = GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf);
+                let updateDataAgain = GetUpdateDataFormat(rid, code, brandName, spec, cascode, mktprice, price, name, subname, stockamount, deliverycycle, purity, mf, productId);
                 let updateJsonAgain = JSON.stringify(updateDataAgain);
                 let md5StrAgain = md5(appid + updateJsonAgain + timestamp + secret);
                 let updateProductPathAgain = encodeURI(updatePath + '?appid=' + appid + '&data=' + updateJsonAgain + '&t=' + timestamp + '&sign=' + md5StrAgain);
