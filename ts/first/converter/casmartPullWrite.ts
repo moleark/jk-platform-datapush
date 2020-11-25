@@ -110,6 +110,9 @@ function GetBrandId(brandName: string): number {
         case 'Apollo':
             result = 988;
             break;
+        case 'Apollo Scientific':
+            result = 988;
+            break;
         case 'Cambridge Isotope Laboratories（CIL）':
             result = 1279;
             break;
