@@ -379,7 +379,7 @@ function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: a
     , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
 
     let discount: any = getBrandDiscount(brandName);
-    let salePrice: any = round((catalogPrice * discount) + 13);
+    let salePrice: any = round((catalogPrice * discount) + 10);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
@@ -391,7 +391,7 @@ function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: a
         '中文名称': chineseName,
         '英文名称': englishName,
         '主图': GetImg(brandName),
-        '目录价(RMB)': round(salePrice / discount),
+        '目录价(RMB)': round(catalogPrice),
         'CAS': CAS,
         '质量等级': '',
         '包装单位': '瓶',
