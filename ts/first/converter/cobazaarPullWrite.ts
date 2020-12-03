@@ -76,15 +76,15 @@ function GetFutureDelivery(amount: number, brandName: string, deliveryCycle: num
         result = 1;
     } else {
         if (brandName == 'Acros') {
-            result = 2;
+            result = 7;
         }
         else if (brandName == 'TCI') {
-            result = 2;
+            result = 4;
         }
         else if (brandName == 'Alfa') {
-            result = 2;
+            result = 7;
         } else if (brandName == 'Alfa Aesar') {
-            result = 2;
+            result = 7;
         } else {
             result = deliveryCycle;
         }
