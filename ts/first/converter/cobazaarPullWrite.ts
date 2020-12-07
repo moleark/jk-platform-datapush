@@ -338,12 +338,9 @@ function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, c
 }
 // 获取促销产品格式数据
 function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, activeDiscount: any, CAS: any, deliveryCycle: any
-    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, pEndTime: any, isHazard: any) {
+    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, pEndTime: any) {
 
     let salePrice: any = round(catalogPrice * (1 - activeDiscount));
-    if (isHazard == true) {
-        salePrice = round(catalogPrice * (1 - activeDiscount)) + 10;
-    }
 
     return [{
         '品牌': GetBrandName(brandName),
@@ -456,7 +453,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
 
         }
         else if (String(isDelete) == '0' && StringUtils.isNotEmpty(activeDiscount)) {
-            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, isHazard);
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime);
             postOptions.path = addproductPricePath;
             postDataStr = JSON.stringify(promotionData);
 

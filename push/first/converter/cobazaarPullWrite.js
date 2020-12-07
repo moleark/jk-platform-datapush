@@ -334,11 +334,8 @@ function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, eng
         }];
 }
 // 获取促销产品格式数据
-function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, isHazard) {
+function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime) {
     let salePrice = lodash_1.round(catalogPrice * (1 - activeDiscount));
-    if (isHazard == true) {
-        salePrice = lodash_1.round(catalogPrice * (1 - activeDiscount)) + 10;
-    }
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
@@ -439,7 +436,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             postDataStr = JSON.stringify(deleteData);
         }
         else if (String(isDelete) == '0' && stringUtils_1.StringUtils.isNotEmpty(activeDiscount)) {
-            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, isHazard);
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime);
             postOptions.path = addproductPricePath;
             postDataStr = JSON.stringify(promotionData);
         }
