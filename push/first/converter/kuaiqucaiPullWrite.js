@@ -500,6 +500,9 @@ function GetBrandName(brandName) {
     else if (brandName == "Dr. Ehrenstorfer") {
         result = 'Dr.Ehrenstorfer';
     }
+    else if (brandName == "Alfa Aesar") {
+        result = 'ALFA';
+    }
     else {
         result = brandName;
     }
