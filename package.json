@@ -38,7 +38,7 @@
         "node-fetch": "^2.3.0",
         "requset": "0.0.1-security",
         "typescript": "^3.9.7",
-        "uq-joint": "^1.0.40",
+        "uq-joint": "^1.1.1",
         "urlencode": "^1.1.0"
     }
 }
