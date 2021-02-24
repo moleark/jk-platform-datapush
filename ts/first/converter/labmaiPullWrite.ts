@@ -97,7 +97,7 @@ export async function LabmaiPullWrite(joint: Joint, uqIn: UqIn, data: any): Prom
             if (SeconClass == "chem_reagent") {     //化学试剂需要传的字段
                 if (CasFormat == 0 || COL == null) {
                     console.log(`LabmaiPush Success:{ keyVal:${keyVal}, Type: ${StateName} ,DateTime: ${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')} , Message: 化学试剂CAS号、COL 为必填字段，为空的直接跳过 }`);
-                    result = true;
+                    return true;
                 }
                 let metric = await UnitConvert(Package, COL);
                 writeData.cas_no = CasFormat,
