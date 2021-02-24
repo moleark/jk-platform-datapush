@@ -10,6 +10,16 @@ class globalVar {
     public token: any;
     public ucode: any;
     public timestamp: any;
+
+    //政采云数据推送
+    public list1: any[] = [];  //存放数据
+    public list2: any[] = [];  //存放id
+    public count: number = 1;
+
+    //基理token存储
+    public access_token: any;
+    public expires_in: any;
+    public createtimestamp: number;
 }
 
 export var GlobalVar = new globalVar();

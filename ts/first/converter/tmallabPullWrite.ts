@@ -9,7 +9,7 @@ import { HttpRequest_POST } from '../../tools/HttpRequestHelper';
 import { GlobalVar } from '../../tools/globalVar';
 
 
-// 喀斯玛接口相关配置
+// 首科方元接口相关配置
 const tmallabApiSetting = config.get<any>("tmallabApi");
 
 // 获取产品类型

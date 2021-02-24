@@ -11,7 +11,7 @@ const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 const globalVar_1 = require("../../tools/globalVar");
-// 喀斯玛接口相关配置
+// 首科方元接口相关配置
 const tmallabApiSetting = config_1.default.get("tmallabApi");
 // 获取产品类型
 function GetProductType(templateTypeId) {

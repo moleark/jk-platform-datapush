@@ -42,3 +42,25 @@ export function HttpRequest_POST(options: any, writeData: any) {
         req.end();
     });
 }
+
+export function HttpRequest_method(options: any, writeData: any) {
+
+    let data = ''
+    return new Promise(function (resolve, reject) {
+        let req = http.request(options, function (res) {
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                data += chunk
+            });
+            res.on('end', function () {
+                let ResultData = `{\"statusCode\": ${res.statusCode},\"statusMessage\": "${res.statusMessage}",\"data\":${data == '' ? '""' : data}}`;
+                resolve(ResultData);
+            });
+        });
+        req.on('error', (e) => {
+            throw '请求失败，请检查访问地址或对方网络连接:' + e;
+        });
+        req.write(writeData);
+        req.end();
+    });
+}

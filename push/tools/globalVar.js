@@ -7,6 +7,10 @@ class globalVar {
         this.addOrEditList_chem = [];
         this.addOrEditList_bio = [];
         this.addOrEditList_cl = [];
+        //政采云数据推送
+        this.list1 = []; //存放数据
+        this.list2 = []; //存放id
+        this.count = 1;
     }
 }
 exports.GlobalVar = new globalVar();

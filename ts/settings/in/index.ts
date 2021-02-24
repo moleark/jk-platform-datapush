@@ -3,6 +3,7 @@ import { Kuaiqucai } from "./kuaiqucai";
 import { Tmallab } from "./tmallab";
 import { Cobazaar } from "./cobazaar";
 import { Zcygov } from "./zcygov";
+import { Labmai } from "./labmai";
 
 
 const uqIns = [
@@ -10,7 +11,8 @@ const uqIns = [
     Kuaiqucai,
     Tmallab,
     Cobazaar,
-    Zcygov
+    Zcygov,
+    Labmai
 ]
 
 export default uqIns;
