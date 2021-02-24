@@ -118,10 +118,14 @@ export async function LabmaiPullWrite(joint: Joint, uqIn: UqIn, data: any): Prom
             console.log(`LabmaiPush Success:{ keyVal:${keyVal}, Type: ${StateName} ,DateTime: ${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')} , Message: ${HttpResult} }`);
         }
         else {
-            if (resultData.statusCode == 403 && resultData.statusMessage == 'Forbidden' && (resultData.data.error[0].indexOf('商品包装不合规') != -1 || resultData.data.error[0].indexOf('指定化学品CAS号') != -1)) {
+            if (resultData.statusCode == 403 && resultData.statusMessage == 'Forbidden' && resultData.data.msg == '数据异常') {
                 console.log(`LabmaiPush Fail:{  keyVal:${keyVal}, Type: ${StateName} ,DateTime: ${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')} , Message: ${HttpResult} }`);
-                WriteError(` keyVal:${keyVal}, Message: ${HttpResult} }` + '\n', 'LabmaiPush-error.txt');
-                result = true;
+                if (resultData.data.error[0].indexOf('商品包装不合规') != -1 || resultData.data.error[0].indexOf('指定化学品CAS号') != -1) {
+
+                    WriteError(` keyVal:${keyVal}, Message: ${HttpResult} }` + '\n', 'LabmaiPush-error.txt');
+                    result = true;
+                }
+
 
             }
             else if (StateName == "add" && resultData.statusCode == 403 && resultData.data.msg == 'SPU已存在') {

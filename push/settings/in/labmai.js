@@ -32,7 +32,7 @@ from (
     SELECT TOP 1  ID
     FROM   ProdData.dbo.ThirdPartyPlatformEntryResult
     WHERE  CustomerUnitOnPlatformId = '7ce085b0405648d1af5cddba00bf7f03'
-            AND SalesRegionID = 'CN' AND ID > @iMaxId  
+            AND SalesRegionID = 'CN' AND ID > 418674172
             AND BrandId  IN ('A01','A10','J34','J29','Q81','K11','M64','J20','R35','L50') 
 		ORDER BY Id
 ) r2
