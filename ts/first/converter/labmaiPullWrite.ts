@@ -156,6 +156,14 @@ export async function LabmaiPullWrite(joint: Joint, uqIn: UqIn, data: any): Prom
                     result = true;
                     console.log(`LabmaiPush Success:{  keyVal:${keyVal}, Type: ${StateName} 转 add ,DateTime: ${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')} , Message: ${HttpResult2} }`);
                 }
+                else if (resultData2.statusCode == 403 && resultData2.statusMessage == 'Forbidden' && resultData2.data.msg == '数据异常') {
+                    console.log(`LabmaiPush Fail:{  keyVal:${keyVal}, Type: ${StateName} ,DateTime: ${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')} , Message: ${HttpResult2} }`);
+                    if (resultData2.data.error[0].indexOf('商品包装不合规') != -1 || resultData2.data.error[0].indexOf('指定化学品CAS号') != -1) {
+
+                        WriteError(` keyVal:${keyVal}, Message: ${HttpResult2} }` + '\n', 'LabmaiPush-error.txt');
+                        result = true;
+                    }
+                }
                 else {
                     throw (`LabmaiPush Fail:{  keyVal:${keyVal}, Type: ${StateName} 转 add  ,DateTime: ${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')} , Message: ${HttpResult2} }`);
                 }
@@ -167,8 +175,6 @@ export async function LabmaiPullWrite(joint: Joint, uqIn: UqIn, data: any): Prom
             else {
                 throw (`LabmaiPush Fail:{  keyVal:${keyVal}, Type: ${StateName} ,DateTime: ${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')} , Message: ${HttpResult} }`);
             }
-
-
         }
         return result;
     } catch (error) {
