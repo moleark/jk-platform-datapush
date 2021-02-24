@@ -1,5 +1,5 @@
-import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
-//import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
+//import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
+import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 import { format } from 'date-fns';
 import config from 'config';
 import { logger } from "../../tools/logger";

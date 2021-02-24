@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LabmaiPullWrite = void 0;
-const uq_joint_1 = require("../../uq-joint");
-//import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
+//import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "../../uq-joint";
+const uq_joint_1 = require("uq-joint");
 const date_fns_1 = require("date-fns");
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");

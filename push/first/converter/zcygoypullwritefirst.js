@@ -4,8 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZcygovPullWrite = void 0;
-//import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
-const uq_joint_1 = require("../../uq-joint");
+const uq_joint_1 = require("uq-joint");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
 let md5 = require('md5');
 const config_1 = __importDefault(require("config"));
