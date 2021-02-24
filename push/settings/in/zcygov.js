@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Zcygov = void 0;
 //import { UqInTuid } from "../../uq-joint";
-const zcygoypullwritefirst_1 = require("../../first/converter/zcygoypullwritefirst");
+const zcygovPullWrite_1 = require("../../first/converter/zcygovPullWrite");
 const config_1 = __importDefault(require("config"));
 const promiseSize = config_1.default.get("promiseSize");
 let pullSql = ` select  r.ID, p.JKID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name AS BrandName, r.CatalogPrice, r.SalePrice , 
@@ -62,7 +62,7 @@ exports.Zcygov = {
         CategoryId: "CategoryId"
     },
     pull: pullSql,
-    pullWrite: zcygoypullwritefirst_1.ZcygovPullWrite,
-    firstPullWrite: zcygoypullwritefirst_1.ZcygovPullWrite,
+    pullWrite: zcygovPullWrite_1.ZcygovPullWrite,
+    firstPullWrite: zcygovPullWrite_1.ZcygovPullWrite,
 };
 //# sourceMappingURL=zcygov.js.map

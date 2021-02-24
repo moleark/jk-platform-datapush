@@ -1,6 +1,6 @@
 import { UqInTuid } from "uq-joint";
 //import { UqInTuid } from "../../uq-joint";
-import { ZcygovPullWrite } from '../../first/converter/zcygoypullwritefirst';
+import { ZcygovPullWrite } from '../../first/converter/zcygovPullWrite';
 import config from 'config';
 const promiseSize = config.get<number>("promiseSize");
 
