@@ -26,13 +26,13 @@ let pullSql = ` SELECT	r.ID, p.JKID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) A
 
                 from (
                     SELECT TOP ${promiseSize} ID
-                    FROM   ProdData.dbo.ThirdPartyPlatformEntryResult
+                    FROM   ProdData.dbo.Export_ThirdPartyPlatformEntryResult
                     WHERE  CustomerUnitOnPlatformId = '7ce085b0405648d1af5cddba00bf7f03'
                             AND SalesRegionID = 'CN' AND ID > @iMaxId  
-                            AND BrandId  IN ('A01','A10','J34','J29','Q81','K11','M64','J20','R35','L50') 
+                            AND BrandId  IN ('A01','A10','J34','J29','Q81','K11','M64','J20','R35','L50')
                         ORDER BY ID
                 ) r2
-                INNER JOIN ProdData.dbo.ThirdPartyPlatformEntryResult r ON r2.ID = r.ID
+                INNER JOIN ProdData.dbo.Export_ThirdPartyPlatformEntryResult r ON r2.ID = r.ID
                 INNER JOIN zcl_mess.dbo.jkcat j ON j.JKCat = r.PackageId
                 INNER JOIN zcl_mess.dbo.products p ON j.JKid = p.JKID
                 INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
