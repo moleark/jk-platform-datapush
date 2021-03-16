@@ -143,7 +143,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         }
 
         // 化学试剂 推送，满足100 条数据推送一次；
-        if (GlobalVar.addOrEditList_chem.length > 0) {
+        if (GlobalVar.addOrEditList_chem.length > 99) {
             console.log(format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 化学试剂数量: 100 ，准备推送... 生物试剂数量: ' + GlobalVar.addOrEditList_bio.length + ', 仪器耗材数量: ' + GlobalVar.addOrEditList_cl.length);
 
             let productList_addOrEdit: any = [];
