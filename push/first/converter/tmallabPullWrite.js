@@ -140,7 +140,7 @@ async function tmallabPullWrite(joint, uqIn, data) {
             }
         }
         // 化学试剂 推送，满足100 条数据推送一次；
-        if (globalVar_1.GlobalVar.addOrEditList_chem.length > 0) {
+        if (globalVar_1.GlobalVar.addOrEditList_chem.length > 99) {
             console.log(date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ' 化学试剂数量: 100 ，准备推送... 生物试剂数量: ' + globalVar_1.GlobalVar.addOrEditList_bio.length + ', 仪器耗材数量: ' + globalVar_1.GlobalVar.addOrEditList_cl.length);
             let productList_addOrEdit = [];
             globalVar_1.GlobalVar.addOrEditList_chem.forEach(element => {

@@ -129,6 +129,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
                 templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime, activeDiscount, packageId);
+                
 
             if (templateTypeId == 1) {
                 GlobalVar.addOrEditList_chem.push(AddOrEditFormat);
