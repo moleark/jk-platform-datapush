@@ -26,8 +26,7 @@ let pullSql = ` SELECT	r.ID, p.JKID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) A
                                         INNER JOIN  ProdData.dbo.PlatformUnitCategoryWithJKMapping pm on pm.JKCategoryId = ee.ProductCategoryID and pm.PlatformUnitCode = 'labmai'
                                         LEFT JOIN  ProdData.dbo.PlatformUnitProductCategory cc ON pm.unitcategoryid = cc.id AND cc.PlatformUnitCode = pm.PlatformUnitCode 
                                         WHERE dd.SaleProductID= p.JKID),'其他耗材') END AS ThirdClass,s.COL,
-                        CASE WHEN  D.Descriptionc LIKE '%钢%' AND D.Descriptionc LIKE '%瓶%' THEN '是' ELSE '否' END AS is_cylinder
-
+                        CASE WHEN CHARINDEX('钢',D.Descriptionc)<>0  AND CHARINDEX('瓶',D.Descriptionc)<>0 THEN '是' ELSE '否' END AS is_cylinder
                 from (
                     SELECT TOP ${promiseSize} ID
                     FROM   ProdData.dbo.Export_ThirdPartyPlatformEntryResult
