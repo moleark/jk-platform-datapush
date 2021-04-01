@@ -85,8 +85,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
         let data = new Date();
         var hour = data.getHours();
         if (hour < 20 && hour > 5) {
-            logger.error("近期数据上传时间段改为晚上8点至早上5点")
-            return false;
+            throw `key: ${key} -方元限制-近期数据上传时间段改为晚上8点至早上5点`;
         }
 
         let timestamp = format(Date.now(), 'yyyy-MM-dd HH:mm:ss');
