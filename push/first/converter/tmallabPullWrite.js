@@ -83,10 +83,16 @@ async function tmallabPullWrite(joint, uqIn, data) {
     let body = await mapToUq.map(data, mapper);
     let version = '1.3';
     try {
+        let data = new Date();
+        var hour = data.getHours();
+        if (hour < 20 && hour > 5) {
+            logger_1.logger.error("近期数据上传时间段改为晚上8点至早上5点");
+            return false;
+        }
+        let timestamp = date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss');
         let result = false;
         let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
         let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid, templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, delivetime, pStartTime, pEndTime } = body;
-        let timestamp = date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss');
         let postDataStr = {};
         let options = {
             hostname: hostname,

@@ -81,12 +81,22 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
     let version = '1.3';
 
     try {
+
+        let data = new Date();
+        var hour = data.getHours();
+        if (hour < 20 && hour > 5) {
+            logger.error("近期数据上传时间段改为晚上8点至早上5点")
+            return false;
+        }
+
+        let timestamp = format(Date.now(), 'yyyy-MM-dd HH:mm:ss');
+
         let result = false;
         let { vipCode, appSecurity, hostname, pushProductPath, deleteOneProductPath, updatePromotionInfoPath } = tmallabApiSetting;
         let { itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
             templateTypeId, isDelete, stateName, packageId, mdlNumber, packnr, unit, activeDiscount, salePrice, delivetime, pStartTime, pEndTime } = body;
 
-        let timestamp = format(Date.now(), 'yyyy-MM-dd HH:mm:ss');
+
         let postDataStr = {};
         let options = {
             hostname: hostname,
@@ -129,7 +139,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             let AddOrEditFormat = GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, catalogPrice, descriptionC, description, descriptionST, purity, storage, jkid,
                 templateTypeId, mdlNumber, packnr, unit, delivetime, salePrice, pStartTime, pEndTime, activeDiscount, packageId);
-                
+
 
             if (templateTypeId == 1) {
                 GlobalVar.addOrEditList_chem.push(AddOrEditFormat);
