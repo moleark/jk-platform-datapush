@@ -84,7 +84,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
         let data = new Date();
         var hour = data.getHours();
-        if (hour < 20 && hour > 5) {
+        if (hour < 20 && hour > 4) {
             throw `key: ${keyVal} -方元限制-近期数据上传时间段改为晚上8点至早上5点`;
         }
 
@@ -176,6 +176,7 @@ export async function tmallabPullWrite(joint: Joint, uqIn: UqIn, data: any): Pro
 
             // 调用平台的接口推送数据，并返回结果
             let optionData = await HttpRequest_POST(options, postDataStr);
+            console.log(optionData);
             let postResult = JSON.parse(String(optionData));
 
             // 判断推送结果
