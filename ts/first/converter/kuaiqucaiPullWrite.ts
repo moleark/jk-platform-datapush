@@ -2,7 +2,7 @@ import { Joint, UqInTuid, UqIn, Tuid, MapUserToUq } from "uq-joint";
 // import { Joint, UqInTuid, UqIn, Tuid } from "../../uq-joint";
 import _ from 'lodash';
 import { format, isSameWeek } from 'date-fns';
-import { HttpRequest_GET, HttpRequest_POST } from '../../tools/HttpRequestHelper'
+import { HttpsRequest_POST, HttpsRequest_GET } from '../../tools/HttpRequestHelper'
 let md5 = require('md5');
 import config from 'config';
 import { logger } from "../../tools/logger";
@@ -617,7 +617,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
         };
 
         // 判断平台是否存在产品
-        let queryPlatformIsExist = await HttpRequest_GET(getOptions);
+        let queryPlatformIsExist = await HttpsRequest_GET(getOptions);
         let queryResult = JSON.parse(String(queryPlatformIsExist));
 
         // 根据是否存在的结果执行后续步骤 
@@ -684,7 +684,7 @@ export async function KuaiQuCaiPullWrite(joint: Joint, uqIn: UqIn, data: any): P
         }
 
         // 调用平台的接口推送数据，并返回结果 
-        let optionData = await HttpRequest_POST(postOptions, postDataStr);
+        let optionData = await HttpsRequest_POST(postOptions, postDataStr);
         let postResult = JSON.parse(String(optionData));
 
         // 判断请求结果 并记录 

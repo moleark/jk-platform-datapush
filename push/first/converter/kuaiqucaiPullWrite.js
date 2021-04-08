@@ -678,7 +678,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
             }
         };
         // 判断平台是否存在产品
-        let queryPlatformIsExist = await HttpRequestHelper_1.HttpRequest_GET(getOptions);
+        let queryPlatformIsExist = await HttpRequestHelper_1.HttpsRequest_GET(getOptions);
         let queryResult = JSON.parse(String(queryPlatformIsExist));
         // 根据是否存在的结果执行后续步骤 
         if (queryResult.CODE != 200 || queryResult.MESSAGE != 'SUCCESS') {
@@ -741,7 +741,7 @@ async function KuaiQuCaiPullWrite(joint, uqIn, data) {
             }
         }
         // 调用平台的接口推送数据，并返回结果 
-        let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, postDataStr);
+        let optionData = await HttpRequestHelper_1.HttpsRequest_POST(postOptions, postDataStr);
         let postResult = JSON.parse(String(optionData));
         // 判断请求结果 并记录 
         if (postResult.CODE != 200) {
