@@ -11,13 +11,120 @@ const md5 = require('md5');
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 const HttpRequestHelper_1 = require("../../tools/HttpRequestHelper");
-// import { isNullOrUndefined } from "util";
 const stringUtils_1 = require("../../tools/stringUtils");
 const globalVar_1 = require("../../tools/globalVar");
 const lodash_1 = require("lodash");
+const matching_1 = require("../../tools/matching");
 let qs = require('querystring');
 // 库巴扎接口相关配置
 const cobazaarApiSetting = config_1.default.get("cobazaarApi");
+/**
+ * 推送
+ * @param joint
+ * @param uqIn
+ * @param data
+ * @returns
+ */
+async function CobazaarPullWrite(joint, uqIn, data) {
+    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
+    if (key === undefined)
+        throw 'key is not defined';
+    if (uqFullName === undefined)
+        throw 'tuid ' + tuid + ' not defined';
+    let keyVal = data[key];
+    let mapToUq = new uq_joint_1.MapUserToUq(joint);
+    let body = await mapToUq.map(data, mapper);
+    let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
+    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, discount, activeDiscount, salePrice, pEndTime, isHazard } = body;
+    let result = false;
+    try {
+        // 判断有没有获取到token信息
+        if (stringUtils_1.StringUtils.isEmpty(globalVar_1.GlobalVar.token) || stringUtils_1.StringUtils.isEmpty(globalVar_1.GlobalVar.ucode) || stringUtils_1.StringUtils.isEmpty(globalVar_1.GlobalVar.timestamp)) {
+            await getTokenInfo(hostname, gettokenPath, loginname, ukey);
+        }
+        // 判断获取到的token信息有没有过期（接口token有效时间120分钟，此处设置为超过100分钟则重新获取）
+        let strattTime = new Date(globalVar_1.GlobalVar.timestamp);
+        let endTime = new Date(Date.now() + 60000);
+        let diffMinutes = lodash_1.round((endTime - strattTime) / (1000 * 60));
+        if (diffMinutes > 100) {
+            await getTokenInfo(hostname, gettokenPath, loginname, ukey);
+        }
+        let postDataStr = {};
+        let postOptions = {
+            hostname: hostname,
+            path: '',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            }
+        };
+        if (String(isDelete) == '1') {
+            let deleteData = await GetDeleteFormat(brandName, originalId, packageSize);
+            postOptions.path = delproductPath;
+            postDataStr = JSON.stringify(deleteData);
+        }
+        else if (String(isDelete) == '0' && stringUtils_1.StringUtils.isNotEmpty(activeDiscount)) {
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime);
+            postOptions.path = addproductPricePath;
+            postDataStr = JSON.stringify(promotionData);
+        }
+        else {
+            let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+            postOptions.path = addproductPath;
+            postDataStr = JSON.stringify(addData);
+        }
+        let requestData = qs.stringify({
+            ucode: globalVar_1.GlobalVar.ucode,
+            token: globalVar_1.GlobalVar.token,
+            timestamp: globalVar_1.GlobalVar.timestamp,
+            reqcontent: postDataStr
+        });
+        // 调用平台的接口推送数据，并返回结果
+        let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestData);
+        let postResult = JSON.parse(String(optionData));
+        if (postResult.flag == 0) {
+            result = false;
+            throw 'cobazaarPush Fail: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData;
+        }
+        else {
+            result = true;
+            console.log('cobazaarPush Success: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
+            // 如果是危险品数据重新推送给苏州大学，增加10块
+            // console.log(isHazard);
+            if (isHazard == true && String(isDelete) == '0' && stringUtils_1.StringUtils.isEmpty(activeDiscount)) {
+                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+                postDataStr = JSON.stringify(sudaData);
+                let requestDataAgain = qs.stringify({
+                    ucode: globalVar_1.GlobalVar.ucode,
+                    token: globalVar_1.GlobalVar.token,
+                    timestamp: globalVar_1.GlobalVar.timestamp,
+                    reqcontent: postDataStr
+                });
+                postOptions.path = addproductPricePath;
+                // 再次调用平台的接口推送数据，并返回结果
+                let optionDataAgain = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestDataAgain);
+                let postResultAgain = JSON.parse(String(optionDataAgain));
+                if (postResultAgain.flag != 0) {
+                    result = true;
+                    console.log('cobazaarPush convertSuDa Success: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}');
+                }
+                else {
+                    result = false;
+                    throw 'cobazaarPush convertSuDa Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}';
+                }
+            }
+            else {
+                result = true;
+            }
+        }
+        return result;
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        throw error;
+    }
+}
+exports.CobazaarPullWrite = CobazaarPullWrite;
 // 获取Token接口信息
 async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     let vcode = md5(loginname + ukey + 'kbz');
@@ -50,17 +157,23 @@ async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     }
 }
 // 获取产品类型
-function GetProductType(typeId) {
-    let result = '';
+function GetProductType(typeId, brandName) {
+    let result = { ProductType: "", QualityGrade: "" };
     switch (typeId) {
         case 1:
-            result = '化学试剂';
+            result.ProductType = '化学试剂';
+            if (brandName == "AccuStandard" || brandName == "Dr. Ehrenstorfer") {
+                result.QualityGrade = 'JZ';
+            }
+            else {
+                result.QualityGrade = 'EP';
+            }
             break;
         case 2:
-            result = '生物试剂';
+            result.ProductType = '生物试剂';
             break;
         case 3:
-            result = '耗材';
+            result.ProductType = '耗材';
             break;
     }
     return result;
@@ -236,12 +349,44 @@ function GetDetaUrl(JKid) {
     return result;
 }
 // 获取删除格式数据
-function GetDeleteFormat(brandName, originalId, packageSize) {
+async function GetDeleteFormat(brandName, originalId, packageSize) {
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
             '包装规格': packageSize
         }];
+}
+async function ConvertPackage(packages) {
+    let radiox = 1;
+    let radioy;
+    let unit;
+    // 判断识别套包装的情况
+    let count = packages.indexOf('x');
+    if (count > 0) {
+        let packageArray = packages.split('x');
+        radiox = Number(packageArray[0]);
+        let packageSizeSplt = packageArray[1];
+        radioy = await matching_1.matching(packageSizeSplt, 'number');
+        unit = await matching_1.matching(packageSizeSplt, 'letter');
+    }
+    else {
+        radioy = await matching_1.matching(packages, 'number');
+        unit = await matching_1.matching(packages, 'letter');
+    }
+    return { 容量: radiox * radioy, 容量单位: unit };
+}
+/**
+ * AccuStandard 产品全部加标样二字 之后反馈加过了 是有的产品需要加混标 所以没有用
+ * @param ChineseName
+ * @param brandName
+ * @returns
+ */
+async function EditChineseName(ChineseName, brandName) {
+    let index = ChineseName.indexOf("标样");
+    if (brandName == "AccuStandard" && index > 0)
+        return ChineseName + " | 标样";
+    else
+        return ChineseName;
 }
 function getBrandDiscount(brandName) {
     let result;
@@ -307,18 +452,20 @@ function getBrandDiscount(brandName) {
     return result;
 }
 // 获取新增或者修改格式数据
-function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
+async function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
+    let PackageUnit = await ConvertPackage(packageSize);
+    let ProductType = GetProductType(typeId, brandName);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
             '包装规格': packageSize,
-            '产品分类': GetProductType(typeId),
+            '产品分类': ProductType.ProductType,
             '中文名称': chineseName,
             '英文名称': englishName,
             '主图': GetImg(brandName),
             '目录价(RMB)': catalogPrice,
             'CAS': CAS,
-            '质量等级': '',
+            '质量等级': ProductType.QualityGrade,
             '包装单位': '瓶',
             '交货期': GetFutureDelivery(stock, brandName, deliveryCycle),
             '纯度': purity,
@@ -330,17 +477,21 @@ function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, eng
             '其他描述': '',
             'MDL': MDL.replace(' ', '').replace(' ', ''),
             '链接地址': GetDetaUrl(jkid),
-            '库存': GetStockamount(brandName, stock)
+            '库存': GetStockamount(brandName, stock),
+            '容量': PackageUnit.容量,
+            '容量单位': PackageUnit.容量单位
         }];
 }
 // 获取促销产品格式数据
-function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime) {
+async function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime) {
     let salePrice = lodash_1.round(catalogPrice * (1 - activeDiscount));
+    let PackageUnit = await ConvertPackage(packageSize);
+    let ProductType = GetProductType(typeId, brandName);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
             '包装规格': packageSize,
-            '产品分类': GetProductType(typeId),
+            '产品分类': ProductType.ProductType,
             '售价': salePrice,
             '特惠结束时间': pEndTime,
             '平台编号': '全部',
@@ -349,7 +500,7 @@ function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englis
             '主图': GetImg(brandName),
             '目录价(RMB)': catalogPrice,
             'CAS': CAS,
-            '质量等级': '',
+            '质量等级': ProductType.QualityGrade,
             '包装单位': '瓶',
             '交货期': GetFutureDelivery(stock, brandName, deliveryCycle),
             '纯度': purity,
@@ -361,18 +512,22 @@ function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englis
             '其他描述': '',
             'MDL': MDL.replace(' ', '').replace(' ', ''),
             '链接地址': GetDetaUrl(jkid),
-            '库存': GetStockamount(brandName, stock)
+            '库存': GetStockamount(brandName, stock),
+            '容量': PackageUnit.容量,
+            '容量单位': PackageUnit.容量单位
         }];
 }
 // 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
-function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
+async function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
     let discount = getBrandDiscount(brandName);
     let salePrice = lodash_1.round((catalogPrice * discount) + 10);
+    let PackageUnit = await ConvertPackage(packageSize);
+    let ProductType = GetProductType(typeId, brandName);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
             '包装规格': packageSize,
-            '产品分类': GetProductType(typeId),
+            '产品分类': ProductType.ProductType,
             '售价': salePrice,
             '特惠结束时间': date_fns_1.format(new Date('2021-12-31 23:59:50'), 'yyyy-MM-dd HH:mm:ss'),
             '平台编号': 'suda',
@@ -381,7 +536,7 @@ function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName
             '主图': GetImg(brandName),
             '目录价(RMB)': lodash_1.round(catalogPrice),
             'CAS': CAS,
-            '质量等级': '',
+            '质量等级': ProductType.QualityGrade,
             '包装单位': '瓶',
             '交货期': GetFutureDelivery(stock, brandName, deliveryCycle),
             '纯度': purity,
@@ -393,108 +548,9 @@ function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName
             '其他描述': '',
             'MDL': MDL.replace(' ', '').replace(' ', ''),
             '链接地址': GetDetaUrl(jkid),
-            '库存': GetStockamount(brandName, stock)
+            '库存': GetStockamount(brandName, stock),
+            '容量': PackageUnit.容量,
+            '容量单位': PackageUnit.容量单位
         }];
 }
-// 推送
-async function CobazaarPullWrite(joint, uqIn, data) {
-    let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
-    if (key === undefined)
-        throw 'key is not defined';
-    if (uqFullName === undefined)
-        throw 'tuid ' + tuid + ' not defined';
-    let keyVal = data[key];
-    let mapToUq = new uq_joint_1.MapUserToUq(joint);
-    let body = await mapToUq.map(data, mapper);
-    let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
-    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, discount, activeDiscount, salePrice, pEndTime, isHazard } = body;
-    let result = false;
-    try {
-        // 判断有没有获取到token信息
-        if (stringUtils_1.StringUtils.isEmpty(globalVar_1.GlobalVar.token) || stringUtils_1.StringUtils.isEmpty(globalVar_1.GlobalVar.ucode) || stringUtils_1.StringUtils.isEmpty(globalVar_1.GlobalVar.timestamp)) {
-            await getTokenInfo(hostname, gettokenPath, loginname, ukey);
-        }
-        // 判断获取到的token信息有没有过期（接口token有效时间120分钟，此处设置为超过100分钟则重新获取）
-        let strattTime = new Date(globalVar_1.GlobalVar.timestamp);
-        let endTime = new Date(Date.now() + 60000);
-        let diffMinutes = lodash_1.round((endTime - strattTime) / (1000 * 60));
-        if (diffMinutes > 100) {
-            await getTokenInfo(hostname, gettokenPath, loginname, ukey);
-        }
-        let postDataStr = {};
-        let postOptions = {
-            hostname: hostname,
-            path: '',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-            }
-        };
-        if (String(isDelete) == '1') {
-            let deleteData = await GetDeleteFormat(brandName, originalId, packageSize);
-            postOptions.path = delproductPath;
-            postDataStr = JSON.stringify(deleteData);
-        }
-        else if (String(isDelete) == '0' && stringUtils_1.StringUtils.isNotEmpty(activeDiscount)) {
-            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime);
-            postOptions.path = addproductPricePath;
-            postDataStr = JSON.stringify(promotionData);
-        }
-        else {
-            let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
-            postOptions.path = addproductPath;
-            postDataStr = JSON.stringify(addData);
-        }
-        let requestData = qs.stringify({
-            ucode: globalVar_1.GlobalVar.ucode,
-            token: globalVar_1.GlobalVar.token,
-            timestamp: globalVar_1.GlobalVar.timestamp,
-            reqcontent: postDataStr
-        });
-        // 调用平台的接口推送数据，并返回结果
-        let optionData = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestData);
-        let postResult = JSON.parse(String(optionData));
-        if (postResult.flag == 0) {
-            result = false;
-            throw 'cobazaarPush Fail: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData;
-        }
-        else {
-            result = true;
-            console.log('cobazaarPush Success: { Id: ' + keyVal + ',Type:' + postOptions.path + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + optionData);
-            // 如果是危险品数据重新推送给苏州大学，增加10块
-            // console.log(isHazard);
-            if (isHazard == true && String(isDelete) == '0' && stringUtils_1.StringUtils.isEmpty(activeDiscount)) {
-                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
-                postDataStr = JSON.stringify(sudaData);
-                let requestDataAgain = qs.stringify({
-                    ucode: globalVar_1.GlobalVar.ucode,
-                    token: globalVar_1.GlobalVar.token,
-                    timestamp: globalVar_1.GlobalVar.timestamp,
-                    reqcontent: postDataStr
-                });
-                postOptions.path = addproductPricePath;
-                // 再次调用平台的接口推送数据，并返回结果
-                let optionDataAgain = await HttpRequestHelper_1.HttpRequest_POST(postOptions, requestDataAgain);
-                let postResultAgain = JSON.parse(String(optionDataAgain));
-                if (postResultAgain.flag != 0) {
-                    result = true;
-                    console.log('cobazaarPush convertSuDa Success: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}');
-                }
-                else {
-                    result = false;
-                    throw 'cobazaarPush convertSuDa Fail:{ Code:' + postResultAgain.Code + ',queue_in:' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message:' + optionDataAgain + '}';
-                }
-            }
-            else {
-                result = true;
-            }
-        }
-        return result;
-    }
-    catch (error) {
-        logger_1.logger.error(error);
-        throw error;
-    }
-}
-exports.CobazaarPullWrite = CobazaarPullWrite;
 //# sourceMappingURL=cobazaarPullWrite.js.map
