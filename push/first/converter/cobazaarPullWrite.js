@@ -157,8 +157,9 @@ async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     }
 }
 // 获取产品类型
-function GetProductType(typeId, brandName) {
-    let result = { ProductType: "", QualityGrade: "" };
+async function GetProductType(typeId, brandName, pachage) {
+    let result = { ProductType: "", QualityGrade: "", 容量: "", 容量单位: "" };
+    let packageUnit = await ConvertPackage(pachage);
     switch (typeId) {
         case 1:
             result.ProductType = '化学试剂';
@@ -168,9 +169,13 @@ function GetProductType(typeId, brandName) {
             else {
                 result.QualityGrade = 'EP';
             }
+            result.容量 = packageUnit.容量;
+            result.容量单位 = packageUnit.容量单位;
             break;
         case 2:
             result.ProductType = '生物试剂';
+            result.容量 = packageUnit.容量;
+            result.容量单位 = packageUnit.容量单位;
             break;
         case 3:
             result.ProductType = '耗材';
@@ -357,23 +362,33 @@ async function GetDeleteFormat(brandName, originalId, packageSize) {
         }];
 }
 async function ConvertPackage(packages) {
-    let radiox = 1;
-    let radioy;
-    let unit;
-    // 判断识别套包装的情况
-    let count = packages.indexOf('x');
-    if (count > 0) {
-        let packageArray = packages.split('x');
-        radiox = Number(packageArray[0]);
-        let packageSizeSplt = packageArray[1];
-        radioy = await matching_1.matching(packageSizeSplt, 'number');
-        unit = await matching_1.matching(packageSizeSplt, 'letter');
+    try {
+        let radiox = 1;
+        let radioy;
+        let unit;
+        //判断是否包含汉字
+        var reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
+        if (reg.test(packages)) {
+            return { 容量: "", 容量单位: "" };
+        }
+        // 判断识别套包装的情况
+        let count = packages.indexOf('x');
+        if (count > 0) {
+            let packageArray = packages.split('x');
+            radiox = Number(packageArray[0]);
+            let packageSizeSplt = packageArray[1];
+            radioy = await matching_1.matching(packageSizeSplt, 'number');
+            unit = await matching_1.matching(packageSizeSplt, 'letter');
+        }
+        else {
+            radioy = await matching_1.matching(packages, 'number');
+            unit = await matching_1.matching(packages, 'letter');
+        }
+        return { 容量: radiox * radioy, 容量单位: unit };
     }
-    else {
-        radioy = await matching_1.matching(packages, 'number');
-        unit = await matching_1.matching(packages, 'letter');
+    catch (error) {
+        throw error;
     }
-    return { 容量: radiox * radioy, 容量单位: unit };
 }
 /**
  * AccuStandard 产品全部加标样二字 之后反馈加过了 是有的产品需要加混标 所以没有用
@@ -453,8 +468,7 @@ function getBrandDiscount(brandName) {
 }
 // 获取新增或者修改格式数据
 async function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
-    let PackageUnit = await ConvertPackage(packageSize);
-    let ProductType = GetProductType(typeId, brandName);
+    let ProductType = await GetProductType(typeId, brandName, packageSize);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
@@ -478,15 +492,14 @@ async function GetAddOrEditFormat(brandName, originalId, packageSize, chineseNam
             'MDL': MDL.replace(' ', '').replace(' ', ''),
             '链接地址': GetDetaUrl(jkid),
             '库存': GetStockamount(brandName, stock),
-            '容量': PackageUnit.容量,
-            '容量单位': PackageUnit.容量单位
+            '容量': ProductType.容量,
+            '容量单位': ProductType.容量单位
         }];
 }
 // 获取促销产品格式数据
 async function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime) {
     let salePrice = lodash_1.round(catalogPrice * (1 - activeDiscount));
-    let PackageUnit = await ConvertPackage(packageSize);
-    let ProductType = GetProductType(typeId, brandName);
+    let ProductType = await GetProductType(typeId, brandName, packageSize);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
@@ -513,16 +526,15 @@ async function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, 
             'MDL': MDL.replace(' ', '').replace(' ', ''),
             '链接地址': GetDetaUrl(jkid),
             '库存': GetStockamount(brandName, stock),
-            '容量': PackageUnit.容量,
-            '容量单位': PackageUnit.容量单位
+            '容量': ProductType.容量,
+            '容量单位': ProductType.容量单位
         }];
 }
 // 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
 async function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
     let discount = getBrandDiscount(brandName);
     let salePrice = lodash_1.round((catalogPrice * discount) + 10);
-    let PackageUnit = await ConvertPackage(packageSize);
-    let ProductType = GetProductType(typeId, brandName);
+    let ProductType = await GetProductType(typeId, brandName, packageSize);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
@@ -549,8 +561,8 @@ async function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chine
             'MDL': MDL.replace(' ', '').replace(' ', ''),
             '链接地址': GetDetaUrl(jkid),
             '库存': GetStockamount(brandName, stock),
-            '容量': PackageUnit.容量,
-            '容量单位': PackageUnit.容量单位
+            '容量': ProductType.容量,
+            '容量单位': ProductType.容量单位
         }];
 }
 //# sourceMappingURL=cobazaarPullWrite.js.map

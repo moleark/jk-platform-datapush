@@ -12,7 +12,6 @@ async function matching(str, type) {
         //匹配字母
         case 'letter':
             let l = new RegExp('[/^[a-z|A-Z]+$');
-            let a = l.exec(str)[1];
             result = l.exec(str)[0];
             break;
     }

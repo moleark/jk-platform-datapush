@@ -173,9 +173,10 @@ async function getTokenInfo(hostname: string, gettokenPath: string, loginname: s
 }
 
 // 获取产品类型
-function GetProductType(typeId: any, brandName: String): any {
+async function GetProductType(typeId: any, brandName: String, pachage: string): Promise<any> {
 
-    let result = { ProductType: "", QualityGrade: "" };
+    let result = { ProductType: "", QualityGrade: "", 容量: "", 容量单位: "" };
+    let packageUnit = await ConvertPackage(pachage);
     switch (typeId) {
         case 1:
             result.ProductType = '化学试剂';
@@ -185,9 +186,13 @@ function GetProductType(typeId: any, brandName: String): any {
             else {
                 result.QualityGrade = 'EP';
             }
+            result.容量 = packageUnit.容量;
+            result.容量单位 = packageUnit.容量单位;
             break;
         case 2:
             result.ProductType = '生物试剂';
+            result.容量 = packageUnit.容量;
+            result.容量单位 = packageUnit.容量单位;
             break;
         case 3:
             result.ProductType = '耗材';
@@ -374,22 +379,34 @@ async function GetDeleteFormat(brandName: any, originalId: any, packageSize: any
 
 async function ConvertPackage(packages: string): Promise<any> {
 
-    let radiox: number = 1;
-    let radioy: any;
-    let unit: string;
-    // 判断识别套包装的情况
-    let count = packages.indexOf('x');
-    if (count > 0) {
-        let packageArray = packages.split('x');
-        radiox = Number(packageArray[0]);
-        let packageSizeSplt = packageArray[1];
-        radioy = await matching(packageSizeSplt, 'number');
-        unit = await matching(packageSizeSplt, 'letter');
-    } else {
-        radioy = await matching(packages, 'number');
-        unit = await matching(packages, 'letter');
+    try {
+        let radiox: number = 1;
+        let radioy: any;
+        let unit: string;
+        //判断是否包含汉字
+        var reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
+        if (reg.test(packages)) {
+
+            return { 容量: "", 容量单位: "" };
+        }
+
+        // 判断识别套包装的情况
+        let count = packages.indexOf('x');
+        if (count > 0) {
+            let packageArray = packages.split('x');
+            radiox = Number(packageArray[0]);
+            let packageSizeSplt = packageArray[1];
+            radioy = await matching(packageSizeSplt, 'number');
+            unit = await matching(packageSizeSplt, 'letter');
+        } else {
+            radioy = await matching(packages, 'number');
+            unit = await matching(packages, 'letter');
+        }
+        return { 容量: radiox * radioy, 容量单位: unit };
+    } catch (error) {
+        throw error;
     }
-    return { 容量: radiox * radioy, 容量单位: unit };
+
 }
 
 /**
@@ -476,8 +493,7 @@ function getBrandDiscount(brandName: string): any {
 async function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
     , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
 
-    let PackageUnit = await ConvertPackage(packageSize);
-    let ProductType = GetProductType(typeId, brandName);
+    let ProductType = await GetProductType(typeId, brandName, packageSize);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
@@ -501,8 +517,8 @@ async function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: 
         'MDL': MDL.replace(' ', '').replace(' ', ''),
         '链接地址': GetDetaUrl(jkid),
         '库存': GetStockamount(brandName, stock),
-        '容量': PackageUnit.容量,
-        '容量单位': PackageUnit.容量单位
+        '容量': ProductType.容量,
+        '容量单位': ProductType.容量单位
     }];
 }
 // 获取促销产品格式数据
@@ -510,8 +526,7 @@ async function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any
     , purity: any, MDL: any, jkid: any, typeId: any, stock: number, pEndTime: any) {
 
     let salePrice: any = round(catalogPrice * (1 - activeDiscount));
-    let PackageUnit = await ConvertPackage(packageSize);
-    let ProductType = GetProductType(typeId, brandName);
+    let ProductType = await GetProductType(typeId, brandName, packageSize);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
@@ -538,8 +553,8 @@ async function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any
         'MDL': MDL.replace(' ', '').replace(' ', ''),
         '链接地址': GetDetaUrl(jkid),
         '库存': GetStockamount(brandName, stock),
-        '容量': PackageUnit.容量,
-        '容量单位': PackageUnit.容量单位
+        '容量': ProductType.容量,
+        '容量单位': ProductType.容量单位
     }];
 }
 
@@ -549,8 +564,7 @@ async function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageS
 
     let discount: any = getBrandDiscount(brandName);
     let salePrice: any = round((catalogPrice * discount) + 10);
-    let PackageUnit = await ConvertPackage(packageSize);
-    let ProductType = GetProductType(typeId, brandName);
+    let ProductType = await GetProductType(typeId, brandName, packageSize);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
@@ -577,8 +591,8 @@ async function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageS
         'MDL': MDL.replace(' ', '').replace(' ', ''),
         '链接地址': GetDetaUrl(jkid),
         '库存': GetStockamount(brandName, stock),
-        '容量': PackageUnit.容量,
-        '容量单位': PackageUnit.容量单位
+        '容量': ProductType.容量,
+        '容量单位': ProductType.容量单位
     }];
 }
 
