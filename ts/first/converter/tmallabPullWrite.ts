@@ -518,7 +518,7 @@ function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, cat
         图片链接: GetImg(brand),
         促销平台: "",
         促销开始日期: activeDiscount == "0.6" ? "2021-03-16" : startTime == null || startTime == '' ? "" : startTime,
-        促销截止日期: activeDiscount == "0.6" ? "2021-08-31" : endTime == null || endTime == '' ? "" : endTime,
+        促销截止日期: activeDiscount == "0.6" ? "2021-08-13" : endTime == null || endTime == '' ? "" : endTime,
         促销价: Math.round(activeDiscount == "0.6" ? catalogPrice * 0.6 : salePrice)
     }
     let array = [{
@@ -546,7 +546,7 @@ function GetAddOrEditFormat(itemNum, brand, packingSpecification, casFormat, cat
     if (model != undefined) {
         productInfo.促销价 = model.asalePrice;
         productInfo.促销开始日期 = "2021-03-16";
-        productInfo.促销截止日期 = "2021-08-31";
+        productInfo.促销截止日期 = "2021-08-13";
     }
     return productInfo;
 }
