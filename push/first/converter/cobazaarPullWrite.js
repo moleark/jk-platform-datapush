@@ -377,8 +377,14 @@ async function ConvertPackage(packages) {
             let packageArray = packages.split('x');
             radiox = Number(packageArray[0]);
             let packageSizeSplt = packageArray[1];
-            radioy = await matching_1.matching(packageSizeSplt, 'number');
-            unit = await matching_1.matching(packageSizeSplt, 'letter');
+            if (packageSizeSplt == '') {
+                radioy = await matching_1.matching(packages, 'number');
+                unit = await matching_1.matching(packages, 'letter');
+            }
+            else {
+                radioy = await matching_1.matching(packageSizeSplt, 'number');
+                unit = await matching_1.matching(packageSizeSplt, 'letter');
+            }
         }
         else {
             radioy = await matching_1.matching(packages, 'number');

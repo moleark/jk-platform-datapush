@@ -396,8 +396,14 @@ async function ConvertPackage(packages: string): Promise<any> {
             let packageArray = packages.split('x');
             radiox = Number(packageArray[0]);
             let packageSizeSplt = packageArray[1];
-            radioy = await matching(packageSizeSplt, 'number');
-            unit = await matching(packageSizeSplt, 'letter');
+            if (packageSizeSplt == '') {
+                radioy = await matching(packages, 'number');
+                unit = await matching(packages, 'letter');
+            } else {
+                radioy = await matching(packageSizeSplt, 'number');
+                unit = await matching(packageSizeSplt, 'letter');
+            }
+
         } else {
             radioy = await matching(packages, 'number');
             unit = await matching(packages, 'letter');
