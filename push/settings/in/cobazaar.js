@@ -9,6 +9,7 @@ const cobazaarPullWrite_1 = require("../../first/converter/cobazaarPullWrite");
 const config_1 = __importDefault(require("config"));
 const promiseSize = config_1.default.get("promiseSize");
 let pullSql = `SELECT TOP ${promiseSize} r.ID, m.name, p.OriginalId, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package
+                        ,j.packnr,j.quantity,j.unit
                         , r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, p.DescriptionC, p.Description, r.CatalogPrice, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat
                         , p.jkid, zcl_mess.dbo.Fn_get_delivetime_days(j.JKCat,'CN') AS Delivetime, isnull(p.purity,'N/A') AS Purity, ISNULL(p.lotnumber,'') AS mdl
                         , IsHazard, r.Storage, r.IsDelete, r.StateName, r.salePrice, r.Discount, x.ActiveDiscount, x.PEndTime 
@@ -39,6 +40,9 @@ exports.Cobazaar = {
         chineseName: "DescriptionC",
         englishName: "Description",
         catalogPrice: "CatalogPrice",
+        packnr: "packnr",
+        quantity: "quantity",
+        unit: "unit",
         CAS: "CasFormat",
         deliveryCycle: "Delivetime",
         stock: "Storage",

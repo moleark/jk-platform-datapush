@@ -35,7 +35,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
     let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
-    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, discount, activeDiscount, salePrice, pEndTime, isHazard } = body;
+    let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete, discount, activeDiscount, salePrice, pEndTime, isHazard, packnr, quantity, unit } = body;
     let result = false;
     try {
         // 判断有没有获取到token信息
@@ -64,12 +64,12 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             postDataStr = JSON.stringify(deleteData);
         }
         else if (String(isDelete) == '0' && stringUtils_1.StringUtils.isNotEmpty(activeDiscount)) {
-            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime);
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, packnr, quantity, unit);
             postOptions.path = addproductPricePath;
             postDataStr = JSON.stringify(promotionData);
         }
         else {
-            let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+            let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, packnr, quantity, unit);
             postOptions.path = addproductPath;
             postDataStr = JSON.stringify(addData);
         }
@@ -92,7 +92,7 @@ async function CobazaarPullWrite(joint, uqIn, data) {
             // 如果是危险品数据重新推送给苏州大学，增加10块
             // console.log(isHazard);
             if (isHazard == true && String(isDelete) == '0' && stringUtils_1.StringUtils.isEmpty(activeDiscount)) {
-                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, packnr, quantity, unit);
                 postDataStr = JSON.stringify(sudaData);
                 let requestDataAgain = qs.stringify({
                     ucode: globalVar_1.GlobalVar.ucode,
@@ -157,9 +157,10 @@ async function getTokenInfo(hostname, gettokenPath, loginname, ukey) {
     }
 }
 // 获取产品类型
-async function GetProductType(typeId, brandName, pachage) {
+async function GetProductType(typeId, brandName, packnr, quantity, unit) {
     let result = { ProductType: "", QualityGrade: "", 容量: "", 容量单位: "" };
-    let packageUnit = await ConvertPackage(pachage);
+    //let packageUnit = await ConvertPackage(pachage);
+    let capacity = packnr * quantity;
     switch (typeId) {
         case 1:
             result.ProductType = '化学试剂';
@@ -169,13 +170,13 @@ async function GetProductType(typeId, brandName, pachage) {
             else {
                 result.QualityGrade = 'EP';
             }
-            result.容量 = packageUnit.容量;
-            result.容量单位 = packageUnit.容量单位;
+            result.容量 = capacity;
+            result.容量单位 = unit;
             break;
         case 2:
             result.ProductType = '生物试剂';
-            result.容量 = packageUnit.容量;
-            result.容量单位 = packageUnit.容量单位;
+            result.容量 = capacity;
+            result.容量单位 = unit;
             break;
         case 3:
             result.ProductType = '耗材';
@@ -473,8 +474,8 @@ function getBrandDiscount(brandName) {
     return result;
 }
 // 获取新增或者修改格式数据
-async function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
-    let ProductType = await GetProductType(typeId, brandName, packageSize);
+async function GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, packnr, quantity, unit) {
+    let ProductType = await GetProductType(typeId, brandName, packnr, quantity, unit);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
@@ -503,9 +504,9 @@ async function GetAddOrEditFormat(brandName, originalId, packageSize, chineseNam
         }];
 }
 // 获取促销产品格式数据
-async function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime) {
+async function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, packnr, quantity, unit) {
     let salePrice = lodash_1.round(catalogPrice * (1 - activeDiscount));
-    let ProductType = await GetProductType(typeId, brandName, packageSize);
+    let ProductType = await GetProductType(typeId, brandName, packnr, quantity, unit);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,
@@ -537,10 +538,10 @@ async function GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, 
         }];
 }
 // 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
-async function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock) {
+async function GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, packnr, quantity, unit) {
     let discount = getBrandDiscount(brandName);
     let salePrice = lodash_1.round((catalogPrice * discount) + 10);
-    let ProductType = await GetProductType(typeId, brandName, packageSize);
+    let ProductType = await GetProductType(typeId, brandName, packnr, quantity, unit);
     return [{
             '品牌': GetBrandName(brandName),
             '货号': originalId,

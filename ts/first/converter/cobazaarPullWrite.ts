@@ -32,7 +32,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
 
     let { loginname, ukey, hostname, gettokenPath, delproductPath, addproductPath, addproductPricePath } = cobazaarApiSetting;
     let { brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, stock, purity, MDL, jkid, typeId, stateName, isDelete,
-        discount, activeDiscount, salePrice, pEndTime, isHazard } = body;
+        discount, activeDiscount, salePrice, pEndTime, isHazard, packnr, quantity, unit } = body;
     let result = false;
 
     try {
@@ -67,12 +67,12 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
 
         }
         else if (String(isDelete) == '0' && StringUtils.isNotEmpty(activeDiscount)) {
-            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime);
+            let promotionData = await GetCuXiaoFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, activeDiscount, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, pEndTime, packnr, quantity, unit);
             postOptions.path = addproductPricePath;
             postDataStr = JSON.stringify(promotionData);
 
         } else {
-            let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+            let addData = await GetAddOrEditFormat(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, packnr, quantity, unit);
             postOptions.path = addproductPath;
             postDataStr = JSON.stringify(addData);
         }
@@ -99,7 +99,7 @@ export async function CobazaarPullWrite(joint: Joint, uqIn: UqIn, data: any): Pr
             // 如果是危险品数据重新推送给苏州大学，增加10块
             // console.log(isHazard);
             if (isHazard == true && String(isDelete) == '0' && StringUtils.isEmpty(activeDiscount)) {
-                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock);
+                let sudaData = await GetWeiXianFormatForSuDa(brandName, originalId, packageSize, chineseName, englishName, catalogPrice, CAS, deliveryCycle, purity, MDL, jkid, typeId, stock, packnr, quantity, unit);
                 postDataStr = JSON.stringify(sudaData);
 
                 let requestDataAgain = qs.stringify({
@@ -173,10 +173,11 @@ async function getTokenInfo(hostname: string, gettokenPath: string, loginname: s
 }
 
 // 获取产品类型
-async function GetProductType(typeId: any, brandName: String, pachage: string): Promise<any> {
+async function GetProductType(typeId: any, brandName: String, packnr: number, quantity: number, unit: string): Promise<any> {
 
     let result = { ProductType: "", QualityGrade: "", 容量: "", 容量单位: "" };
-    let packageUnit = await ConvertPackage(pachage);
+    //let packageUnit = await ConvertPackage(pachage);
+    let capacity: any = packnr * quantity;
     switch (typeId) {
         case 1:
             result.ProductType = '化学试剂';
@@ -186,13 +187,13 @@ async function GetProductType(typeId: any, brandName: String, pachage: string): 
             else {
                 result.QualityGrade = 'EP';
             }
-            result.容量 = packageUnit.容量;
-            result.容量单位 = packageUnit.容量单位;
+            result.容量 = capacity;
+            result.容量单位 = unit;
             break;
         case 2:
             result.ProductType = '生物试剂';
-            result.容量 = packageUnit.容量;
-            result.容量单位 = packageUnit.容量单位;
+            result.容量 = capacity;
+            result.容量单位 = unit;
             break;
         case 3:
             result.ProductType = '耗材';
@@ -497,9 +498,9 @@ function getBrandDiscount(brandName: string): any {
 
 // 获取新增或者修改格式数据
 async function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
-    , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
+    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, packnr: number, quantity: number, unit: string) {
 
-    let ProductType = await GetProductType(typeId, brandName, packageSize);
+    let ProductType = await GetProductType(typeId, brandName, packnr, quantity, unit);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
@@ -529,10 +530,10 @@ async function GetAddOrEditFormat(brandName: any, originalId: any, packageSize: 
 }
 // 获取促销产品格式数据
 async function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, activeDiscount: any, CAS: any, deliveryCycle: any
-    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, pEndTime: any) {
+    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, pEndTime: any, packnr: number, quantity: number, unit: string) {
 
     let salePrice: any = round(catalogPrice * (1 - activeDiscount));
-    let ProductType = await GetProductType(typeId, brandName, packageSize);
+    let ProductType = await GetProductType(typeId, brandName, packnr, quantity, unit);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
@@ -566,11 +567,11 @@ async function GetCuXiaoFormat(brandName: any, originalId: any, packageSize: any
 
 // 苏州大学为什么要特殊判断处理？ 是因为舒经理反馈苏大危险品需要加收10元，平台给出方案是按照促销产品的形式来处理，危险品单独设置价格;
 async function GetWeiXianFormatForSuDa(brandName: any, originalId: any, packageSize: any, chineseName: any, englishName: any, catalogPrice: any, CAS: any, deliveryCycle: any
-    , purity: any, MDL: any, jkid: any, typeId: any, stock: number) {
+    , purity: any, MDL: any, jkid: any, typeId: any, stock: number, packnr: number, quantity: number, unit: string) {
 
     let discount: any = getBrandDiscount(brandName);
     let salePrice: any = round((catalogPrice * discount) + 10);
-    let ProductType = await GetProductType(typeId, brandName, packageSize);
+    let ProductType = await GetProductType(typeId, brandName, packnr, quantity, unit);
     return [{
         '品牌': GetBrandName(brandName),
         '货号': originalId,
