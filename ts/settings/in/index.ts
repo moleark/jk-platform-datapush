@@ -4,6 +4,7 @@ import { Tmallab } from "./tmallab";
 import { Cobazaar } from "./cobazaar";
 import { Zcygov } from "./zcygov";
 import { Labmai } from "./labmai";
+import { medicineStone } from "./medicineStone";
 
 
 const uqIns = [
@@ -12,7 +13,8 @@ const uqIns = [
     Tmallab,
     Cobazaar,
     Zcygov,
-    Labmai
+    Labmai,
+    medicineStone
 ]
 
 export default uqIns;
