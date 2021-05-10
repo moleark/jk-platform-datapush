@@ -32,8 +32,9 @@ export async function medicineStonePullWrite(joint: Joint, uqIn: UqIn, data: any
 
         let data = new Date();
         var hour = data.getHours();
-        if (hour < 20 && hour > 7) {
-            throw `key: ${keyVal} - 南京药石建议晚上上传,上传时间为晚上8点到早上8点 `;
+
+        if (hour < 18 && hour > 7) {
+            throw `key: ${keyVal} - 南京药石建议晚上上传,上传时间为晚上18点到早上8点 `;
         }
 
         let quantity = getStockamount(brandName, stockamount);
@@ -71,11 +72,12 @@ export async function medicineStonePullWrite(joint: Joint, uqIn: UqIn, data: any
             }]
         };
 
+        let json_data = JSON.stringify(bodydata);
         let fetchOptions: any = {
             url: url,
             options: {
                 method: "POST",
-                body: JSON.stringify(bodydata),
+                body: json_data,
                 agent: new https.Agent({ rejectUnauthorized: false }),    // https 必须加上这一句, http 请求必须去掉
                 headers: {
                     "Content-Type": "application/json",

@@ -32,8 +32,8 @@ async function medicineStonePullWrite(joint, uqIn, data) {
     try {
         let data = new Date();
         var hour = data.getHours();
-        if (hour < 20 && hour > 7) {
-            throw `key: ${keyVal} - 南京药石建议晚上上传,上传时间为晚上8点到早上8点 `;
+        if (hour < 18 && hour > 7) {
+            throw `key: ${keyVal} - 南京药石建议晚上上传,上传时间为晚上18点到早上8点 `;
         }
         let quantity = getStockamount(brandName, stockamount);
         let bodydata = {
@@ -68,11 +68,12 @@ async function medicineStonePullWrite(joint, uqIn, data) {
                         }]
                 }]
         };
+        let json_data = JSON.stringify(bodydata);
         let fetchOptions = {
             url: url,
             options: {
                 method: "POST",
-                body: JSON.stringify(bodydata),
+                body: json_data,
                 agent: new https_1.default.Agent({ rejectUnauthorized: false }),
                 headers: {
                     "Content-Type": "application/json",
