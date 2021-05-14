@@ -3,19 +3,20 @@ import config from 'config';
 import { logger } from "../../tools/logger";
 import { fetchRequest } from "../../tools/fetchRequest";
 import { format } from "date-fns";
-import https from 'https'
+import { stringify } from 'querystring'
+import { URLSearchParams } from 'url';
 
-const medicineStoneSetting = config.get<any>("medicineStoneApi");
+const labgleSetting = config.get<any>("labgleApi");
 
 
 /**
- * 南京药石
+ * 江苏艾康
  * @param joint 
  * @param uqIn 
  * @param data 
  * @returns 
  */
-export async function medicineStonePullWrite(joint: Joint, uqIn: UqIn, data: any): Promise<boolean> {
+export async function labglePullWrite(joint: Joint, uqIn: UqIn, data: any): Promise<boolean> {
 
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn as UqInTuid;
     if (key === undefined) throw 'key is not defined';
@@ -24,18 +25,11 @@ export async function medicineStonePullWrite(joint: Joint, uqIn: UqIn, data: any
     let mapToUq = new MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
 
-    let { key: medicineStoneKey, secret, url } = medicineStoneSetting;
-    let { brandName, originalId, mdl, casFormat, descriptionC, description, mf, mw, purity, deliverycycle, stateName,
-        package: packageSize, catalogPrice, salePrice, stockamount, templateTypeId, productId } = body;
+    let { token, url } = labgleSetting;
+    let { brandName, originalId, mdl, casFormat, descriptionC, description, mf, mw, purity, deliverycycle,
+        stateName, package: packageSize, catalogPrice, salePrice, stockamount, templateTypeId, productId } = body;
 
     try {
-
-        let data = new Date();
-        var hour = data.getHours();
-
-        if (hour < 18 && hour > 7) {
-            throw `key: ${keyVal} - 南京药石建议晚上上传,上传时间为晚上18点到早上8点 `;
-        }
 
         let quantity = getStockamount(brandName, stockamount);
 
@@ -71,44 +65,31 @@ export async function medicineStonePullWrite(joint: Joint, uqIn: UqIn, data: any
                 }]
             }]
         };
-
         let json_data = JSON.stringify(bodydata);
+        const params = new URLSearchParams();
+        params.append('data', json_data);
+        params.append('token', token);
+
+
         let fetchOptions: any = {
             url: url,
             options: {
                 method: "POST",
-                body: json_data,
-                agent: new https.Agent({ rejectUnauthorized: false }),    // https 必须加上这一句, http 请求必须去掉
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Basic " + encodeBase64(medicineStoneKey + ":" + secret)
-                }
+                body: params
             }
         };
-
         let ret = await fetchRequest(fetchOptions);
-        if (ret.code != "200") {
-            throw 'medicineStone Fail: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}";
+        if (ret.code != 0) {
+            throw 'labgle Fail: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}";
         }
 
-        console.log('medicineStone Success: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}")
+        console.log('labgle Success: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}")
         return true;
     } catch (error) {
         logger.error(error);
         throw error;
     }
 }
-
-
-/**
- * encodeBase64
- * @param source 
- * @returns 
- */
-function encodeBase64(source: string) {
-    return Buffer.from(source).toString('base64');
-}
-
 
 /**
  * 指定包装没有库存时的定制周期

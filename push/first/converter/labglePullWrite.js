@@ -3,22 +3,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.medicineStonePullWrite = void 0;
+exports.labglePullWrite = void 0;
 const uq_joint_1 = require("uq-joint");
 const config_1 = __importDefault(require("config"));
 const logger_1 = require("../../tools/logger");
 const fetchRequest_1 = require("../../tools/fetchRequest");
 const date_fns_1 = require("date-fns");
-const https_1 = __importDefault(require("https"));
-const medicineStoneSetting = config_1.default.get("medicineStoneApi");
+const url_1 = require("url");
+const labgleSetting = config_1.default.get("labgleApi");
 /**
- * 南京药石
+ * 江苏艾康
  * @param joint
  * @param uqIn
  * @param data
  * @returns
  */
-async function medicineStonePullWrite(joint, uqIn, data) {
+async function labglePullWrite(joint, uqIn, data) {
     let { key, mapper, uq: uqFullName, entity: tuid } = uqIn;
     if (key === undefined)
         throw 'key is not defined';
@@ -27,14 +27,9 @@ async function medicineStonePullWrite(joint, uqIn, data) {
     let keyVal = data[key];
     let mapToUq = new uq_joint_1.MapUserToUq(joint);
     let body = await mapToUq.map(data, mapper);
-    let { key: medicineStoneKey, secret, url } = medicineStoneSetting;
+    let { token, url } = labgleSetting;
     let { brandName, originalId, mdl, casFormat, descriptionC, description, mf, mw, purity, deliverycycle, stateName, package: packageSize, catalogPrice, salePrice, stockamount, templateTypeId, productId } = body;
     try {
-        let data = new Date();
-        var hour = data.getHours();
-        if (hour < 18 && hour > 7) {
-            throw `key: ${keyVal} - 南京药石建议晚上上传,上传时间为晚上18点到早上8点 `;
-        }
         let quantity = getStockamount(brandName, stockamount);
         let bodydata = {
             Products: [{
@@ -69,23 +64,21 @@ async function medicineStonePullWrite(joint, uqIn, data) {
                 }]
         };
         let json_data = JSON.stringify(bodydata);
+        const params = new url_1.URLSearchParams();
+        params.append('data', json_data);
+        params.append('token', token);
         let fetchOptions = {
             url: url,
             options: {
                 method: "POST",
-                body: json_data,
-                agent: new https_1.default.Agent({ rejectUnauthorized: false }),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Basic " + encodeBase64(medicineStoneKey + ":" + secret)
-                }
+                body: params
             }
         };
         let ret = await fetchRequest_1.fetchRequest(fetchOptions);
-        if (ret.code != "200") {
-            throw 'medicineStone Fail: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}";
+        if (ret.code != 0) {
+            throw 'labgle Fail: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}";
         }
-        console.log('medicineStone Success: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}");
+        console.log('labgle Success: { Id: ' + keyVal + ',Type:' + stateName + ',Datetime:' + date_fns_1.format(Date.now(), 'yyyy-MM-dd HH:mm:ss') + ',Message: ' + ret.msg + "}");
         return true;
     }
     catch (error) {
@@ -93,15 +86,7 @@ async function medicineStonePullWrite(joint, uqIn, data) {
         throw error;
     }
 }
-exports.medicineStonePullWrite = medicineStonePullWrite;
-/**
- * encodeBase64
- * @param source
- * @returns
- */
-function encodeBase64(source) {
-    return Buffer.from(source).toString('base64');
-}
+exports.labglePullWrite = labglePullWrite;
 /**
  * 指定包装没有库存时的定制周期
  * @param brandName
@@ -175,4 +160,4 @@ function getStockamount(brandName, amount) {
     }
     return result;
 }
-//# sourceMappingURL=medicineStoneWrite.js.map
+//# sourceMappingURL=labglePullWrite.js.map

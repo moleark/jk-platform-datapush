@@ -5,6 +5,7 @@ import { Cobazaar } from "./cobazaar";
 import { Zcygov } from "./zcygov";
 import { Labmai } from "./labmai";
 import { medicineStone } from "./medicineStone";
+import { labgle } from "./labgle";
 
 
 const uqIns = [
@@ -14,7 +15,8 @@ const uqIns = [
     Cobazaar,
     Zcygov,
     Labmai,
-    medicineStone
+    medicineStone,
+    labgle
 ]
 
 export default uqIns;
