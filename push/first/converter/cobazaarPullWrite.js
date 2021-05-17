@@ -177,6 +177,7 @@ async function GetProductType(typeId, brandName, packnr, quantity, unit) {
             result.ProductType = '生物试剂';
             result.容量 = capacity;
             result.容量单位 = unit;
+            result.QualityGrade = 'BR';
             break;
         case 3:
             result.ProductType = '耗材';
