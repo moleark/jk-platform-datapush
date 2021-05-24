@@ -17,6 +17,7 @@ let pullSql = `SELECT TOP ${promiseSize} r.ID, m.name AS Brand, p.OriginalID, IS
                     INNER JOIN zcl_mess.dbo.Products p ON j.JKid = p.JKID
                     INNER JOIN zcl_mess.dbo.manufactory m ON m.code = r.BrandId
                 WHERE r.CustomerUnitOnPlatformId = '1767cb5cea7340c0adad74b7ff3fb530'
+                    AND r.BrandId IN ('A01','A10','J29','J34')
                     AND r.Id > @iMaxId
                 ORDER BY Id;`;
 exports.labgle = {
