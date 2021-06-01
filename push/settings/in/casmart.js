@@ -18,10 +18,10 @@ const promiseSize = config_1.default.get("promiseSize");
     J&K 974643  100ML	196		A019746431_100_ML
                 500ML	256		A019746431_500_ML
                 1L		440		A019746431_1_L
-        167915	100ML	338		A01T060020100
+        247387	100ML	327		A01T060010100
 */
 let pullSql = `SELECT  TOP ${promiseSize} r.ID, r.PackageId, zcl_mess.dbo.fc_reCAS(p.CAS) AS CasFormat, p.OriginalId, m.name as BrandName, r.CatalogPrice,
-                        CASE WHEN r.PackageId IN ('A019746431_100_ML','A019746431_500_ML','A019746431_1_L','A01T060020100') THEN r.CatalogPrice ELSE r.SalePrice END AS SalePrice,
+                        CASE WHEN r.PackageId IN ('A019746431_100_ML','A019746431_500_ML','A019746431_1_L','A01T060010100') THEN r.CatalogPrice ELSE r.SalePrice END AS SalePrice,
                         r.Storage, p.DescriptionC, p.Description, zcl_mess.dbo.fn_mi_pack_toString(j.packnr,j.quantity,j.unit,'abstract') as Package, r.StateName, r.IsDelete, 
                         isnull(p.purity,'N/A') AS Purity, r.ThirdPartyPlatformTemplateTypeId AS Templatetypeid, REPLACE(REPLACE(isnull(p.MF,'N/A'),'+',''),'?','') AS MF,
                         zcl_mess.dbo.Fn_get_delivetime(j.JKCat,'CN') AS Delivetime, (CASE WHEN sc.chemid IS NULL  then 'No' ELSE 'Yes' END ) as IsWX, j.jkid,
