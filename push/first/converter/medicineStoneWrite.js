@@ -55,8 +55,8 @@ async function medicineStonePullWrite(joint, uqIn, data) {
                             LeadTime: GetDelivetime(brandName, deliverycycle),
                             Status: stateName,
                             Prices: [{
-                                    ListPrice: catalogPrice,
-                                    DiscountPrice: salePrice,
+                                    ListPrice: catalogPrice.toFixed(2),
+                                    DiscountPrice: salePrice.toFixed(2),
                                     Currency: "RMB",
                                     Status: stateName
                                 }],
@@ -135,43 +135,29 @@ function GetDelivetime(brandName, deliveryCycle) {
  */
 function getStockamount(brandName, amount) {
     let result = 0;
-    if (brandName == 'Acros') {
+    if (amount > 0 && amount < 11) {
+        result = 10;
+    }
+    else if (amount > 10 && amount < 21) {
+        result = 20;
+    }
+    else if (amount > 20 && amount < 31) {
+        result = 30;
+    }
+    else if (amount > 30 && amount < 41) {
+        result = 40;
+    }
+    else if (amount > 40 && amount < 51) {
+        result = 50;
+    }
+    else if (amount > 50 && amount < 61) {
+        result = 60;
+    }
+    else if (amount > 60 && amount < 100) {
         result = 99;
     }
-    else if (brandName == 'TCI') {
-        result = 99;
-    }
-    else if (brandName == 'Alfa') {
-        result = 99;
-    }
-    else if (brandName == 'Alfa Aesar') {
-        result = 99;
-    }
-    else {
-        if (amount > 0 && amount < 11) {
-            result = 10;
-        }
-        else if (amount > 10 && amount < 21) {
-            result = 20;
-        }
-        else if (amount > 20 && amount < 31) {
-            result = 30;
-        }
-        else if (amount > 30 && amount < 41) {
-            result = 40;
-        }
-        else if (amount > 40 && amount < 51) {
-            result = 50;
-        }
-        else if (amount > 50 && amount < 61) {
-            result = 60;
-        }
-        else if (amount > 60 && amount < 100) {
-            result = 99;
-        }
-        else if (amount > 99) {
-            result = 100;
-        }
+    else if (amount > 99) {
+        result = 100;
     }
     return result;
 }
