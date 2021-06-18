@@ -536,7 +536,7 @@ function GetFarmetName(str) {
     let result = '';
     if (str != null) {
         //去除空格、反斜杠、括号、+- &
-        result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[ ]/g, '');
+        result = str.replace(/[/]/g, '').replace(/[#]/g, '').replace(/[&]/g, 'N').replace(/[:]/g, ' ').replace(/[+]/g, '').replace(/[ ]/g, '');
         if (result.length > 100) {
             result = result.substring(0, 99);
         }
