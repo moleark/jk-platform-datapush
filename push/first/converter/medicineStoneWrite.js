@@ -32,8 +32,8 @@ async function medicineStonePullWrite(joint, uqIn, data) {
     try {
         let data = new Date();
         var hour = data.getHours();
-        if (hour < 18 && hour > 7) {
-            throw `key: ${keyVal} - 南京药石建议晚上上传,上传时间为晚上18点到早上8点 `;
+        if (hour > 17 || hour < 8) {
+            throw `key: ${keyVal} - 南京药石数据重发,上传时间改为早上8点到晚上18点 `;
         }
         let quantity = getStockamount(brandName, stockamount);
         let bodydata = {
