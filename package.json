@@ -38,7 +38,7 @@
         "mysql": "^2.17.1",
         "node-fetch": "^2.3.0",
         "requset": "0.0.1-security",
-        "typescript": "^3.9.7",
+        "typescript": "^4.4.3",
         "uq-joint": "^1.1.1",
         "urlencode": "^1.1.0"
     }
